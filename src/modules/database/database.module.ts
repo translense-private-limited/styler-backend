@@ -22,10 +22,12 @@ import { ConfigModule } from '@nestjs/config';
       migrationsRun: false,
     }),
     TypeOrmModule.forRoot({
+      logging: false,
       name: getMongodbDataSource(), // Unique name for the MongoDB connection
       type: 'mongodb',
       url: 'mongodb://mongodb:27017/styler',
-      synchronize: process.env.ENVIROMENT === 'development', // get rid of it soon as task optimisation
+      // entities: [path.join(__dirname, '../../**/*.entity{.ts,.js}')],
+      synchronize: true,
     }),
   ],
   exports: [],

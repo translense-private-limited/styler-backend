@@ -45,10 +45,11 @@
     "rxjs": "^7.8.1",
     "sib-api-v3-sdk": "^8.5.0",
     "sib-api-v3-typescript": "^2.2.2",
+    "swagger-ui-express": "^4.1.6",
     "twilio": "^4.23.0",
     "typeorm": "^0.3.20",
-    "winston": "^3.11.0",
-    "swagger-ui-express": "^4.1.6"
+    "uuid": "^10.0.0",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

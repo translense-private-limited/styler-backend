@@ -44,7 +44,6 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
-      - MONGO_LOG_LEVEL=warn
     ports:
       - '4002:27017'
     volumes:

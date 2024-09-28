@@ -1,32 +1,28 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  HttpStatus,
-  Logger,
-} from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
-import { ResponseHandler } from '../response/response-handler';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
+import { Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 
 @Catch(QueryFailedError)
 export class DatabaseExceptionFilter implements ExceptionFilter {
-  private logger = new Logger(DatabaseExceptionFilter.name);
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
-  catch(exception: any, host: ArgumentsHost) {
-    const { httpAdapter } = this.httpAdapterHost;
+  catch(exception: QueryFailedError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
+    const status = HttpStatus.BAD_REQUEST;  // You can customize this based on the error
 
-    const responseErrorBody = ResponseHandler.error(
-      'Something went wrong',
-      exception,
-    );
-    this.logger.error(exception.message, exception);
-    httpAdapter.reply(ctx.getResponse(), responseErrorBody, status);
+    response.status(status).json({
+      status: status,
+      error: {
+        code: 'DATABASE_ERROR',
+        message: 'A database error occurred.',
+        details: {
+          fieldErrors: exception.message,  // You can customize or format the error details here
+        },
+      },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: response.getHeader('x-request-id') || null,
+      },
+    });
   }
 }

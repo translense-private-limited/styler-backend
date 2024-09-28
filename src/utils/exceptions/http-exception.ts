@@ -1,27 +1,28 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
-import { ResponseHandler } from '../response/response-handler';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import { Response } from 'express';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
-  catch(exception: any, host: ArgumentsHost) {
-    const { httpAdapter } = this.httpAdapterHost;
+  catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
-    const errorBody = ResponseHandler.error(
-      (exception as Record<string, string>).message,
-      exception,
-    );
-    httpAdapter.reply(ctx.getResponse(), errorBody, status);
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
+    const status = exception.getStatus();
+    const exceptionResponse: any = exception.getResponse();
+
+    response.status(status).json({
+      status: status,
+      error: {
+        code: exceptionResponse.code || 'INVALID_INPUT',
+        message: exceptionResponse.message || 'Invalid request.',
+        details: {
+          fieldErrors: exceptionResponse.details || null,
+        },
+      },
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: response.getHeader('x-request-id') || null,
+      },
+    });
   }
 }
