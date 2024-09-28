@@ -1,0 +1,18 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "..",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.ts$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@src/(.*)$": "<rootDir>/src/$1",
+    "^@modules/(.*)$": "<rootDir>/src/modules/$1",
+    "^@test/(.*)$": "<rootDir>/test/$1",
+    "^@lib/http-infra-lib(|/.*)$": "<rootDir>/libs/http-infra-lib/src/$1",
+    "^@utils/(.*)$": "<rootDir>/src/utils/$1",
+    "^@response/(.*)$": "<rootDir>/src/utils/response/$1"
+  },
+  "verbose": true
+}

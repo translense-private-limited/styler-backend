@@ -1,0 +1,124 @@
+version: '3'
+services:
+  odriyo-backend:
+    image: odriyo-backend
+    container_name: odriyo-backend
+    build: .
+    ports:
+      - '4000:3000'
+      - '9229:9229'
+    volumes:
+      - odriyo-backend:/app
+    depends_on:
+      - mysql
+      - mongodb
+    networks:
+      - odriyo
+
+  odriyo-admin:
+    image: odriyo-admin
+    container_name: odriyo-admin
+    build:
+      context: ../odriyo-admin-v2/.
+      dockerfile: ../odriyo-admin-v2/Dockerfile
+    working_dir: /app/
+    ports:
+      - "3000:3000"
+      - "9000:9000"
+    volumes:
+      - odriyo-admin:/app/
+    networks:
+      - odriyo
+    depends_on:
+      - odriyo-backend
+
+  odriyo-client:
+    image: odriyo-client
+    container_name: odriyo-client
+    build:
+      context: ../odriyo-client-v2/.
+      dockerfile: ../odriyo-client-v2/Dockerfile
+    working_dir: /app/
+    ports:
+      - "3001:3001"
+      - "9001:9001"
+    volumes:
+      - odriyo-client:/app/
+    networks:
+      - odriyo
+    depends_on:
+      - odriyo-backend
+
+  odriyo-customer:
+    image: odriyo-customer
+    container_name: odriyo-customer
+    build:
+      context: ../odriyo-customer-v2/.
+      dockerfile: ../odriyo-customer-v2/Dockerfile
+    working_dir: /app/
+    ports:
+      - "3002:3002"
+      - "9002:9002"
+    volumes:
+      - odriyo-customer:/app/
+    networks:
+      - odriyo
+    depends_on:
+      - odriyo-backend
+
+  mysql:
+    container_name: odriyo-mysql
+    image: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: odriyo
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 4001:3306
+    volumes:
+      - odriyo-mysql:/var/lib/mysql
+      - ./docker/mysql/initial_setup.sh:/docker-entrypoint-initdb.d/10-initial_setup.sh
+    networks:
+      - odriyo
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  mongodb:
+    container_name: odriyo-mongodb
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    ports:
+      - '4002:27017'
+    volumes:
+      - odriyo-mongodb:/data/db
+    networks:
+      - odriyo
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh", "--eval", "db.runCommand('ping').ok"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+networks:
+  odriyo:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.1.0/24
+
+volumes:
+  odriyo-mysql:
+  odriyo-backend:
+  odriyo-mongodb:
+  odriyo-admin:
+  odriyo-customer:
+  odriyo-client:

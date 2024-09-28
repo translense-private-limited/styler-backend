@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@modules": ["./src/modules"],
+      "@modules/*": ["./src/modules/*"],
+      "@src": ["./src"],
+      "@src/*": ["./src/*"],
+      "@test": ["./test"],
+      "@test/*": ["./test/*"],
+      "@lib/http-infra-lib": ["libs/http-infra-lib/src"],
+      "@utils": ["./src/utils"],
+      "@utils/*": ["./src/utils/*"],
+      "@response": ["./src/utils/response"],
+      "@response/*": ["./src/utils/response/*"]
+    }
+  }
+}

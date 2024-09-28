@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Your Page Title</title>
+  </head>
+  <body>
+    <form
+      action="https://storage.googleapis.com/odriyo/"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <input type="text" name="key" value="123/personal/2/profile-pic" />
+      <input
+        type="hidden"
+        name="policy"
+        value="eyJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJvZHJpeW8ifSx7ImtleSI6IjEyMy9wZXJzb25hbC8yL3Byb2ZpbGUtcGljIn0seyJ4LWdvb2ctZGF0ZSI6IjIwMjQwMzExVDA5NTExOFoifSx7IngtZ29vZy1jcmVkZW50aWFsIjoic3RvcmFnZUBhc3R1dGUtd2ludGVyLTQxNDAwNy5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbS8yMDI0MDMxMS9hdXRvL3N0b3JhZ2UvZ29vZzRfcmVxdWVzdCJ9LHsieC1nb29nLWFsZ29yaXRobSI6IkdPT0c0LVJTQS1TSEEyNTYifV0sImV4cGlyYXRpb24iOiIyMDI0LTAzLTExVDEwOjUxOjE4WiJ9"
+      />
+      <input type="hidden" name="x-goog-algorithm" value="GOOG4-RSA-SHA256" />
+      <input
+        type="hidden"
+        name="x-goog-credential"
+        value="storage@astute-winter-414007.iam.gserviceaccount.com/20240311/auto/storage/goog4_request"
+      />
+      <input type="hidden" name="x-goog-date" value="20240311T095118Z" />
+      <input
+        type="hidden"
+        name="x-goog-signature"
+        value="568e56d0dba0e02e781f9eda208642cc967ae2485d03e1d70fda9b6643f51e0e8ad2b895c14d9c2c76c4611e4df77924712ae5a3534126611592df0c43bc8f01806e51e5b87b498a1fa452569f0ece9829ac9b138c77940deb883a30463a93b78da43267ab7fb83b0cd32ce91a90c021f6c12d9d8bcfe55014a1b88276b26f36fea097b9205826a31ba432dcdf6c5f43833ad6067f00b0c003773ece8e55a70207fcde14781519af1a855a0a7efd178b5f5fb855142ee51209890aa63f5dc1bf42e8159965d94a784d9139fb3c2f77f858492a46fb7bf29d3b231f016a8665726f91c0766457cdc2b4164476c593b59807b0ba98cfdcd7a90c653b667b8e987f"
+      />
+      <input name="file" type="file" />
+      <input type="submit" value="Upload" />
+    </form>
+  </body>
+</html>
