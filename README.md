@@ -89,14 +89,14 @@ This document outlines the standard format for API responses in both success and
 
 ## Common HTTP Status Codes
 
-| Status Code | Description                         |
-|-------------|-------------------------------------|
-| 200         | OK - Request was successful         |
-| 400         | Bad Request - Invalid client input  |
-| 401         | Unauthorized - Authentication failed|
-| 403         | Forbidden - Access is not allowed   |
-| 404         | Not Found - Resource not found      |
-| 500         | Internal Server Error               |
+| Status Code | Description                          |
+| ----------- | ------------------------------------ |
+| 200         | OK - Request was successful          |
+| 400         | Bad Request - Invalid client input   |
+| 401         | Unauthorized - Authentication failed |
+| 403         | Forbidden - Access is not allowed    |
+| 404         | Not Found - Resource not found       |
+| 500         | Internal Server Error                |
 
 ---
 
