@@ -6,9 +6,9 @@ MYSQL_USER=${MYSQL_USER}
 
 echo "Executing SQL commands..." 
 mysql --user=root --password="$MYSQL_ROOT_PASSWORD" <<-EOSQL
-    CREATE DATABASE IF NOT EXISTS odriyo;
-    GRANT ALL PRIVILEGES ON \`odriyo\`.* TO '$MYSQL_USER'@'%';
-    USE odriyo; 
+    CREATE DATABASE IF NOT EXISTS styler;
+    GRANT ALL PRIVILEGES ON \`styler\`.* TO '$MYSQL_USER'@'%';
+    USE styler; 
 
     -- Create tables if they don't exist
     CREATE TABLE IF NOT EXISTS whitelabel (
@@ -45,7 +45,7 @@ mysql --user=root --password="$MYSQL_ROOT_PASSWORD" <<-EOSQL
         CONSTRAINT FK_c2d5b1048b7ed394bff71886e04 FOREIGN KEY (whitelabelId) REFERENCES whitelabel (whitelabelId)
     ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-    INSERT INTO whitelabel (whitelabelId, name, label) VALUES (1, 'ODRIYO3', 'Odriyoe');
+    INSERT INTO whitelabel (whitelabelId, name, label) VALUES (1, 'styler3', 'stylere');
     INSERT INTO resources (name, label) VALUES ('REPORT', 'Report');
     INSERT INTO business (name, location, averageCost, type, images, status, whitelabelId) 
     VALUES ('Test business', '{"latitude": 100, "longitude": 159}', 234, 'HOTEL', JSON_ARRAY('"imageurl1"', '"imageurl2"'), 'LIVE', 1); 

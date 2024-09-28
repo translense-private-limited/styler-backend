@@ -1,16 +1,16 @@
-# Connect to odriyo-mysql
-docker exec -it odriyo-mysql mysql -u user -p 
+# Connect to styler-mysql
+docker exec -it styler-mysql mysql -u user -p 
 
 # Enter password
 root 
 
 # Create database 
-CREATE DATABASE IF NOT EXISTS odriyo;
+CREATE DATABASE IF NOT EXISTS styler;
 
-use odriyo;
+use styler;
 
 # create whitelabel
-Insert into whitelabel (whitelabelId, name, label) values (1, 'ODRIYO', 'Odriyo');
+Insert into whitelabel (whitelabelId, name, label) values (1, 'styler', 'styler');
 
 # Create resource 
 Insert into resources (name, label) VALUES ('REPORT', 'Report');
@@ -19,7 +19,7 @@ Insert into resources (name, label) VALUES ('REPORT', 'Report');
 INSERT INTO business (name, location, averageCost, type, images, status, whitelabelId)
 VALUES ('Test business', '{"latitude": 100, "longitude": 159}', 234, 'HOTEL', JSON_ARRAY('imageurl1', 'imageurl2'), 'LIVE', 1);
 
-# Exit out of odriyo-mysql
+# Exit out of styler-mysql
 exit
 
 # create Super Admin 

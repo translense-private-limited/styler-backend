@@ -15,7 +15,7 @@ import { ConfigModule } from '@nestjs/config';
       name: getMysqlDataSource(), // 'mysql'
       username: 'user',
       password: 'root',
-      database: 'odriyo',
+      database: 'styler',
       entities: [path.join(__dirname, '../../**/*.entity{.ts,.js}')],
       synchronize: true,
       timezone: 'Z',
@@ -24,7 +24,7 @@ import { ConfigModule } from '@nestjs/config';
     TypeOrmModule.forRoot({
       name: getMongodbDataSource(), // Unique name for the MongoDB connection
       type: 'mongodb',
-      url: 'mongodb://mongodb:27017/odriyo',
+      url: 'mongodb://mongodb:27017/styler',
       synchronize: process.env.ENVIROMENT === 'development', // get rid of it soon as task optimisation
     }),
   ],

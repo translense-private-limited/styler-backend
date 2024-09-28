@@ -1,7 +1,7 @@
 export function getMysqlDataSource(): string {
-  return 'odriyo-mysql';
+  return 'styler-mysql';
 }
 
 export function getMongodbDataSource(): string {
-  return 'odriyo-mongodb';
+  return 'styler-mongodb';
 }

@@ -7,7 +7,7 @@ export const connectionSource = new DataSource({
   port: 4001,
   username: 'user',
   password: 'root',
-  database: 'odriyo',
+  database: 'styler',
   logging: true,
   migrations: ['src/migrations/**/*{.ts,.js}'],
   entities: ['dist/**/*.entity.js'],
