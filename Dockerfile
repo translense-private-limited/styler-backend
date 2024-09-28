@@ -1,20 +1,22 @@
+# Use an official Node.js image from the Docker library
 FROM node:latest
 
-# set the default working directory inside the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.* .
-COPY package.* /app/
-RUN npm install -g @nestjs/cli
-RUN npm install -g npm@latest
-RUN npm install --legacy-peer-deps
+# Copy only the package.json and package-lock.json to leverage Docker layer caching
+COPY package*.json ./
 
-# absolute path
-COPY . /app/
+# Install dependencies before copying the rest of the files
+RUN npm install -g @nestjs/cli \
+    && npm install -g npm@latest \
+    && npm install --legacy-peer-deps
 
-# its optional but good practice 
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port (optional)
 EXPOSE 3000
 
+# Default command to run your application
 CMD ["npm", "run", "start:dev"]
-
-

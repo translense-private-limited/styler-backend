@@ -1,19 +1,5 @@
 version: '3.8'
 services:
-  styler-backend:
-    image: styler-backend
-    container_name: styler-backend
-    build: .
-    ports:
-      - '4000:3000'
-      - '9229:9229'
-    volumes:
-      - .:/app
-    depends_on:
-      - mysql
-      - mongodb
-    networks:
-      - styler
 
   mysql:
     container_name: styler-mysql
@@ -32,7 +18,7 @@ services:
     networks:
       - styler
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      test: [ 'CMD', 'mysqladmin', 'ping', '-h', 'localhost' ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -51,7 +37,7 @@ services:
     networks:
       - styler
     healthcheck:
-      test: ['CMD-SHELL', 'mongosh', '--eval', "db.runCommand('ping').ok"]
+      test: [ 'CMD-SHELL', 'mongosh', '--eval', "db.runCommand('ping').ok" ]
       interval: 30s
       timeout: 10s
       retries: 5
