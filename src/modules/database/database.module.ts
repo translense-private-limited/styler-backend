@@ -10,9 +10,9 @@ import { ConfigModule } from '@nestjs/config';
     TypeOrmModule.forRoot({
       logging: true,
       type: 'mysql',
-      //  host: 'mysql',
-      host: '127.0.0.1',
-      port: 3306,
+      //  host: 'mysql', // uncomment it if you want to run via docker
+      host: '127.0.0.1', // uncomment it if you want to run backend service independently 
+      port: 4001,
       name: getMysqlDataSource(), // 'mysql'
       username: 'user',
       password: 'root',

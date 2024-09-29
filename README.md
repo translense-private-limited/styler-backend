@@ -108,4 +108,50 @@ The **meta** field contains:
 - **pagination**: Present in paginated responses, providing pagination details.
 ```
 
-This Markdown document is structured for clarity, while keeping it concise for easy understanding and use in a `README.md` file.
+Here’s the markdown version you can copy and paste:
+
+```markdown
+# Setup and Running Guide
+
+## For Windows Users
+
+### Steps to Start the Services:
+
+1. **Start Support Services:**
+   Run the following command to start the support services using Docker Compose:
+   
+   ```bash
+   docker compose -f stack.yaml up
+   ```
+   or
+   
+   ```bash
+   docker-compose -f stack.yaml up
+   ```
+
+2. **Start the Application:**
+   After the services are up, start the application with the following command:
+   
+   ```bash
+   npm run start:dev
+   ```
+
+3. **Services Ports:**
+   - **Application Server:** Running on port `4000`.
+   - **MySQL Server:** Running on port `4001`.
+   - **MongoDB Server:** Running on port `4002`.
+
+---
+
+## For Non-Windows Users
+
+1. **Start Support Services:**
+   Run the following command to start all services at once:
+   
+   ```bash
+   docker-compose up
+   ```
+
+---
+
+

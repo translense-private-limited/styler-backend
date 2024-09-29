@@ -5,7 +5,7 @@ services:
     container_name: styler-backend
     build: .
     ports:
-      - '4000:3000'
+      - '4000:4000'
       - '9229:9229'
     volumes:
       - styler-backend:/app
@@ -83,7 +83,7 @@ services:
     networks:
       - styler
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -102,7 +102,7 @@ services:
     networks:
       - styler
     healthcheck:
-      test: ["CMD-SHELL", "mongosh", "--eval", "db.runCommand('ping').ok"]
+      test: [ "CMD-SHELL", "mongosh", "--eval", "db.runCommand('ping').ok" ]
       interval: 30s
       timeout: 10s
       retries: 5

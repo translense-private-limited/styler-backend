@@ -23,7 +23,7 @@ services:
       dockerfile: ../styler-admin-v2/Dockerfile
     working_dir: /app/
     ports:
-      - "3000:3000"
+      - "3000:4000"
       - "9000:9000"
     volumes:
       - styler-admin:/app/
@@ -83,7 +83,7 @@ services:
     networks:
       - styler
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -102,7 +102,7 @@ services:
     networks:
       - styler
     healthcheck:
-      test: ["CMD-SHELL", "mongosh", "--eval", "db.runCommand('ping').ok"]
+      test: [ "CMD-SHELL", "mongosh", "--eval", "db.runCommand('ping').ok" ]
       interval: 30s
       timeout: 10s
       retries: 5
