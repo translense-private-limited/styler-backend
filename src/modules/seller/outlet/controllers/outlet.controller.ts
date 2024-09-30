@@ -15,5 +15,14 @@ export class OutletController {
         return this.outletService.createOutlet(createOutletDto);
     }
 
+    @Get() // GET /outlets
+    async getAllOutlets(): Promise<OutletEntity[]> {
+        return this.outletService.getAllOutlets();
+    }
+    @Get(':id')
+    async getOutletById(@Param('id') id: string): Promise<OutletEntity> {
+        return this.outletService.getOutletById(id);
+    }
+
 
 }

@@ -22,7 +22,7 @@ export class AppController {
     console.log()
     return {
       status: 'OK',
-      message: 'Service is up and running',
+      message: 'Service is up and running....',
       timestamp: new Date().toISOString()
     };
   }

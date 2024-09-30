@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,NotFoundException } from '@nestjs/common';
 
 import { OutletRepository } from '../repositories/outlet.repository';
 import { CreateOutletDto } from '../dtos/outlet.dto';
@@ -12,6 +12,21 @@ export class OutletService {
         const outlet = await this.outletRepository
             .getRepository()
             .save(createAddressDto);
+        return outlet;
+    }
+
+    // Fetch all outlets
+    async getAllOutlets(): Promise<OutletEntity[]> {
+        return this.outletRepository.getRepository().find();
+    }
+
+    async getOutletById(id: string): Promise<OutletEntity> {
+        const outletId = parseInt(id, 10); // Convert the id to a number
+        const outlet = await this.outletRepository.getRepository().findOne({ where: { id: outletId } });
+        
+        if (!outlet) {
+            throw new NotFoundException(`Outlet with ID ${id} not found`);
+        }
         return outlet;
     }
 }
