@@ -1,0 +1,124 @@
+version: '3'
+services:
+  styler-backend:
+    image: styler-backend
+    container_name: styler-backend
+    build: .
+    ports:
+      - '4000:4000'
+      - '9229:9229'
+    volumes:
+      - styler-backend:/app
+    depends_on:
+      - mysql
+      - mongodb
+    networks:
+      - styler
+
+  styler-admin:
+    image: styler-admin
+    container_name: styler-admin
+    build:
+      context: ../styler-admin-v2/.
+      dockerfile: ../styler-admin-v2/Dockerfile
+    working_dir: /app/
+    ports:
+      - "3000:3000"
+      - "9000:9000"
+    volumes:
+      - styler-admin:/app/
+    networks:
+      - styler
+    depends_on:
+      - styler-backend
+
+  styler-client:
+    image: styler-client
+    container_name: styler-client
+    build:
+      context: ../styler-client-v2/.
+      dockerfile: ../styler-client-v2/Dockerfile
+    working_dir: /app/
+    ports:
+      - "3001:3001"
+      - "9001:9001"
+    volumes:
+      - styler-client:/app/
+    networks:
+      - styler
+    depends_on:
+      - styler-backend
+
+  styler-customer:
+    image: styler-customer
+    container_name: styler-customer
+    build:
+      context: ../styler-customer-v2/.
+      dockerfile: ../styler-customer-v2/Dockerfile
+    working_dir: /app/
+    ports:
+      - "3002:3002"
+      - "9002:9002"
+    volumes:
+      - styler-customer:/app/
+    networks:
+      - styler
+    depends_on:
+      - styler-backend
+
+  mysql:
+    container_name: styler-mysql
+    image: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: styler
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 4001:3306
+    volumes:
+      - styler-mysql:/var/lib/mysql
+      - ./docker/mysql/initial_setup.sh:/docker-entrypoint-initdb.d/10-initial_setup.sh
+    networks:
+      - styler
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  mongodb:
+    container_name: styler-mongodb
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    ports:
+      - '4002:27017'
+    volumes:
+      - styler-mongodb:/data/db
+    networks:
+      - styler
+    healthcheck:
+      test: [ "CMD-SHELL", "mongosh", "--eval", "db.runCommand('ping').ok" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+networks:
+  styler:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.1.0/24
+
+volumes:
+  styler-mysql:
+  styler-backend:
+  styler-mongodb:
+  styler-admin:
+  styler-customer:
+  styler-client:
