@@ -14,6 +14,7 @@ import { OutletModule } from '@modules/seller/outlet/outlet.module';
 import { ResponseTransformInterceptor } from '@src/utils/interceptors/response.interceptor';
 import { RequestIdMiddleware } from '@src/utils/middlewares/request.middleware';
 import { GlobalExceptionFilter } from '@src/utils/exceptions/global-exception';
+import { SellerModule } from '@modules/seller/seller.module';
 
 
 
@@ -23,8 +24,7 @@ import { GlobalExceptionFilter } from '@src/utils/exceptions/global-exception';
     Throttler,
     EnvModule,
     DatabaseModule,
-    OutletModule
-
+   SellerModule
 
   ],
   controllers: [AppController],

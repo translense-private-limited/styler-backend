@@ -154,4 +154,30 @@ Here’s the markdown version you can copy and paste:
 
 ---
 
+# NestJS Folder Structure Generator
+
+This script generates a NestJS module folder structure with necessary subfolders and files.
+
+## Usage
+
+1. Install `ts-node` if not installed:
+   ```bash
+   npm install -g ts-node
+   ```
+
+2. Run the script:
+   ```bash
+   ts-node create-structure.ts <module-name> <location>
+   ```
+
+   - `<module-name>`: The name for the module (e.g., `outlet`).
+   - `<location>`: The path where the folder should be created.
+
+Example:
+```bash
+ts-node create-structure.ts outlet ./src/modules/your/project/src/modules
+```
+
+This will create the folder structure for the module in the specified location.
+```
 
