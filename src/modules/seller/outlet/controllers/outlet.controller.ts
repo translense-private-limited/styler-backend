@@ -10,10 +10,8 @@ export class OutletController {
 
     @Post() // POST /outlets
     async createOutlet(
-        @Req() req: Request,
         @Body() createOutletDto: CreateOutletDto
     ): Promise<OutletEntity> {
-        console.log(req);
         return this.outletService.createOutlet(createOutletDto);
     }
 
