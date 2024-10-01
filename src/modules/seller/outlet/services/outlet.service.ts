@@ -5,7 +5,7 @@ import { OutletEntity } from '../entities/outlet.entity';
 
 @Injectable()
 export class OutletService {
-    constructor(private readonly outletRepository: OutletRepository) {}
+    constructor(private readonly outletRepository: OutletRepository) { }
 
     // Create a new outlet
     async createOutlet(createOutletDto: CreateOutletDto): Promise<OutletEntity> {
@@ -18,15 +18,15 @@ export class OutletService {
     }
 
     // Get outlet by ID
-    async getOutletById(id: string): Promise<OutletEntity> {
-        const outletId = parseInt(id, 10);
-        const outlet = await this.outletRepository.getRepository().findOne({ where: { id: outletId } });
-        
+    async getOutletById(id: number): Promise<OutletEntity> {
+        const outlet = await this.outletRepository.getRepository().findOne({ where: { id } });
+
         if (!outlet) {
             throw new NotFoundException(`Outlet with ID ${id} not found.`);
         }
         return outlet;
     }
+
 
     // Find outlet by ID or throw an exception
     async findByIdOrThrow(id: number): Promise<OutletEntity> {

@@ -6,11 +6,11 @@ import { Request } from 'express';
 
 @Controller('outlets') // Global route
 export class OutletController {
-    constructor(private readonly outletService: OutletService) {}
+    constructor(private readonly outletService: OutletService) { }
 
     @Post() // POST /outlets
     async createOutlet(
-        @Req() req: Request, 
+        @Req() req: Request,
         @Body() createOutletDto: CreateOutletDto
     ): Promise<OutletEntity> {
         console.log(req);
@@ -24,16 +24,19 @@ export class OutletController {
 
     @Get(':id') // GET /outlets/:id
     async getOutletById(@Param('id') id: string): Promise<OutletEntity> {
-        return this.outletService.getOutletById(id);
+        const outletId = parseInt(id, 10);
+        return this.outletService.getOutletById(outletId);
     }
 
     @Patch(':id') // PATCH /outlets/:id
     async updateOutlet(
-        @Param('id') id: string, 
+        @Param('id') id: string,
         @Body() updateOutletDto: Partial<CreateOutletDto>
     ): Promise<OutletEntity> {
-        return this.outletService.updateOutlet(parseInt(id, 10), updateOutletDto);
+        const outletId = parseInt(id, 10);
+        return this.outletService.updateOutlet(outletId, updateOutletDto);
     }
+
 
     @Delete(':id') // DELETE /outlets/:id
     async deleteOutlet(@Param('id') id: string): Promise<{ message: string }> {
