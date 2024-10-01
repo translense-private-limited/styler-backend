@@ -26,18 +26,21 @@ export class OutletController {
     }
 
      // PATCH /outlets/:id
-     @Patch(':id')
-     async updateOutlet(
-         @Param('id') id: string,
-         @Body() updateOutletDto: Partial<CreateOutletDto>,
-     ): Promise<OutletEntity> {
-         return this.outletService.updateOutlet(id, updateOutletDto);
-     }
+    @Patch(':id')
+    async updateOutlet(
+        @Param('id') id: string,
+        @Body() updateOutletDto: Partial<CreateOutletDto>,
+    ): Promise<OutletEntity> {
+        const outletId = parseInt(id, 10); // Parse the id here in the controller
+        const outlet = await this.outletService.findByIdOrThrow(outletId);
+        return this.outletService.updateOutlet(outlet, updateOutletDto);
+    }
 
      // DELETE /outlets/:id
-    @Delete(':id')
-    async deleteOutlet(@Param('id') id: string): Promise<{ message: string }> {
-        await this.outletService.deleteOutlet(id);
-        return { message: `Outlet with ID ${id} has been deleted successfully.` };
-    }
+     @Delete(':id')
+     async deleteOutlet(@Param('id') id: string): Promise<{ message: string }> {
+         const outletId = parseInt(id, 10); // Parse the id here in the controller
+         await this.outletService.deleteOutlet(outletId);
+         return { message: `Outlet with ID ${id} has been deleted successfully.` };
+     }
 }

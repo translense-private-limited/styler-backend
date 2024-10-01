@@ -30,23 +30,24 @@ export class OutletService {
         return outlet;
     }
 
-    async updateOutlet(id: string, updateOutletDto: Partial<CreateOutletDto>): Promise<OutletEntity> {
-        const outletId = parseInt(id, 10);
-        const outlet = await this.outletRepository.getRepository().findOne({ where: { id: outletId } });
-
+    // Method to find outlet by ID or throw an exception if not found
+    async findByIdOrThrow(id: number): Promise<OutletEntity> {
+        const outlet = await this.outletRepository.getRepository().findOne({ where: { id } });
         if (!outlet) {
             throw new NotFoundException(`Outlet with ID ${id} not found`);
         }
-
-        // Merge updated data
+        return outlet;
+    }
+    
+    // Method to update outlet details
+    async updateOutlet(outlet: OutletEntity, updateOutletDto: Partial<CreateOutletDto>): Promise<OutletEntity> {
         Object.assign(outlet, updateOutletDto);
         return await this.outletRepository.getRepository().save(outlet);
     }
 
     // Method to delete an outlet by ID
-    async deleteOutlet(id: string): Promise<void> {
-        const outletId = parseInt(id, 10);
-        const result = await this.outletRepository.getRepository().delete(outletId);
+    async deleteOutlet(id: number): Promise<void> {
+        const result = await this.outletRepository.getRepository().delete(id);
 
         if (result.affected === 0) {
             throw new NotFoundException(`Outlet with ID ${id} not found`);
