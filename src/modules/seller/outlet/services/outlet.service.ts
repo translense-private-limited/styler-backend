@@ -29,4 +29,27 @@ export class OutletService {
         }
         return outlet;
     }
+
+    async updateOutlet(id: string, updateOutletDto: Partial<CreateOutletDto>): Promise<OutletEntity> {
+        const outletId = parseInt(id, 10);
+        const outlet = await this.outletRepository.getRepository().findOne({ where: { id: outletId } });
+
+        if (!outlet) {
+            throw new NotFoundException(`Outlet with ID ${id} not found`);
+        }
+
+        // Merge updated data
+        Object.assign(outlet, updateOutletDto);
+        return await this.outletRepository.getRepository().save(outlet);
+    }
+
+    // Method to delete an outlet by ID
+    async deleteOutlet(id: string): Promise<void> {
+        const outletId = parseInt(id, 10);
+        const result = await this.outletRepository.getRepository().delete(outletId);
+
+        if (result.affected === 0) {
+            throw new NotFoundException(`Outlet with ID ${id} not found`);
+        }
+    }
 }
