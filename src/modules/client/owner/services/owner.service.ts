@@ -44,14 +44,16 @@ export class OwnerService {
     
   }
 
-  async getSellerByEmailAndPassword(sellerLoginDto: SellerLoginDto): Promise<OwnerEntity>{
-    const { email, password } = sellerLoginDto
-    const encryptedPassword = await this.bcryptEncryptionService.encrypt(password)
-    const seller = await this.ownerRepository.getRepository().findOne({ where: { email: email, password: encryptedPassword}})
+  async getSellerByEmail(sellerLoginDto: SellerLoginDto): Promise<OwnerEntity>{
+    const { username } = sellerLoginDto
+    
+    
+    const seller = await this.ownerRepository.getRepository().findOne({ where: { email: username}})
     if(!seller){
       throw new UnauthorizedException('Invalid credentials')
     }
-    seller.password = 'XXXXX'
+  
     return seller
   }
+
 }

@@ -8,6 +8,6 @@ export class SellerExternalService {
     constructor( private sellerService: OwnerService){}
 
     async getSellers(loginDto: LoginDto): Promise<OwnerEntity> {
-        return await this.sellerService.getSellerByEmailAndPassword(loginDto)
+        return await this.sellerService.getSellerByEmail(loginDto)
     }
 }

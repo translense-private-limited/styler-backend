@@ -11,7 +11,7 @@ export class BcryptEncryptionService implements EncryptionInterface {
         return hashedPassword;
     }
 
-    async validate(encryptedPassword: string, password: string): Promise<boolean> {
-        return  await bcrypt.compare(password, encryptedPassword);
+    async validate(plainText: string, encryptedPassword: string): Promise<boolean> {
+        return  await bcrypt.compare(plainText, encryptedPassword);
     }
 }

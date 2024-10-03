@@ -1,15 +1,15 @@
 import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 
 export class CreateOwnerDto {
-    @IsNotEmpty()
-    @Length(1, 255)
+    @IsNotEmpty({ message: 'Name should not be empty' })
+    @Length(1, 255, { message: 'Name must be between 1 and 255 characters' })
     name: string;
 
-    @IsEmail()
-    @IsNotEmpty()
+    @IsEmail({}, { message: 'Invalid email format' })
+    @IsNotEmpty({ message: 'Email should not be empty' })
     email: string;
 
-    @IsNotEmpty()
-    @Length(6, 255)
+    @IsNotEmpty({ message: 'Password should not be empty' })
+    @Length(6, 255, { message: 'Password must be at least 6 characters long' })
     password: string;
 }

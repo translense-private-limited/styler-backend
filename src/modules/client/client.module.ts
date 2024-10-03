@@ -3,6 +3,7 @@ import { OutletModule } from "./outlet/outlet.module";
 import { OwnerModule } from "./owner/owner.module";
 
 @Module({
-    imports: [ OutletModule, OwnerModule]
+    imports: [ OutletModule, OwnerModule],
+    exports: [OwnerModule]
  })
 export class ClientModule{}

@@ -14,6 +14,7 @@ export class OwnerController {
   @Post()
   @Post()
   async createSeller(@Body() createOwnerDto: CreateOwnerDto) {
-      return this.ownerService.create(createOwnerDto);
+    console.log('create seller called ')
+      return this.ownerService.createSeller(createOwnerDto);
   }
 }

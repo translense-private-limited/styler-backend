@@ -14,7 +14,11 @@ import { OutletModule } from '@modules/client/outlet/outlet.module';
 import { ResponseTransformInterceptor } from '@src/utils/interceptors/response.interceptor';
 import { RequestIdMiddleware } from '@src/utils/middlewares/request.middleware';
 import { GlobalExceptionFilter } from '@src/utils/exceptions/global-exception';
-import { SellerModule } from '@modules/client/seller.module';
+import { ClientModule } from '@modules/client/client.module';
+import { AtuhenticationModule } from '@modules/atuhentication/atuhentication.module';
+
+import { AuthenticationGuard } from '@modules/atuhentication/gaurds/authentication.gaurd';
+
 
 
 
@@ -24,7 +28,8 @@ import { SellerModule } from '@modules/client/seller.module';
     Throttler,
     EnvModule,
     DatabaseModule,
-   SellerModule
+   ClientModule,
+   AtuhenticationModule
 
   ],
   controllers: [AppController],
@@ -35,22 +40,26 @@ import { SellerModule } from '@modules/client/seller.module';
       provide: APP_FILTER,
       useClass: DatabaseExceptionFilter,
     },
+    
+    
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter
+    },
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
-    {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    },
+    
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseTransformInterceptor,
     },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthenticationGuard,
-    // },
+    
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
     // {
     //   provide: APP_GUARD,
     //   useClass: AuthorizationGuard,

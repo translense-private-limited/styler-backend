@@ -1,18 +1,23 @@
 import { Module } from "@nestjs/common";
-import { AtuhenticationService } from "./services/atuhentication.service";
-import { AtuhenticationRepository } from "./repository/atuhentication.repository";
-import { AtuhenticationController } from "./controllers/atuhentication.controller";
+
+
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AtuhenticationEntity } from "./entities/atuhentication.entity";
+
 import { getMysqlDataSource } from "@modules/database/data-source";
 import { ClientModule } from "@modules/client/client.module";
+import { ClientAuthController } from "./controllers/client-authentication.controller";
+import { SellerAuthService } from "./services/seller-auth.service";
+import { EncryptionModule } from "@modules/encryption/encryption.module";
+import { JwtService } from "./services/jwt.service";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AtuhenticationEntity], getMysqlDataSource()),
-        ClientModule
+        ClientModule,
+        EncryptionModule,
     ],
-    providers: [AtuhenticationService, AtuhenticationRepository],
-    controllers: [AtuhenticationController]
+    providers: [ SellerAuthService, JwtService],
+    exports: [ SellerAuthService, JwtService],
+
+    controllers: [ClientAuthController]
 })
 export class AtuhenticationModule { }

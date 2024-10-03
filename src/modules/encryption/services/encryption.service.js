@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class EncryptionService {
- constructor(private EncryptionRepository: encryptionRepository) {}
+ 
   
   findAll() {
     // Logic for finding all records
