@@ -5,4 +5,4 @@ import { OwnerModule } from "./owner/owner.module";
 @Module({
     imports: [ OutletModule, OwnerModule]
  })
-export class SellerModule{}
+export class ClientModule{}

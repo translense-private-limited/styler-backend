@@ -10,11 +10,11 @@ import { HttpExceptionFilter } from '@src/utils/exceptions/http-exception';
 import { DatabaseExceptionFilter } from '@src/utils/exceptions/database-exception';
 import { Logger } from 'winston';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { OutletModule } from '@modules/seller/outlet/outlet.module';
+import { OutletModule } from '@modules/client/outlet/outlet.module';
 import { ResponseTransformInterceptor } from '@src/utils/interceptors/response.interceptor';
 import { RequestIdMiddleware } from '@src/utils/middlewares/request.middleware';
 import { GlobalExceptionFilter } from '@src/utils/exceptions/global-exception';
-import { SellerModule } from '@modules/seller/seller.module';
+import { SellerModule } from '@modules/client/seller.module';
 
 
 

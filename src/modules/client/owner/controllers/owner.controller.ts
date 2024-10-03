@@ -13,7 +13,7 @@ export class OwnerController {
 
   @Post()
   @Post()
-  async createOwner(@Body() createOwnerDto: CreateOwnerDto) {
+  async createSeller(@Body() createOwnerDto: CreateOwnerDto) {
       return this.ownerService.create(createOwnerDto);
   }
 }

@@ -1,10 +1,10 @@
-import * as fs from 'fs';
-import * as path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 // Function to capitalize the first letter of the name
-const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
-const createFoldersAndFiles = (name: string, location: string) => {
+const createFoldersAndFiles = (name, location) => {
   const basePath = path.join(location, name);
   const capitalizedName = capitalize(name);
 
@@ -33,7 +33,7 @@ const createFoldersAndFiles = (name: string, location: string) => {
   });
 
   // Create the repository file
-  const repositoryFilePath = path.join(basePath, 'repository', `${name}.repository.ts`);
+  const repositoryFilePath = path.join(basePath, 'repository', `${name}.repository.js`);
   const repositoryFileContent = `
 import { InjectRepository } from "@nestjs/typeorm";
 import { ${capitalizedName}Entity } from "../entities/${name}.entity";
@@ -53,13 +53,13 @@ export class ${capitalizedName}Repository extends BaseRepository<${capitalizedNa
   fs.writeFileSync(repositoryFilePath, repositoryFileContent.trim());
 
   // Create the entity file
-  const entityFilePath = path.join(basePath, 'entities', `${name}.entity.ts`);
+  const entityFilePath = path.join(basePath, 'entities', `${name}.entity.js`);
   const entityFileContent = `
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "@src/utils/entities/base.entity";
 
 @Entity()
-export class ${capitalizedName}Entity extends BaseEntity{
+export class ${capitalizedName}Entity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -70,7 +70,7 @@ export class ${capitalizedName}Entity extends BaseEntity{
   fs.writeFileSync(entityFilePath, entityFileContent.trim());
 
   // Create the module file
-  const moduleFilePath = path.join(basePath, `${name}.module.ts`);
+  const moduleFilePath = path.join(basePath, `${name}.module.js`);
   const moduleFileContent = `
 import { Module } from "@nestjs/common";
 import { ${capitalizedName}Service } from "./services/${name}.service";
@@ -92,7 +92,7 @@ export class ${capitalizedName}Module { }
   fs.writeFileSync(moduleFilePath, moduleFileContent.trim());
 
   // Create the controller file
-  const controllerFilePath = path.join(basePath, 'controllers', `${name}.controller.ts`);
+  const controllerFilePath = path.join(basePath, 'controllers', `${name}.controller.js`);
   const controllerFileContent = `
 import { Controller, Get, Post } from "@nestjs/common";
 import { ${capitalizedName}Service } from "../services/${name}.service";
@@ -115,13 +115,14 @@ export class ${capitalizedName}Controller {
   fs.writeFileSync(controllerFilePath, controllerFileContent.trim());
 
   // Create the service file
-  const serviceFilePath = path.join(basePath, 'services', `${name}.service.ts`);
+  const serviceFilePath = path.join(basePath, 'services', `${name}.service.js`);
   const serviceFileContent = `
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class ${capitalizedName}Service {
- constructor(private ${capitalizedName}Repository: ${name}Repository){}
+ constructor(private ${capitalizedName}Repository: ${name}Repository) {}
+  
   findAll() {
     // Logic for finding all records
     return [];
