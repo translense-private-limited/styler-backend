@@ -1,12 +1,11 @@
-import { IsString, IsNotEmpty, IsOptional, IsEmail, IsDecimal, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsEmail, IsDecimal, IsNumber, IsBoolean } from 'class-validator';
 
 export class CreaterolesDto {
     @IsNotEmpty()
     @IsString()
     name: string; // Required field
 
-    @IsNotEmpty()
-    @IsNumber()
+    @IsBoolean()
     isSystemDefined: boolean; // Required field
 
     @IsNotEmpty()
