@@ -39,3 +39,4 @@ export class OutletEntity extends BaseEntity {
   website: string;
 
 }
+

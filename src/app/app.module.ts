@@ -15,17 +15,15 @@ import { ResponseTransformInterceptor } from '@src/utils/interceptors/response.i
 import { RequestIdMiddleware } from '@src/utils/middlewares/request.middleware';
 import { GlobalExceptionFilter } from '@src/utils/exceptions/global-exception';
 
-
-
+import { rolesModule } from '@modules/admin/roles/roles.module';
 
 @Module({
   imports: [
     Throttler,
     EnvModule,
     DatabaseModule,
-    OutletModule
-
-
+    OutletModule,
+    rolesModule
   ],
   controllers: [AppController],
   providers: [
