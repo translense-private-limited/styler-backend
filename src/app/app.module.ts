@@ -10,10 +10,15 @@ import { HttpExceptionFilter } from '@src/utils/exceptions/http-exception';
 import { DatabaseExceptionFilter } from '@src/utils/exceptions/database-exception';
 import { Logger } from 'winston';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { OutletModule } from '@modules/seller/outlet/outlet.module';
+import { OutletModule } from '@modules/client/outlet/outlet.module';
 import { ResponseTransformInterceptor } from '@src/utils/interceptors/response.interceptor';
 import { RequestIdMiddleware } from '@src/utils/middlewares/request.middleware';
 import { GlobalExceptionFilter } from '@src/utils/exceptions/global-exception';
+import { ClientModule } from '@modules/client/client.module';
+import { AtuhenticationModule } from '@modules/atuhentication/atuhentication.module';
+
+import { AuthenticationGuard } from '@modules/atuhentication/gaurds/authentication.gaurd';
+
 
 
 
@@ -23,8 +28,8 @@ import { GlobalExceptionFilter } from '@src/utils/exceptions/global-exception';
     Throttler,
     EnvModule,
     DatabaseModule,
-    OutletModule
-
+   ClientModule,
+   AtuhenticationModule
 
   ],
   controllers: [AppController],
@@ -35,22 +40,26 @@ import { GlobalExceptionFilter } from '@src/utils/exceptions/global-exception';
       provide: APP_FILTER,
       useClass: DatabaseExceptionFilter,
     },
+    
+    
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter
+    },
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
-    {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    },
+    
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseTransformInterceptor,
     },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthenticationGuard,
-    // },
+    
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
     // {
     //   provide: APP_GUARD,
     //   useClass: AuthorizationGuard,

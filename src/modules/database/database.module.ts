@@ -8,7 +8,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
-      logging: true,
+      logging: false,
       type: 'mysql',
       //  host: 'mysql', // uncomment it if you want to run via docker
       host: '127.0.0.1', // uncomment it if you want to run backend service independently 
