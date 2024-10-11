@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as path from 'path';
 import { getMongodbDataSource, getMysqlDataSource } from './data-source';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -22,16 +23,12 @@ import { ConfigModule } from '@nestjs/config';
       timezone: 'Z',
       migrationsRun: false,
     }),
-    TypeOrmModule.forRoot({
-      logging: false,
-      name: getMongodbDataSource(), // Unique name for the MongoDB connection
-      type: 'mongodb',
-      //url: 'mongodb://mongodb:27017/styler',
-      url: 'mongodb://127.0.0.1:4002/styler',
-
-
-      // entities: [path.join(__dirname, '../../**/*.entity{.ts,.js}')],
-      synchronize: true,
+     // MongoDB Connection using Mongoose
+     MongooseModule.forRoot('mongodb://127.0.0.1:4002', {
+      dbName: 'styler',
+      user: 'root',
+      pass: 'root',
+      connectionName: getMongodbDataSource(), // MongoDB connection name
     }),
   ],
   exports: [],

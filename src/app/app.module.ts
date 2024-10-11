@@ -18,6 +18,7 @@ import { ClientModule } from '@modules/client/client.module';
 import { AtuhenticationModule } from '@modules/atuhentication/atuhentication.module';
 
 import { AuthenticationGuard } from '@modules/atuhentication/gaurds/authentication.gaurd';
+import { ServiceModule } from '@modules/services/service.module';
 
 
 
@@ -29,7 +30,8 @@ import { AuthenticationGuard } from '@modules/atuhentication/gaurds/authenticati
     EnvModule,
     DatabaseModule,
    ClientModule,
-   AtuhenticationModule
+   AtuhenticationModule,
+   ServiceModule
 
   ],
   controllers: [AppController],
