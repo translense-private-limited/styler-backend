@@ -15,9 +15,10 @@ import { ResponseTransformInterceptor } from '@src/utils/interceptors/response.i
 import { RequestIdMiddleware } from '@src/utils/middlewares/request.middleware';
 import { GlobalExceptionFilter } from '@src/utils/exceptions/global-exception';
 import { ClientModule } from '@modules/client/client.module';
-import { AtuhenticationModule } from '@modules/atuhentication/atuhentication.module';
+import { AuthenticationModule } from '@modules/atuhentication/atuhentication.module';
 
 import { AuthenticationGuard } from '@modules/atuhentication/gaurds/authentication.gaurd';
+import { ServiceModule } from '@modules/services/service.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 import { AuthorizationGuard } from '@modules/authorization/gaurds/authorization.gaurd';
 
@@ -31,7 +32,8 @@ import { AuthorizationGuard } from '@modules/authorization/gaurds/authorization.
     EnvModule,
     DatabaseModule,
    ClientModule,
-   AtuhenticationModule,
+   AuthenticationModule,
+   ServiceModule,
   AuthorizationModule
 
   ],
