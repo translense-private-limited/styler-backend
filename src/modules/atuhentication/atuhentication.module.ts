@@ -20,4 +20,4 @@ import { JwtService } from "./services/jwt.service";
 
     controllers: [ClientAuthController]
 })
-export class AtuhenticationModule { }
+export class AuthenticationModule { }
