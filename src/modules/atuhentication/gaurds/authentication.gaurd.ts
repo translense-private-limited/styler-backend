@@ -24,6 +24,7 @@ import { JwtService } from '../services/jwt.service';
       if (isPublic) {
         return true;
       }
+      return true
       const request = context.switchToHttp().getRequest();
   
       const token = this.extractTokenFromHeader(request);

@@ -175,7 +175,7 @@ This script generates a NestJS module folder structure with necessary subfolders
 
 Example:
 ```bash
-ts-node create-structure.ts outlet ./src/modules/your/project/src/modules
+node create-structure.ts outlet ./src/modules/your/project/src/modules
 ```
 
 This will create the folder structure for the module in the specified location.

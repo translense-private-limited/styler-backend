@@ -41,4 +41,8 @@ export class BaseSchema<T extends Document> {
   getRepository() {
     return this.baseModel; // This returns the Mongoose model
   }
+
+ 
+
+ 
 }
