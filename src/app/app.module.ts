@@ -21,6 +21,8 @@ import { AuthenticationGuard } from '@modules/atuhentication/gaurds/authenticati
 import { ServiceModule } from '@modules/services/service.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 import { AuthorizationGuard } from '@modules/authorization/gaurds/authorization.gaurd';
+import { AdminModule } from '@modules/admin/category/admin.module';
+import { CategoryModule } from '@modules/admin/category/category.module';
 
 
 
@@ -34,7 +36,8 @@ import { AuthorizationGuard } from '@modules/authorization/gaurds/authorization.
    ClientModule,
    AuthenticationModule,
    ServiceModule,
-  AuthorizationModule
+  AuthorizationModule,
+  AdminModule
 
   ],
   controllers: [AppController],

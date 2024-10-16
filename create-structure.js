@@ -33,7 +33,7 @@ const createFoldersAndFiles = (name, location) => {
   });
 
   // Create the repository file
-  const repositoryFilePath = path.join(basePath, 'repository', `${name}.repository.js`);
+  const repositoryFilePath = path.join(basePath, 'repository', `${name}.repository.ts`);
   const repositoryFileContent = `
 import { InjectRepository } from "@nestjs/typeorm";
 import { ${capitalizedName}Entity } from "../entities/${name}.entity";
@@ -49,11 +49,11 @@ export class ${capitalizedName}Repository extends BaseRepository<${capitalizedNa
         super(repository);
     }
 }
-`;
-  fs.writeFileSync(repositoryFilePath, repositoryFileContent.trim());
+`.trim();
+  fs.writeFileSync(repositoryFilePath, repositoryFileContent);
 
   // Create the entity file
-  const entityFilePath = path.join(basePath, 'entities', `${name}.entity.js`);
+  const entityFilePath = path.join(basePath, 'entities', `${name}.entity.ts`);
   const entityFileContent = `
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 import { BaseEntity } from "@src/utils/entities/base.entity";
@@ -66,11 +66,11 @@ export class ${capitalizedName}Entity extends BaseEntity {
     @Column()
     name: string;
 }
-`;
-  fs.writeFileSync(entityFilePath, entityFileContent.trim());
+`.trim();
+  fs.writeFileSync(entityFilePath, entityFileContent);
 
   // Create the module file
-  const moduleFilePath = path.join(basePath, `${name}.module.js`);
+  const moduleFilePath = path.join(basePath, `${name}.module.ts`);
   const moduleFileContent = `
 import { Module } from "@nestjs/common";
 import { ${capitalizedName}Service } from "./services/${name}.service";
@@ -88,11 +88,11 @@ import { getMysqlDataSource } from "@modules/database/data-source";
     controllers: [${capitalizedName}Controller]
 })
 export class ${capitalizedName}Module { }
-`;
-  fs.writeFileSync(moduleFilePath, moduleFileContent.trim());
+`.trim();
+  fs.writeFileSync(moduleFilePath, moduleFileContent);
 
   // Create the controller file
-  const controllerFilePath = path.join(basePath, 'controllers', `${name}.controller.js`);
+  const controllerFilePath = path.join(basePath, 'controllers', `${name}.controller.ts`);
   const controllerFileContent = `
 import { Controller, Get, Post } from "@nestjs/common";
 import { ${capitalizedName}Service } from "../services/${name}.service";
@@ -111,18 +111,19 @@ export class ${capitalizedName}Controller {
     return this.${name}Service.create();
   }
 }
-`;
-  fs.writeFileSync(controllerFilePath, controllerFileContent.trim());
+`.trim();
+  fs.writeFileSync(controllerFilePath, controllerFileContent);
 
   // Create the service file
-  const serviceFilePath = path.join(basePath, 'services', `${name}.service.js`);
+  const serviceFilePath = path.join(basePath, 'services', `${name}.service.ts`);
   const serviceFileContent = `
 import { Injectable } from "@nestjs/common";
+import { ${capitalizedName}Repository } from "../repository/${name}.repository";
 
 @Injectable()
 export class ${capitalizedName}Service {
- constructor(private ${capitalizedName}Repository: ${name}Repository) {}
-  
+  constructor(private ${capitalizedName}Repository: ${capitalizedName}Repository) {}
+
   findAll() {
     // Logic for finding all records
     return [];
@@ -130,12 +131,11 @@ export class ${capitalizedName}Service {
 
   create() {
     // Logic for creating a new record
-    this.${name}Repository.getRepository().save()
-    return { message: "Created successfully" };
+    return this.${capitalizedName}Repository.getRepository().save();
   }
 }
-`;
-  fs.writeFileSync(serviceFilePath, serviceFileContent.trim());
+`.trim();
+  fs.writeFileSync(serviceFilePath, serviceFileContent);
 
   console.log(`Folders and files for ${name} created successfully at ${location}!`);
 };
