@@ -1,7 +1,7 @@
 
 
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import  { Document } from 'mongoose';
 
 @Schema({ timestamps: true }) // This will automatically add `createdAt` and `updatedAt`
 export class ServiceSchema extends Document {
@@ -20,8 +20,8 @@ export class ServiceSchema extends Document {
   @Prop({ required: true })
   duration: number; // Duration in minutes (for time-based services)
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Seller', required: true })
-  seller: mongoose.Schema.Types.ObjectId; // The salon/spa offering the service
+@Prop({ required: true})
+clientId: number
 
   @Prop({ type: String, enum: ['available', 'unavailable'], default: 'available' })
   availability: string; // Availability status of the service

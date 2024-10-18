@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Service } from '../schema/service.schema';
+
 import { BaseSchema } from '@src/utils/repositories/base-schema';
 import { getMongodbDataSource } from '@modules/database/data-source';
+import { ServiceSchema } from '../schema/service.schema';
 
 @Injectable()
-export class ServiceRepository extends BaseSchema<Service> {
-  private readonly serviceRepository: Model<Service>;
+export class ServiceRepository extends BaseSchema<ServiceSchema> {
+  private readonly serviceRepository: Model<ServiceSchema>;
 
   constructor(
-    @InjectModel(Service.name, getMongodbDataSource())
-    serviceModel: Model<Service> // Change parameter name to serviceModel
+    @InjectModel(ServiceSchema.name, getMongodbDataSource())
+    serviceModel: Model<ServiceSchema> // Change parameter name to serviceModel
   ) {
     super(serviceModel); // Pass the model to the base class
     this.serviceRepository = serviceModel; // Assign to the instance variable
