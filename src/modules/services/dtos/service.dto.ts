@@ -1,11 +1,30 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum } from 'class-validator';
+import { ServiceInterface } from '../interfaces/service.interface'; // Adjust the import path as needed
 
-export class ServiceDto {
-  @IsString()  // Ensures that 'name' is a string
-  @IsNotEmpty()  // Ensures that 'name' is not empty
-  name: string;
+export class ServiceDto implements ServiceInterface {
+  @IsString()
+  @IsNotEmpty()
+  name: string; // e.g., Haircut, Facial
 
-  @IsNumber()  // Ensures that 'price' is a number
-  @IsNotEmpty()  // Ensures that 'price' is not empty
-  price: number;
+  @IsString()
+  @IsOptional()
+  description?: string; // Description of the service
+
+  @IsNumber()
+  @IsNotEmpty()
+  category: number; // Category of the service
+
+  @IsNumber()
+  @IsNotEmpty()
+  price: number; // Price of the service
+
+  @IsNumber()
+  @IsNotEmpty()
+  duration: number; // Duration in minutes (for time-based services)
+
+  @IsNumber()
+  @IsNotEmpty()
+  clientId: number; // Client ID associated with the service
+
+  
 }
