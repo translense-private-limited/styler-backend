@@ -181,3 +181,22 @@ node create-structure.ts outlet ./src/modules/your/project/src/modules
 This will create the folder structure for the module in the specified location.
 ```
 
+## Seed Data Setup
+
+To populate the necessary data required to boot up the system, run the following command:
+
+```bash
+npm run setup
+```
+**Instructions**
+- make sure databases are up and running 
+
+**Info**
+- it will create outlet with following details 
+**Outlet Details**
+	Outlet Name: `Sample Outlet`
+	Outlet Email: `sample@translense.com`
+**Owner Details**
+  Owner Name: `Sample Outlet Owner`
+	Owner Email: `sampleOutletOwner@translense.com`
+	Owner Password: `password` 

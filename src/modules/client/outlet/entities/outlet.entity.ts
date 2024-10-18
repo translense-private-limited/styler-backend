@@ -38,4 +38,7 @@ export class OutletEntity extends BaseEntity {
   @Column({ length: 255, nullable: true })
   website: string;
 
+  @Column({ type: 'int'})
+  ownerId: number
+
 }
