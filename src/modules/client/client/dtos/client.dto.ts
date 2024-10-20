@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 
-export class CreateOwnerDto {
+export class CreateClientDto {
     @IsNotEmpty({ message: 'Name should not be empty' })
     @Length(1, 255, { message: 'Name must be between 1 and 255 characters' })
     name: string;

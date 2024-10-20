@@ -1,9 +1,13 @@
 import { Module } from "@nestjs/common";
 import { OutletModule } from "./outlet/outlet.module";
-import { OwnerModule } from "./owner/owner.module";
+
+// due to conflict this name have modified
+import { ClientModule as clientModule } from "./client/client.module"
+
+
 
 @Module({
-    imports: [ OutletModule, OwnerModule],
-    exports: [OwnerModule]
+    imports: [ OutletModule, clientModule],
+    exports: [clientModule]
  })
 export class ClientModule{}

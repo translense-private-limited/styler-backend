@@ -3,15 +3,17 @@ import { SellerAuthService } from "../services/seller-auth.service";
 import { SellerLoginDto } from "../dtos/seller-login.dto";
 import { Response } from "express";
 import { Public } from "@src/utils/decorators/public.decorator";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller('client')
+@ApiTags('Auth')
 @Public()
 export class ClientAuthController{
     constructor(
         private clientAuthService: SellerAuthService
     ){}
 
-    @Post()
+    @Post('login')
     async login(@Body() clientLoginDto: SellerLoginDto, @Res() res: Response): Promise<Response> {
         try {
           const { seller, jwtToken } = await this.clientAuthService.login(clientLoginDto);

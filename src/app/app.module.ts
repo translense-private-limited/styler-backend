@@ -6,11 +6,12 @@ import { EnvModule } from '../modules/configs/env/env.module';
 import { Throttler } from '../modules/configs/gaurds/rate-limiter.gaurd';
 
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { RouterModule } from 'nest-router';
 import { HttpExceptionFilter } from '@src/utils/exceptions/http-exception';
 import { DatabaseExceptionFilter } from '@src/utils/exceptions/database-exception';
 import { Logger } from 'winston';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { OutletModule } from '@modules/client/outlet/outlet.module';
+
 import { ResponseTransformInterceptor } from '@src/utils/interceptors/response.interceptor';
 import { RequestIdMiddleware } from '@src/utils/middlewares/request.middleware';
 import { GlobalExceptionFilter } from '@src/utils/exceptions/global-exception';
@@ -30,10 +31,10 @@ import { CategoryModule } from '@modules/admin/category/category.module';
 
 @Module({
   imports: [
+    ClientModule,
     Throttler,
     EnvModule,
     DatabaseModule,
-   ClientModule,
    AuthenticationModule,
    ServiceModule,
   AuthorizationModule,

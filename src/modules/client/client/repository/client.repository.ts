@@ -1,13 +1,13 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { OwnerEntity } from "../entities/owner.entity";
+import { ClientEntity } from "../entities/client.entity";
 import { getMysqlDataSource } from "@modules/database/data-source";
 import { Repository } from "typeorm";
 import { BaseRepository } from "@src/utils/repositories/base-repository";
 
-export class OwnerRepository extends BaseRepository<OwnerEntity> {
+export class ClientRepository extends BaseRepository<ClientEntity> {
     constructor(
-        @InjectRepository(OwnerEntity, getMysqlDataSource())
-        protected repository: Repository<OwnerEntity>,
+        @InjectRepository(ClientEntity, getMysqlDataSource())
+        protected repository: Repository<ClientEntity>,
     ) {
         super(repository);
     }

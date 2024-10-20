@@ -39,6 +39,6 @@ export class OutletEntity extends BaseEntity {
   website: string;
 
   @Column({ type: 'int'})
-  ownerId: number
+  clientId: number
 
 }
