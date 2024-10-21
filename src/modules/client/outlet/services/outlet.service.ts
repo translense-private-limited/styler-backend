@@ -20,13 +20,17 @@ export class OutletService {
         return this.outletRepository.getRepository().find();
     }
 
-    async getOutletById(id: string): Promise<OutletEntity> {
-        const outletId = parseInt(id, 10); // Convert the id to a number
+    async getOutletByIdOrThrow(outletId: number): Promise<OutletEntity> {
         const outlet = await this.outletRepository.getRepository().findOne({ where: { id: outletId } });
         
         if (!outlet) {
-            throw new NotFoundException(`Outlet with ID ${id} not found`);
+            throw new NotFoundException(`Outlet with ID ${outletId} not found`);
         }
         return outlet;
+    }
+
+    async getOutletById(outletId: number): Promise<OutletEntity> {
+       
+        return this.getOutletByIdOrThrow(outletId)
     }
 }

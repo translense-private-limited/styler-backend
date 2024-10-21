@@ -21,7 +21,8 @@ export class OutletController {
     }
     @Get(':id')
     async getOutletById(@Param('id') id: string): Promise<OutletEntity> {
-        return this.outletService.getOutletById(id);
+        
+        return this.outletService.getOutletById(parseInt(id));
     }
 
 

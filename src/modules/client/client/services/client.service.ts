@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { CreateClientDto } from "../dtos/client.dto";
 import { ClientRepository } from "../repository/client.repository";
 import { BcryptEncryptionService } from "@modules/encryption/services/bcrypt-encryption.service";
@@ -54,6 +54,19 @@ export class ClientService {
     }
   
     return seller
+  }
+
+  private async getClientByIdOrThrow(clientId: number ): Promise<ClientEntity> {
+    const client = await this.clientRepository.getRepository().findOne({ where: { id: clientId } });
+        
+        if (!client) {
+            throw new NotFoundException(`Outlet with ID ${clientId} not found`);
+        }
+        return client; 
+  }
+
+  async getClientById(clientId: number): Promise<ClientEntity> {
+    return this.getClientByIdOrThrow(clientId)
   }
 
 }
