@@ -6,7 +6,7 @@ import {
   createCustomerSwaggerDocument,
   createSwaggerDocument,
 } from './swagger.document';
-const swaggerCustomerOption: SwaggerCustomOptions = {
+const swaggerCustomOption: SwaggerCustomOptions = {
   customSiteTitle: 'Odriyo Api Docs',
   customfavIcon:
     'https://media.licdn.com/dms/image/C560BAQEgOil_8sLTAA/company-logo_100_100/0/1667873121695/translense_private_limited_logo?e=2147483647&v=beta&t=aoMhGOadwe8RCtjwOLUo9EUg8zLUUpegXeo5LSpfXWY   ',
@@ -33,7 +33,7 @@ function filterPathsByNotPrefix(document: any, prefixes: string[]) {
 
 export function swaggerSetup(app: INestApplication) {
   const swaggerDocument = createSwaggerDocument(app);
-  SwaggerModule.setup('swagger', app, swaggerDocument, swaggerCustomerOption);
+  SwaggerModule.setup('swagger', app, swaggerDocument, swaggerCustomOption);
 
   const adminSwaggerDocument = createAdminSwaggerDocument(app);
   filterPathsByPrefix(adminSwaggerDocument, ['/admin']);
@@ -41,7 +41,7 @@ export function swaggerSetup(app: INestApplication) {
     'swagger/admin',
     app,
     adminSwaggerDocument,
-    swaggerCustomerOption,
+    swaggerCustomOption,
   );
 
   const clientSwaggerDocument = createClientSwaggerDocument(app);
@@ -50,7 +50,7 @@ export function swaggerSetup(app: INestApplication) {
     'swagger/client',
     app,
     clientSwaggerDocument,
-    swaggerCustomerOption,
+    swaggerCustomOption,
   );
 
   const customerSwaggerDocument = createCustomerSwaggerDocument(app);
@@ -59,7 +59,7 @@ export function swaggerSetup(app: INestApplication) {
     'swagger/customer',
     app,
     customerSwaggerDocument,
-    swaggerCustomerOption,
+    swaggerCustomOption,
   );
 
   // Define configurations for each category
