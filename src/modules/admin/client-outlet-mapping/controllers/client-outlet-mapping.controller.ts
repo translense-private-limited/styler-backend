@@ -1,16 +1,34 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { ClientOutletMappingService } from "../services/client-outlet-mapping.service";
-import { ClientOutletIdDto } from "../dtos/client-outlet-id.dto";
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { ClientOutletMappingService } from '../services/client-outlet-mapping.service';
+import { ClientOutletIdDto } from '../dtos/client-outlet-id.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('admin')
-export class ClientOutletMappingController{
-    constructor(private clientOutletMappingService: ClientOutletMappingService) {
+@Controller('admin/client-outlet-mapping')
+@ApiTags('Client')
+export class ClientOutletMappingController {
+  constructor(
+    private readonly clientOutletMappingService: ClientOutletMappingService,
+  ) {}
 
-    }
+  @Post('map')
+  async mapClientToOutlet(
+    @Body() clientOutletIdDto: ClientOutletIdDto,
+  ): Promise<string> {
+    const result =
+      await this.clientOutletMappingService.createClientOutletIdDto(
+        clientOutletIdDto,
+      );
+    return result;
+  }
 
-    @Post('link-client-outlet')
-    async createClientOutletMapping(@Body() clientOutletIdDto: ClientOutletIdDto): Promise<string> {
-        const mapping = await this.clientOutletMappingService.createClientOutletIdDto(clientOutletIdDto)
-        return mapping
-    }
+  @Get('client/:clientId/outlets')
+  async getOutletsForClient(
+    @Param('clientId') clientId: number,
+  ): Promise<number[]> {
+    const outletIds =
+      await this.clientOutletMappingService.getLinkedOutletIdsByClientId(
+        clientId,
+      );
+    return outletIds;
+  }
 }

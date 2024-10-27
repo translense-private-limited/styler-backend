@@ -22,6 +22,7 @@ import { ServiceModule } from '@modules/services/service.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 
 import { AdminModule } from '@modules/admin/category/admin.module';
+import { OutletGuard } from '@modules/authorization/gaurds/outlet-gaurd';
 
 @Module({
   imports: [
@@ -60,6 +61,10 @@ import { AdminModule } from '@modules/admin/category/admin.module';
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: OutletGuard,
     },
     // {
     //   provide: APP_GUARD,

@@ -14,6 +14,8 @@ ON DUPLICATE KEY UPDATE id=id;
 INSERT INTO outlets (id, name, description, status, address, latitude, longitude, phoneNumber, email, website, createdAt, updatedAt, clientId) 
 VALUES (1, 'Sample Outlet', 'This is a sample outlet description.', 'UNDER_CONSTRUCTION', '123 Main Street, City, Country', 37.7749, -122.4194, '+1234567890', 'sample@translense.com', 'http://www.sampleoutlet.com', NOW(), NOW(), 1) 
 ON DUPLICATE KEY UPDATE id=id;
+INSERT INTO client_outlet_mapping (clientId, outletId) VALUES (1, 1) ON DUPLICATE KEY UPDATE clientId = VALUES(clientId), outletId = VALUES(outletId);
+
 EOF
 )
 

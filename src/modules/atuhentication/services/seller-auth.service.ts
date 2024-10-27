@@ -5,45 +5,48 @@ import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-enc
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 import { JwtService } from './jwt.service';
 import { CreateClientDto } from '@modules/client/client/dtos/client.dto';
+import { ClientEntity } from '@modules/client/client/entities/client.entity';
 
 @Injectable()
 export class SellerAuthService implements AuthServiceInterface {
-    constructor(
-      private bcryptEncryptionService: BcryptEncryptionService,
-         private clientExternalService: ClientExternalService,
-         private jwtService: JwtService
-    ){}
-  async validateUser(email: string, password: string): Promise<any> {
-    // Seller-specific logic for validation
+  constructor(
+    private bcryptEncryptionService: BcryptEncryptionService,
+    private clientExternalService: ClientExternalService,
+    private jwtService: JwtService,
+  ) {}
+
+  addHeaderDataForTokenPayload(client: ClientEntity): object {
+    // delete password from object
+    delete client.password;
+
+    // now add the
+    const headers = {
+      whitelabelId: 1,
+      clientId: 1,
+      outletIds: [1],
+    };
+
+    client['headers'] = headers;
+
+    return client;
   }
 
-  generateToken(user: any): string {
-    // Generate token for seller
-    return 'seller-token';
-  }
+  async login(sellerLoginDto: SellerLoginDto): Promise<any> {
+    const { password } = sellerLoginDto;
 
-  async login(sellerLoginDto: SellerLoginDto):Promise<any>   {
-        const {  username, password } = sellerLoginDto
+    const seller = await this.clientExternalService.getSellers(sellerLoginDto);
 
-        const seller = await this.clientExternalService.getSellers(sellerLoginDto)
+    const isCredentialValid = await this.bcryptEncryptionService.validate(
+      password,
+      seller.password,
+    );
 
-        const isCredentialValid = await this.bcryptEncryptionService.validate(password, seller.password)
+    if (!isCredentialValid) {
+      throw new UnauthorizedException('Invalid Credential');
+    }
+    const tokenPayload = await this.addHeaderDataForTokenPayload(seller);
+    const jwtToken = await this.jwtService.generateToken(tokenPayload);
 
-        if(!isCredentialValid){
-          throw new UnauthorizedException('Invalid Credential')
-        }
-
-        const jwtToken = await this.jwtService.generateToken(seller)
-
-        return { seller, jwtToken}
-
-        
-
-  }
-
-  async prepareClientTokenPayload (client : CreateClientDto ): Promise<any> {
-    // ClientId 
-    // whitelabelId
-    // outletId
+    return { seller, jwtToken };
   }
 }
