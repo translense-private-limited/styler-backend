@@ -6,7 +6,6 @@ import { EnvModule } from '../modules/configs/env/env.module';
 import { Throttler } from '../modules/configs/gaurds/rate-limiter.gaurd';
 
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { RouterModule } from 'nest-router';
 import { HttpExceptionFilter } from '@src/utils/exceptions/http-exception';
 import { DatabaseExceptionFilter } from '@src/utils/exceptions/database-exception';
 import { Logger } from 'winston';
@@ -21,13 +20,8 @@ import { AuthenticationModule } from '@modules/atuhentication/atuhentication.mod
 import { AuthenticationGuard } from '@modules/atuhentication/gaurds/authentication.gaurd';
 import { ServiceModule } from '@modules/services/service.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
-import { AuthorizationGuard } from '@modules/authorization/gaurds/authorization.gaurd';
+
 import { AdminModule } from '@modules/admin/category/admin.module';
-import { CategoryModule } from '@modules/admin/category/category.module';
-
-
-
-
 
 @Module({
   imports: [
@@ -35,11 +29,10 @@ import { CategoryModule } from '@modules/admin/category/category.module';
     Throttler,
     EnvModule,
     DatabaseModule,
-   AuthenticationModule,
-   ServiceModule,
-  AuthorizationModule,
-  AdminModule
-
+    AuthenticationModule,
+    ServiceModule,
+    AuthorizationModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [
@@ -49,22 +42,21 @@ import { CategoryModule } from '@modules/admin/category/category.module';
       provide: APP_FILTER,
       useClass: DatabaseExceptionFilter,
     },
-    
-    
+
     {
       provide: APP_FILTER,
-      useClass: GlobalExceptionFilter
+      useClass: GlobalExceptionFilter,
     },
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
-    
+
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseTransformInterceptor,
     },
-    
+
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard,

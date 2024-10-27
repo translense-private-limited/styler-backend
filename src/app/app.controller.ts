@@ -1,10 +1,8 @@
-import { BadRequestException, Controller, Get, HttpException, HttpStatus, Logger, Req, Res } from '@nestjs/common';
+import { BadRequestException, Controller, Get, HttpStatus, Logger } from '@nestjs/common';
 import { AppService } from './app.service';
-import { SuccessResponse } from '../utils/response/interfaces/success-response.interface';
-import { ResponseHandler } from '../utils/response/response-handler';
+
 
 import { Public } from '@src/utils/decorators/public.decorator';
-import { Request } from 'express'; // Import the Request type from express
 
 
 
