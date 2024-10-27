@@ -4,6 +4,7 @@ import { SellerLoginDto } from '../dtos/seller-login.dto';
 import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 import { JwtService } from './jwt.service';
+import { CreateClientDto } from '@modules/client/client/dtos/client.dto';
 
 @Injectable()
 export class SellerAuthService implements AuthServiceInterface {
@@ -38,5 +39,11 @@ export class SellerAuthService implements AuthServiceInterface {
 
         
 
+  }
+
+  async prepareClientTokenPayload (client : CreateClientDto ): Promise<any> {
+    // ClientId 
+    // whitelabelId
+    // outletId
   }
 }

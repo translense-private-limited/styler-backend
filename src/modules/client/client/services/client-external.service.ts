@@ -5,9 +5,14 @@ import { ClientEntity } from "../entities/client.entity";
 
 @Injectable()
 export class ClientExternalService {
-    constructor( private sellerService: ClientService){}
+    constructor( private clientService: ClientService){}
 
     async getSellers(loginDto: LoginDto): Promise<ClientEntity> {
-        return await this.sellerService.getSellerByEmail(loginDto)
+        return await this.clientService.getSellerByEmail(loginDto)
+    }
+
+    async getClientById(clientId: number): Promise<ClientEntity> {
+        const client = await this.clientService.getClientById(clientId)
+        return client
     }
 }
