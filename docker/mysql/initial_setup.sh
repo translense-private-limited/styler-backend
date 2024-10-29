@@ -3,12 +3,17 @@
 # Access environment variables from Docker Compose
 MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 MYSQL_USER=${MYSQL_USER}
+MYSQL_USER_PASSWORD='root'
 
-echo "Executing SQL commands..." 
+# Create database and user, grant privileges
+mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS styler;"
+mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED WITH 'mysql_native_password' BY '$MYSQL_USER_PASSWORD';"
+mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT ALL PRIVILEGES ON styler.* TO '$MYSQL_USER'@'%';"
+mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "FLUSH PRIVILEGES;"
+
+echo "Executing SQL commands to set up tables and initial data..." 
 mysql --user=root --password="$MYSQL_ROOT_PASSWORD" <<-EOSQL
-    CREATE DATABASE IF NOT EXISTS styler;
-    GRANT ALL PRIVILEGES ON \`styler\`.* TO '$MYSQL_USER'@'%';
-    USE styler; 
+    USE styler;
 
     -- Create tables if they don't exist
     CREATE TABLE IF NOT EXISTS whitelabel (
@@ -45,17 +50,26 @@ mysql --user=root --password="$MYSQL_ROOT_PASSWORD" <<-EOSQL
         CONSTRAINT FK_c2d5b1048b7ed394bff71886e04 FOREIGN KEY (whitelabelId) REFERENCES whitelabel (whitelabelId)
     ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-    INSERT INTO whitelabel (whitelabelId, name, label) VALUES (1, 'styler3', 'stylere');
-    INSERT INTO resources (name, label) VALUES ('REPORT', 'Report');
-    INSERT INTO business (name, location, averageCost, type, images, status, whitelabelId) 
-    VALUES ('Test business', '{"latitude": 100, "longitude": 159}', 234, 'HOTEL', JSON_ARRAY('"imageurl1"', '"imageurl2"'), 'LIVE', 1); 
-EOSQL
-echo "SQL execution complete."
+    -- Insert into whitelabel only if the record doesn't exist
+    INSERT INTO whitelabel (whitelabelId, name, label)
+    SELECT 1, 'styler3', 'stylere'
+    WHERE NOT EXISTS (SELECT 1 FROM whitelabel WHERE whitelabelId = 1);
 
-# Check for errors 
+    -- Insert into resources only if the record doesn't exist
+    INSERT INTO resources (name, label, userType)
+    SELECT 'REPORT', 'Report', 'ADMIN'
+    WHERE NOT EXISTS (SELECT 1 FROM resources WHERE name = 'REPORT' AND label = 'Report');
+
+    -- Insert into business only if the record doesn't exist
+    INSERT INTO business (name, location, averageCost, type, images, status, whitelabelId)
+    SELECT 'Test business', '{"latitude": 100, "longitude": 159}', 234, 'HOTEL', JSON_ARRAY('"imageurl1"', '"imageurl2"'), 'LIVE', 1
+    WHERE NOT EXISTS (SELECT 1 FROM business WHERE name = 'Test business');
+EOSQL
+
+# Check for errors in SQL execution
 if [ $? -ne 0 ]; then
     echo "Error: Failed to execute SQL commands."
-    exit 1 # Exit with an error code
+    exit 1
 fi
 
 echo "SQL commands executed successfully."
