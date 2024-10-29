@@ -3,7 +3,7 @@ services:
 
   mysql:
     container_name: styler-mysql
-    image: mysql
+    image: mysql:latest
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: styler
@@ -15,6 +15,7 @@ services:
     volumes:
       - styler-mysql:/var/lib/mysql
       - ./docker/mysql/initial_setup.sh:/docker-entrypoint-initdb.d/10-initial_setup.sh
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
     networks:
       - styler
     healthcheck:
