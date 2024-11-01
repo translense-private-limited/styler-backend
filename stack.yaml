@@ -3,7 +3,7 @@ services:
 
   mysql:
     container_name: styler-mysql
-    image: mysql:latest
+    image: mysql:8
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: styler
