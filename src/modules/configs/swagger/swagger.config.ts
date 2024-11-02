@@ -1,7 +1,7 @@
 import { DocumentBuilder } from '@nestjs/swagger';
 
 export const swaggerConfig = new DocumentBuilder()
-  .setTitle('Odriyo developed by Translense Private Limited')
+  .setTitle('Styler developed by Translense Private Limited')
   .setDescription('Comprehensive refernce for API development in NestJs')
   .setVersion('1.0.0')
   .setTermsOfService(
@@ -18,8 +18,8 @@ export const swaggerConfig = new DocumentBuilder()
   .build();
 
 export const adminSwaggerConfig = new DocumentBuilder()
-  .setTitle('Odriyo developed by Translense Private Limited')
-  .setDescription('Odriyo Admin Api')
+  .setTitle('Styler developed by Translense Private Limited')
+  .setDescription('Styler Admin Api')
   .setVersion('1.0.0')
   .setTermsOfService(
     'The API developed and maintained by Translense Private Limited is the sole property of Translense Private Limited, and unauthorized access or use is strictly prohibited. Such unauthorized access may lead to legal ramifications. Access to the API is granted solely to those who have obtained explicit permission from Translense Private Limited through official channels. Prohibited activities include attempting to bypass security measures or using the API for illegal purposes. Translense Private Limited reserves the right to enforce these terms through legal means and may modify them at its discretion. Users are responsible for regularly reviewing the terms for any updates.',
@@ -37,8 +37,8 @@ export const adminSwaggerConfig = new DocumentBuilder()
   .build();
 
 export const clientSwaggerConfig = new DocumentBuilder()
-  .setTitle('Odriyo developed by Translense Private Limited')
-  .setDescription('Odriyo Client Api')
+  .setTitle('Styler developed by Translense Private Limited')
+  .setDescription('Styler Client Api')
   .setVersion('1.0.0')
   .setTermsOfService(
     'The API developed and maintained by Translense Private Limited is the sole property of Translense Private Limited, and unauthorized access or use is strictly prohibited. Such unauthorized access may lead to legal ramifications. Access to the API is granted solely to those who have obtained explicit permission from Translense Private Limited through official channels. Prohibited activities include attempting to bypass security measures or using the API for illegal purposes. Translense Private Limited reserves the right to enforce these terms through legal means and may modify them at its discretion. Users are responsible for regularly reviewing the terms for any updates.',
@@ -54,8 +54,8 @@ export const clientSwaggerConfig = new DocumentBuilder()
   .build();
 
 export const customerSwaggerConfig = new DocumentBuilder()
-  .setTitle('Odriyo developed by Translense Private Limited')
-  .setDescription('Odriyo Customer Api')
+  .setTitle('Styler developed by Translense Private Limited')
+  .setDescription('Styler Customer Api')
   .setVersion('1.0.0')
   .setTermsOfService(
     'The API developed and maintained by Translense Private Limited is the sole property of Translense Private Limited, and unauthorized access or use is strictly prohibited. Such unauthorized access may lead to legal ramifications. Access to the API is granted solely to those who have obtained explicit permission from Translense Private Limited through official channels. Prohibited activities include attempting to bypass security measures or using the API for illegal purposes. Translense Private Limited reserves the right to enforce these terms through legal means and may modify them at its discretion. Users are responsible for regularly reviewing the terms for any updates.',

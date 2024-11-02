@@ -4,8 +4,8 @@ import { CreateClientDto } from '../dtos/client.dto';
 import { Public } from '@src/utils/decorators/public.decorator';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@Controller()
-@ApiTags('Client')
+@Controller('admin')
+@ApiTags('Admin/Client')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}
 

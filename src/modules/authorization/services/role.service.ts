@@ -99,7 +99,7 @@
 //     roleEntity.roleId = 1;
 //     roleEntity.userType = UserTypeEnum.ADMIN;
 //     const whitelabel = await this.whitelabelService.getWhitelabelByIdOrThrow(
-//       WhitelabelEnum.ODRIYO,
+//       WhitelabelEnum.STYLER,
 //     );
 //     roleEntity.whitelabel = whitelabel;
 //     return await this.roleRepository.getRepository().save(roleEntity);
@@ -115,7 +115,7 @@
 //     ownerRoleDto.userType = UserTypeEnum.CLIENT;
 //     ownerRoleDto.whitelabel =
 //       await this.whitelabelService.getWhitelabelByIdOrThrow(
-//         WhitelabelEnum.ODRIYO,
+//         WhitelabelEnum.STYLER,
 //       );
 //     return await this.roleRepository.getRepository().save(ownerRoleDto);
 //   }

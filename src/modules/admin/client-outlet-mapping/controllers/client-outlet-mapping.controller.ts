@@ -4,7 +4,7 @@ import { ClientOutletIdDto } from '../dtos/client-outlet-id.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('admin/client-outlet-mapping')
-@ApiTags('Client')
+@ApiTags('client-outlet-mapping')
 export class ClientOutletMappingController {
   constructor(
     private readonly clientOutletMappingService: ClientOutletMappingService,
