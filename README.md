@@ -1,6 +1,27 @@
 Here is the concise version of the README content in **Markdown** format for your `readme.md` file:
 
 ```markdown
+
+#Project documentation
+
+This document outlines the project setup,extensions requirements and necessary software installations.
+
+##Prerequisites
+
+1.**VSCode Extensions**:
+   -Markdown Preview
+   -ESLint
+   -GitLens
+   -Pieces for VSCode
+   -Prettier Code Formatter
+   -YAML
+   -Swagger Viewer
+
+2.**Software**:
+  -**MySQL Workbench**(Linux)
+  -**NoSQLBooster** 
+---
+
 # API Response Structure
 
 This document outlines the standard format for API responses in both success and error scenarios.
@@ -156,7 +177,7 @@ Here’s the markdown version you can copy and paste:
 
 # NestJS Folder Structure Generator
 
-This script generates a NestJS module folder structure with necessary subfolders and files.
+This script generates a NestJS module folder structure with  necessary subfolders and files.
 
 ## Usage
 
