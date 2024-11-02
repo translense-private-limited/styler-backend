@@ -186,7 +186,7 @@ This will create the folder structure for the module in the specified location.
 To populate the necessary data required to boot up the system, run the following command:
 
 ```bash
-npm run setup
+npm run seed
 ```
 **Instructions**
 - make sure databases are up and running 

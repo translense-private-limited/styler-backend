@@ -36,7 +36,7 @@ export class ClientAuthController {
       const { seller, jwtToken } =
         await this.clientAuthService.login(clientLoginDto);
       res.setHeader('token', jwtToken); // Use setHeader to add the token
-      return res.status(HttpStatus.OK).json({ seller }); // Correctly return status and JSON
+      return res.status(HttpStatus.OK).json({ ...seller, jwtToken }); // Correctly return status and JSON
     } catch (error) {
       throw new UnauthorizedException('Invalid Credentials');
     }
