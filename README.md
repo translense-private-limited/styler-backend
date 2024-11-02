@@ -19,8 +19,7 @@ This document outlines the project setup,extensions requirements and necessary s
 
 2.**Software**:
   -**MySQL Workbench**(Linux)
-  
-  -**NoSQLBooster**
+  -**NoSQLBooster** 
 ---
 
 # API Response Structure
