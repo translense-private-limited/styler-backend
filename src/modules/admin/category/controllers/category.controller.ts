@@ -1,8 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Post, HttpCode, HttpStatus, Patch } from "@nestjs/common";
-import { CategoryService } from "../services/category.service";
-import { CategorySchema } from "../entities/category.schema";
-import { CategoryDto } from "../dtos/category.dto";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Patch,
+} from '@nestjs/common';
+import { CategoryService } from '../services/category.service';
+import { CategorySchema } from '../entities/category.schema';
+import { CategoryDto } from '../dtos/category.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('category')
 @Controller()
@@ -17,7 +27,9 @@ export class CategoryController {
 
   // Create a new category
   @Post('category')
-  async create(@Body() createCategoryDto: CategoryDto): Promise<CategorySchema> {
+  async create(
+    @Body() createCategoryDto: CategoryDto,
+  ): Promise<CategorySchema> {
     return this.categoryService.createCategory(createCategoryDto);
   }
 
@@ -44,7 +56,7 @@ export class CategoryController {
   @Patch('category/:id')
   async updateCategory(
     @Param('id') categoryId: string,
-    @Body() updateCategoryDto: Partial<CategoryDto>
+    @Body() updateCategoryDto: Partial<CategoryDto>,
   ): Promise<CategorySchema> {
     return this.categoryService.updateCategory(categoryId, updateCategoryDto);
   }
