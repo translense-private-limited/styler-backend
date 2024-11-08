@@ -9,9 +9,6 @@ export class ServiceSchema extends Document {
     @Prop({required:true})
     categoryId:string;
 
-    @Prop()
-    categoryName:string;
-
     @Prop({required:true})
     gender:Gender;
 

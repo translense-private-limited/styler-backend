@@ -1,6 +1,5 @@
 export interface serviceInterface {
     categoryId: string;
-    categoryName:string;
     gender: Gender;
     serviceName: string;
     type: string; 

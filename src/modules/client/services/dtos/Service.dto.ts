@@ -7,10 +7,6 @@ export class ServiceDto implements serviceInterface {
     @IsNotEmpty()
     categoryId: string;
 
-    @IsString()
-    @IsNotEmpty()
-    categoryName:string;
-
     @IsEnum(Gender)
     @IsNotEmpty()
     gender: Gender;
