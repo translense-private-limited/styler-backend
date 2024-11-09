@@ -3,9 +3,10 @@ import { OutletService } from '../services/outlet.service';
 import { OutletEntity } from '../entities/outlet.entity';
 import { CreateOutletDto } from '../dtos/outlet.dto';
 import { Request } from 'express';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('client/outlets') // Global route
+@ApiTags('Outlet')
 export class OutletController {
   constructor(private readonly outletService: OutletService) {}
 
@@ -19,7 +20,6 @@ export class OutletController {
   }
 
   @Get() // GET /outlets
-  
   async getAllOutlets(): Promise<OutletEntity[]> {
     return this.outletService.getAllOutlets();
   }
