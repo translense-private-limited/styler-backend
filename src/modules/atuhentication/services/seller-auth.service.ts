@@ -30,7 +30,7 @@ export class SellerAuthService implements AuthServiceInterface {
 
     return client;
   }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async login(sellerLoginDto: SellerLoginDto): Promise<any> {
     const { password } = sellerLoginDto;
 

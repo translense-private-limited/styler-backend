@@ -15,6 +15,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const exceptionResponse: any = exception.getResponse();
 
     response.status(status).json({

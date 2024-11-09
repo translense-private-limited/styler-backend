@@ -11,6 +11,7 @@ import { map } from 'rxjs/operators';
 export class ResponseTransformInterceptor<T>
   implements NestInterceptor<T, ResponseFormat<T>>
 {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<any> {
     const response = context.switchToHttp().getResponse();
 

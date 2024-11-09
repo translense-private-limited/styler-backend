@@ -13,6 +13,7 @@ export class JwtService {
   }
 
   // Method to verify JWT
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   verifyToken(token: string): any {
     try {
       return jwt.verify(token, this.secret);
@@ -22,6 +23,7 @@ export class JwtService {
   }
 
   // Method to extract the token from request headers
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extractTokenFromHeader(headers: any): string | null {
     const authHeader = headers['authorization'];
     if (authHeader && authHeader.startsWith('Bearer ')) {
