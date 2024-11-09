@@ -1,82 +1,28 @@
-name: Tests
+name: Lint Check
 
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   lint:
-    name: Lint Code
     runs-on: ubuntu-latest
-    env:
-      INPUT_TOKEN: ${{ secrets.NPM_TOKEN }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3.5.1
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '18'
 
-      - name: Installing Dependencies
-        run: npm ci
+      - name: Install dependencies
+        run: npm install
 
-      - name: Lint Source
-        id: lint_source
+      - name: Run lint
         run: npm run lint
-
-  # tests:
-  #   name: Unit Test
-  #   needs: [lint]
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     INPUT_TOKEN: ${{ secrets.NPM_TOKEN }}
-  #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  #     JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-  #     DB_TEST: ${{ secrets.MONGO_URI_TEST }}
-  #     SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
-  #     SENDER_NAME: ${{ secrets.SENDER_NAME }}
-  #     SEND_IN_BLUE_API_KEY: ${{ secrets.SEND_IN_BLUE_API_KEY }}
-  #     FROM: ${{ secrets.FROM }}
-  #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-  #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-  #     CRYPTO_SECRET_KEY: ${{ secrets.CRYPTO_SECRET_KEY }}
-  #     BCRYPT_SALT: ${{ secrets.BCRYPT_SALT }}
-  #     FIREBASE_TYPE: ${{ secrets.FIREBASE_TYPE }}
-  #     FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-  #     FIREBASE_PRIVATE_KEY_ID: ${{ secrets.FIREBASE_PRIVATE_KEY_ID }}
-  #     FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
-  #     FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
-  #     FIREBASE_CLIENT_ID: ${{ secrets.FIREBASE_CLIENT_ID }}
-  #     FIREBASE_AUTH_URI: ${{ secrets.FIREBASE_AUTH_URI }}
-  #     FIREBASE_TOKEN_URI: ${{ secrets.FIREBASE_TOKEN_URI }}
-  #     FIREBASE_AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.FIREBASE_AUTH_PROVIDER_X509_CERT_URL }}
-  #     FIREBASE_CLIENT_X509_CERT_URL: ${{ secrets.FIREBASE_CLIENT_X509_CERT_URL }}
-  #     PAYTM_MID: ${{ secrets.PAYTM_MID }}
-  #     PAYTM_WEBSITE: ${{ secrets.PAYTM_WEBSITE }}
-  #     PAYTM_INDUSTRY_TYPE_ID: ${{ secrets.PAYTM_INDUSTRY_TYPE_ID }}
-  #     PAYTM_REQUESTTYPE: ${{ secrets.PAYTM_REQUESTTYPE }}
-  #     PAYTM_CALLBACK_URL: ${{ secrets.PAYTM_CALLBACK_URL }}
-  #     PAYTM_MERCHANT_KEY: ${{ secrets.PAYTM_MERCHANT_KEY }}
-  #     PAYTM_CHANNEL_ID: ${{ secrets.PAYTM_CHANNEL_ID }}
-  #     PAYTM_STAGGING_TRANSACTION_URL: ${{ secrets.PAYTM_STAGGING_TRANSACTION_URL }}
-  #     PAYTM_STAGGING_VERIFY_TRANSACTION_URL: ${{ secrets.PAYTM_STAGGING_VERIFY_TRANSACTION_URL }}
-  #     PAYTM_PROD_VERIFY_TRANSACTION_URL: ${{ secrets.PAYTM_PROD_VERIFY_TRANSACTION_URL }}
-  #   steps:
-  #     - uses: actions/checkout@v3
-
-  #     - uses: actions/setup-node@v3.5.1
-  #       with:
-  #         node-version: "16"
-
-  #     - name: Installing Dependencies
-  #       run: npm ci
-
-  #     - name: Unit Test
-  #       id: unit_test
-  #       run: npm run testdev
