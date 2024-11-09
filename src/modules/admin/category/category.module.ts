@@ -6,7 +6,7 @@ import { CategoryController } from './controllers/category.controller';
 import { CategoryModel, CategorySchema } from './entities/category.schema';
 import { getMongodbDataSource } from '@modules/database/data-source';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CategoryExternal } from './services/category.external';
+import { CategoryExternal } from './services/category-external';
 
 @Module({
   imports: [

@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
 import { ServiceDto } from "../dtos/Service.dto";
-import { CategoryExternal } from '@modules/admin/category/services/category.external';
+import { CategoryExternal } from '@modules/admin/category/services/category-external';
 
 @Injectable()
 export class ServiceService {
