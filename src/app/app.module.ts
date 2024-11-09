@@ -18,7 +18,7 @@ import { ClientModule } from '@modules/client/client.module';
 import { AuthenticationModule } from '@modules/atuhentication/atuhentication.module';
 
 import { AuthenticationGuard } from '@modules/atuhentication/gaurds/authentication.gaurd';
-import { ServiceModule } from '@modules/services/service.module';
+import { ServiceModule } from '@modules/client/services/service.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 
 import { AdminModule } from '@modules/admin/category/admin.module';
