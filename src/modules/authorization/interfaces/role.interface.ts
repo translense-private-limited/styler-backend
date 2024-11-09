@@ -1,5 +1,4 @@
 export interface RoleInterface {
-    name: string
-    isSystemDefined?: boolean
-    
+  name: string;
+  isSystemDefined?: boolean;
 }

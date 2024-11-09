@@ -1,14 +1,8 @@
-import {
-
-  Injectable,
-  Logger,
-  NotFoundException,
-  
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CategoryRepository } from '../repository/category.repository';
 import { CategoryDto } from '../dtos/category.dto';
 import { CategorySchema } from '../entities/category.schema';
-import  { Types } from 'mongoose';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class CategoryService {

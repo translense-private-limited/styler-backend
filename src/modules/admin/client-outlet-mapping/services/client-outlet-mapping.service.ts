@@ -6,7 +6,6 @@ import { OutletExternalService } from '@modules/client/outlet/services/outlet-ex
 import { ClientOutletIdDto } from '../dtos/client-outlet-id.dto';
 import { ClientOutletMappingEntity } from '../entities/client-outlet-mapping.entity';
 
-
 @Injectable()
 export class ClientOutletMappingService {
   constructor(
@@ -36,8 +35,8 @@ export class ClientOutletMappingService {
   ): Promise<string> {
     const { clientId, outletId } = clientOutletIdDto;
 
-     await this.clientExternalService.getClientById(clientId);
-     await this.outletExternalService.getOutletById(outletId);
+    await this.clientExternalService.getClientById(clientId);
+    await this.outletExternalService.getOutletById(outletId);
 
     const existingClientOutletMapping =
       await this.getClientOutletMapping(clientOutletIdDto);

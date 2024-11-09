@@ -4,9 +4,9 @@ import { CategoryService } from './category.service';
 
 @Injectable()
 export class CategoryExternal {
-    constructor(private readonly categoryService: CategoryService) {}
+  constructor(private readonly categoryService: CategoryService) {}
 
-    async getCategoryById(categoryId: string) {
-        return this.categoryService.findByIdOrThrow(categoryId);
-    }
+  async getCategoryById(categoryId: string) {
+    return this.categoryService.findByIdOrThrow(categoryId);
+  }
 }

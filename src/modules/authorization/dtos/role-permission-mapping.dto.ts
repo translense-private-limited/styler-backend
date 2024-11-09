@@ -3,8 +3,6 @@ import { Type } from 'class-transformer';
 
 import { ResourcePermissionDto } from './resource-permission.dto';
 
-
-
 export class RolePermissionMappingDto {
   @IsNumber()
   roleId: number;

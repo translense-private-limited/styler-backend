@@ -4,17 +4,13 @@
 //   UnauthorizedException,
 // } from '@nestjs/common';
 
-
-
 // import { RoleRepository } from '../repositories/role.repository';
 // import { ResourcePermissionRepository } from '../repositories/resource-permission.repository';
 // import { PermissionEnum } from '../enums/permission.enum';
 
 // import { In } from 'typeorm';
 
-
 // import { RolePermissionMapRepository } from '../repositories/role-permission-map.repository';
-
 
 // @Injectable()
 // export class RoleService {
@@ -337,24 +333,22 @@
 //   }
 // }
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RoleEntity } from '../entities/role.entity';
 import { CreateRoleDto } from '../dtos/create-role.dto';
 import { RoleRepository } from '../repositories/role.repository';
 
-
 @Injectable()
 export class RoleService {
-    constructor(private readonly rolesRepository: RoleRepository) { }
+  constructor(private readonly rolesRepository: RoleRepository) {}
 
-    // Create a new roles
-    async createRole(createRoleDto: CreateRoleDto): Promise<RoleEntity> {
-        return await this.rolesRepository.getRepository().save(createRoleDto);
-    }
+  // Create a new roles
+  async createRole(createRoleDto: CreateRoleDto): Promise<RoleEntity> {
+    return await this.rolesRepository.getRepository().save(createRoleDto);
+  }
 
-    // Fetch all roles
-    async getAllRoles(): Promise<RoleEntity[]> {
-        return this.rolesRepository.getRepository().find();
-    }
-
+  // Fetch all roles
+  async getAllRoles(): Promise<RoleEntity[]> {
+    return this.rolesRepository.getRepository().find();
+  }
 }

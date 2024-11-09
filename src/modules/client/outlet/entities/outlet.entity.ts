@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { OutletStatusEnum } from '../enums/outlet-status.enum';
 import { BaseEntity } from '@src/utils/entities/base.entity';
 
@@ -38,7 +38,6 @@ export class OutletEntity extends BaseEntity {
   @Column({ length: 255, nullable: true })
   website: string;
 
-  @Column({ type: 'int'})
-  clientId: number
-
+  @Column({ type: 'int' })
+  clientId: number;
 }

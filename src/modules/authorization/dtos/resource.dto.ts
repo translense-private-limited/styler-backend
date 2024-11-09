@@ -1,4 +1,3 @@
-
 import { UserEnum } from '@modules/atuhentication/enums/user.enum';
 import { IsEnum, IsString } from 'class-validator';
 
@@ -9,5 +8,4 @@ export class ResourceDto {
   label: string;
   @IsEnum(UserEnum)
   user: UserEnum;
-
 }

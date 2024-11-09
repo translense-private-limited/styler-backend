@@ -1,9 +1,9 @@
-import { IsNumber } from "class-validator";
+import { IsNumber } from 'class-validator';
 
-export class RoleResourceIdDto{
-    @IsNumber()
-    roleId: number
+export class RoleResourceIdDto {
+  @IsNumber()
+  roleId: number;
 
-    @IsNumber()
-    resourceId: number
+  @IsNumber()
+  resourceId: number;
 }

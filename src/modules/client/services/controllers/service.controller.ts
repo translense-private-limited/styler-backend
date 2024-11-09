@@ -1,5 +1,13 @@
 // service.controller.ts
-import { Controller, Get, Post, Param, Body,Patch,Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { ServiceService } from '../services/service.service';
 
 import { ServiceDto } from '../dtos/Service.dto';
@@ -13,7 +21,9 @@ export class ServiceController {
   constructor(private readonly serviceService: ServiceService) {}
 
   @Post('service')
-  async createService(@Body() createServiceDto: ServiceDto ): Promise<ServiceSchema> {
+  async createService(
+    @Body() createServiceDto: ServiceDto,
+  ): Promise<ServiceSchema> {
     return this.serviceService.createService(createServiceDto);
   }
 
@@ -23,28 +33,27 @@ export class ServiceController {
   }
 
   @Get('service/:id')
-  async getServiceById(
-    @Param('id') serviceId:string
-  ):Promise<ServiceSchema>{
+  async getServiceById(@Param('id') serviceId: string): Promise<ServiceSchema> {
     return this.serviceService.getServiceByIdOrThrow(serviceId);
   }
 
   @Patch('service/:id')
   async updateService(
-    @Param('id') serviceId:string,
-    @Body() UpdateServiceDto:Partial<ServiceDto>,
-  ):Promise<ServiceSchema>{
-    return this.serviceService.updateServiceById(serviceId,UpdateServiceDto)
-  } 
-  
+    @Param('id') serviceId: string,
+    @Body() UpdateServiceDto: Partial<ServiceDto>,
+  ): Promise<ServiceSchema> {
+    return this.serviceService.updateServiceById(serviceId, UpdateServiceDto);
+  }
+
   @Delete('service/:id')
   async deleteService(
-    @Param('id') serviceId:string,):Promise<ServiceSchema[]>{
-      return this.serviceService.deleteServiceById(serviceId)
-    }
-  
+    @Param('id') serviceId: string,
+  ): Promise<ServiceSchema[]> {
+    return this.serviceService.deleteServiceById(serviceId);
+  }
+
   @Delete('services')
-  async deleteServices():Promise<ServiceSchema[]>{
+  async deleteServices(): Promise<ServiceSchema[]> {
     return this.serviceService.deleteAll();
   }
 }

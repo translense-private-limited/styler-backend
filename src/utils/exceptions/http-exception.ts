@@ -1,4 +1,9 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import {
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpException,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 
 @Catch(HttpException)
@@ -17,12 +22,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
       error: {
         code: exceptionResponse.code || 'INVALID_REQUEST',
         message: exceptionResponse.message || 'An unexpected error occurred.',
-        details: exceptionResponse.details || null,  // Optional, for additional error context (like validation)
+        details: exceptionResponse.details || null, // Optional, for additional error context (like validation)
       },
       meta: {
         timestamp: new Date().toISOString(),
         path: request.url,
-        requestId: response.getHeader('x-request-id') || null,  // Optional for request tracing
+        requestId: response.getHeader('x-request-id') || null, // Optional for request tracing
       },
     });
   }

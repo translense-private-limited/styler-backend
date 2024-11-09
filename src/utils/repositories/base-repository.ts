@@ -4,7 +4,7 @@ import { PagerResult } from '../response/interfaces/pager-result.interface';
 import { PagerOptions } from '../response/interfaces/pager-options.interface';
 
 export class BaseRepository<T extends ObjectLiteral> {
-  constructor(protected baseRepository: Repository<T>) { }
+  constructor(protected baseRepository: Repository<T>) {}
 
   DEFAULT_PER_PAGE = 10;
   DEFAULT_PAGE_NUMBER = 1;

@@ -12,10 +12,9 @@ export class CategoryRepository extends BaseSchema<CategorySchema> {
 
   constructor(
     @InjectModel(CategorySchema.name, getMongodbDataSource())
-    CategoryModel: Model<CategorySchema> // Change parameter name to CategoryModel
+    CategoryModel: Model<CategorySchema>, // Change parameter name to CategoryModel
   ) {
     super(CategoryModel); // Pass the model to the base class
     this.categoryRepository = CategoryModel; // Assign to the instance variable
   }
-
 }

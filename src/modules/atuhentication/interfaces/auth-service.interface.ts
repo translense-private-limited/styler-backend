@@ -1,5 +1,5 @@
-import { LoginDto } from "../dtos/login.dto";
-import { UserTypeInterface } from "./user-type.interface";
+import { LoginDto } from '../dtos/login.dto';
+import { UserTypeInterface } from './user-type.interface';
 
 export interface AuthServiceInterface {
   login(loginDto: LoginDto): Promise<UserTypeInterface>;

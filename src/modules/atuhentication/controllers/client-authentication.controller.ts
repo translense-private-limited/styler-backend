@@ -38,7 +38,7 @@ export class ClientAuthController {
       res.setHeader('token', jwtToken); // Use setHeader to add the token
       return res.status(HttpStatus.OK).json({ ...seller, token: jwtToken }); // Correctly return status and JSON
     } catch (error) {
-      throw new UnauthorizedException('Invalid Credentials',error.message);
+      throw new UnauthorizedException('Invalid Credentials', error.message);
     }
   }
 }

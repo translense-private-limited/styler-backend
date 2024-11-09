@@ -1,5 +1,4 @@
 import { IsArray, IsEnum, IsNumber } from 'class-validator';
-import { Type } from 'class-transformer';
 import { PermissionEnum } from '../enums/permission.enum';
 
 export class ResourcePermissionDto {
@@ -8,7 +7,5 @@ export class ResourcePermissionDto {
   permissions: PermissionEnum[];
 
   @IsNumber()
-  resourceId: number
+  resourceId: number;
 }
-
-

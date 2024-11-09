@@ -15,8 +15,8 @@ import { CategoryExternal } from './services/category-external';
       getMongodbDataSource(),
     ),
   ],
-  providers: [CategoryService, CategoryRepository,CategoryExternal],
+  providers: [CategoryService, CategoryRepository, CategoryExternal],
   controllers: [CategoryController],
-  exports:[CategoryExternal],
+  exports: [CategoryExternal],
 })
 export class CategoryModule {}
