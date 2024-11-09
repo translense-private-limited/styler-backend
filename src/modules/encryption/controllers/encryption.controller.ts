@@ -1,5 +1,5 @@
-import { Controller, Get, Post } from "@nestjs/common";
-import { EncryptionService } from "../services/encryption.service";
+import { Controller, Get, Post } from '@nestjs/common';
+import { EncryptionService } from '../services/encryption.service';
 
 @Controller('encryption')
 export class EncryptionController {
