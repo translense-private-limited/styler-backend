@@ -1,3 +1,4 @@
+import { Gender } from "@src/utils/enums/gender.enums";
 export interface serviceInterface {
     categoryId: string;
     gender: Gender;
@@ -8,8 +9,4 @@ export interface serviceInterface {
     about: string;
     description: string;
 }
-export enum Gender {
-    Male = "male",
-    Female = "female",
-    Other = "other"
-}
+

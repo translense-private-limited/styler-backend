@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { serviceInterface } from "../interfaces/service.interface";
-import { Gender } from "../interfaces/service.interface";
+import { Gender } from "@src/utils/enums/gender.enums";
 
 export class ServiceDto implements serviceInterface {
     @IsString()

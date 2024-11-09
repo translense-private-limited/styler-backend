@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
 import { ServiceDto } from "../dtos/Service.dto";
-import { CategoryRepository } from '@modules/admin/category/repository/category.repository';
+import { CategoryExternal } from '@modules/admin/category/services/category.external';
 
 @Injectable()
 export class ServiceService {
@@ -11,15 +11,11 @@ export class ServiceService {
 
   constructor(
     private readonly serviceRepository: ServiceRepository,
-    private readonly categoryRepository: CategoryRepository  
+    private readonly categoryExternal: CategoryExternal  
   ) {}
 
   async createService(createServiceDto: ServiceDto): Promise<ServiceSchema> {
-    const categoryExists = await this.categoryRepository.getRepository().findById(createServiceDto.categoryId).exec();
-
-    if (!categoryExists) {
-      throw new NotFoundException(`Category with ID ${createServiceDto.categoryId} not found.`);
-    }
+    const category = await this.categoryExternal.getCategoryById(createServiceDto.categoryId);
 
     return this.serviceRepository.getRepository().create(createServiceDto);
   }
@@ -28,10 +24,9 @@ export class ServiceService {
     return this.serviceRepository.getRepository().find();
   }
 
-  async getServiceById(serviceId:string):Promise<ServiceSchema>{
+  async getServiceByIdOrThrow(serviceId:string):Promise<ServiceSchema>{
     const service = await this.serviceRepository.getRepository().findById(serviceId);
     if(!service){
-      this.logger.error('invalid service id')
       throw new NotFoundException('no service exist with provided Id')
     }
     return service;

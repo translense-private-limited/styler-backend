@@ -2,7 +2,7 @@
 
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import  { Document } from 'mongoose';
-import { Gender } from '../interfaces/service.interface';
+import { Gender } from '@src/utils/enums/gender.enums';
 
 @Schema({ timestamps: true }) // This will automatically add `createdAt` and `updatedAt`
 export class ServiceSchema extends Document {

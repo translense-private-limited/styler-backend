@@ -2,15 +2,13 @@
 import { Controller, Get, Post, Param, Body,Patch,Delete } from '@nestjs/common';
 import { ServiceService } from '../services/service.service';
 
-import { Public } from '@src/utils/decorators/public.decorator';
 import { ServiceDto } from '../dtos/Service.dto';
 import { ServiceSchema } from '../schema/service.schema';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@Public()
-@Controller('client')
+@Controller('admin')
+@ApiBearerAuth('jwt')
 @ApiTags('services')
-@Public()
 export class ServiceController {
   constructor(private readonly serviceService: ServiceService) {}
 
@@ -28,7 +26,7 @@ export class ServiceController {
   async getServiceById(
     @Param('id') serviceId:string
   ):Promise<ServiceSchema>{
-    return this.serviceService.getServiceById(serviceId);
+    return this.serviceService.getServiceByIdOrThrow(serviceId);
   }
 
   @Patch('service/:id')
