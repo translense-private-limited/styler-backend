@@ -4,7 +4,7 @@ import { SellerLoginDto } from '../dtos/seller-login.dto';
 import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 import { JwtService } from './jwt.service';
-import { CreateClientDto } from '@modules/client/client/dtos/client.dto';
+//import { CreateClientDto } from '@modules/client/client/dtos/client.dto';
 import { ClientEntity } from '@modules/client/client/entities/client.entity';
 
 @Injectable()

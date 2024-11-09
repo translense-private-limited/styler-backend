@@ -4,6 +4,8 @@ import { ClientExternalService } from '@modules/client/client/services/client-ex
 
 import { OutletExternalService } from '@modules/client/outlet/services/outlet-external.service';
 import { ClientOutletIdDto } from '../dtos/client-outlet-id.dto';
+import { ClientOutletMappingEntity } from '../entities/client-outlet-mapping.entity';
+
 
 @Injectable()
 export class ClientOutletMappingService {
@@ -15,7 +17,7 @@ export class ClientOutletMappingService {
 
   async getClientOutletMapping(
     clientOutletIdDto: ClientOutletIdDto,
-  ): Promise<any> {
+  ): Promise<ClientOutletMappingEntity> {
     const { clientId, outletId } = clientOutletIdDto;
     const clientOutletMapping = await this.clientOutletMappingRepository
       .getRepository()
@@ -31,11 +33,11 @@ export class ClientOutletMappingService {
 
   async createClientOutletIdDto(
     clientOutletIdDto: ClientOutletIdDto,
-  ): Promise<any> {
+  ): Promise<string> {
     const { clientId, outletId } = clientOutletIdDto;
 
-    const client = await this.clientExternalService.getClientById(clientId);
-    const outlet = await this.outletExternalService.getOutletById(outletId);
+     await this.clientExternalService.getClientById(clientId);
+     await this.outletExternalService.getOutletById(outletId);
 
     const existingClientOutletMapping =
       await this.getClientOutletMapping(clientOutletIdDto);

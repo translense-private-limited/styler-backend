@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
 
 
-import { TypeOrmModule } from "@nestjs/typeorm";
+//import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { getMysqlDataSource } from "@modules/database/data-source";
+//import { getMysqlDataSource } from "@modules/database/data-source";
 import { ClientModule } from "@modules/client/client.module";
 import { ClientAuthController } from "./controllers/client-authentication.controller";
 import { SellerAuthService } from "./services/seller-auth.service";

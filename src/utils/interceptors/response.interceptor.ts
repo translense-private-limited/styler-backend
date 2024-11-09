@@ -4,11 +4,11 @@ import {
     ExecutionContext,
     CallHandler,
 } from '@nestjs/common';
-import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable,  } from 'rxjs';
+import { map, } from 'rxjs/operators';
 
 @Injectable()
-export class ResponseTransformInterceptor<T> implements NestInterceptor<T, any> {
+export class ResponseTransformInterceptor<T> implements NestInterceptor<T, ResponseFormat<T>> {
     intercept(
         context: ExecutionContext,
         next: CallHandler<T>,
@@ -24,7 +24,6 @@ export class ResponseTransformInterceptor<T> implements NestInterceptor<T, any> 
                     meta: {
                         timestamp: new Date().toISOString(),
                         requestId: response.getHeader('x-request-id') || null,
-                        //@ts-ignore
                         //pagination: data.pagination
                     },
                 };
@@ -50,3 +49,13 @@ export class ResponseTransformInterceptor<T> implements NestInterceptor<T, any> 
         );
     }
 }
+interface ResponseFormat<T> {
+    status: number;
+    data: T;
+    meta: {
+      timestamp: string;
+      requestId: string | null;
+      // pagination?: PaginationType; // Optional: add pagination if needed, with a specific type
+    };
+  }
+  
