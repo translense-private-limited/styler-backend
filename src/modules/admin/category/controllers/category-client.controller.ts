@@ -4,7 +4,7 @@ import { CategorySchema } from '../entities/category.schema';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('client')
-@ApiTags('category/client')
+@ApiTags('Client/category')
 @ApiBearerAuth('jwt')
 export class CategoryClientController {
   constructor(private readonly categoryService: CategoryService) {}
