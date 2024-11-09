@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  lint:
+  lint-check:
     name: Lint Code
     runs-on: ubuntu-latest
     env:
