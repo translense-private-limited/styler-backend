@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Exception } from 'handlebars';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
@@ -18,7 +19,7 @@ export class JwtService {
     try {
       return jwt.verify(token, this.secret);
     } catch (error) {
-      throw new Error('Invalid or expired token');
+      throw new Exception('Invalid or expired token', error);
     }
   }
 
