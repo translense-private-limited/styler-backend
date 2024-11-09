@@ -11,6 +11,7 @@ const swaggerCustomOption: SwaggerCustomOptions = {
   customfavIcon:
     'https://media.licdn.com/dms/image/C560BAQEgOil_8sLTAA/company-logo_100_100/0/1667873121695/translense_private_limited_logo?e=2147483647&v=beta&t=aoMhGOadwe8RCtjwOLUo9EUg8zLUUpegXeo5LSpfXWY   ',
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function filterPathsByPrefix(document: any, prefixes: string[]) {
   const filteredPaths = {};
   for (const [path, operations] of Object.entries(document.paths)) {
@@ -20,7 +21,7 @@ function filterPathsByPrefix(document: any, prefixes: string[]) {
   }
   document.paths = filteredPaths;
 }
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function filterPathsByNotPrefix(document: any, prefixes: string[]) {
   const filteredPaths = {};
   for (const [path, operations] of Object.entries(document.paths)) {

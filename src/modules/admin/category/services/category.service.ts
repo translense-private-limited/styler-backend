@@ -1,16 +1,8 @@
-import {
-  Body,
-  Injectable,
-  Logger,
-  NotFoundException,
-  Patch,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CategoryRepository } from '../repository/category.repository';
 import { CategoryDto } from '../dtos/category.dto';
 import { CategorySchema } from '../entities/category.schema';
-import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, Mongoose, Types } from 'mongoose';
-import { getMongodbDataSource } from '@modules/database/data-source';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class CategoryService {
@@ -53,7 +45,7 @@ export class CategoryService {
   }
 
   async delete(id: string): Promise<void> {
-    const category = await this.findByIdOrThrow(id);
+    await this.findByIdOrThrow(id);
     try {
       await this.categoryRepository
         .getRepository()

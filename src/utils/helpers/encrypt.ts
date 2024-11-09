@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
+import { Exception } from 'handlebars';
 
 /**
  * Generates a hashed password using bcrypt.
@@ -9,13 +10,9 @@ import * as bcrypt from 'bcryptjs';
  */ export async function generateHashedPassword(
   password: string,
 ): Promise<string> {
-  try {
-    const saltRounds: number = 10;
-    const hashedPassword: string = await bcrypt.hash(password, saltRounds);
-    return hashedPassword;
-  } catch (error) {
-    throw error;
-  }
+  const saltRounds: number = 10;
+  const hashedPassword: string = await bcrypt.hash(password, saltRounds);
+  return hashedPassword;
 }
 
 /**
@@ -38,6 +35,6 @@ export async function verifyPassword(
     }
     return match;
   } catch (error) {
-    throw error;
+    throw new Exception('Error in validating encrypted password', error);
   }
 }

@@ -21,26 +21,29 @@ export class AuthorizationGuard implements CanActivate {
     if (!isAuthorizedUserType) {
       return false;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const meta = this.reflector.getAllAndMerge(REQUIRED_PERMISSION, [
       context.getClass(),
       context.getHandler(),
     ]);
-    return true;
-    if (!meta) {
-      return true;
-    }
-
-    const user = req.user; // Replace with your actual user retrieval logic
-
-    if (!user || !user.roles) {
-      throw new UnauthorizedException('User does not have required roles');
-    }
-
-    if (!false) {
-      throw new UnauthorizedException('Insufficient permissions');
-    }
 
     return true;
+    // need to be reviewed and tested again and uncomment
+    // if (!meta) {
+    //   return true;
+    // }
+
+    // const user = req.user; // Replace with your actual user retrieval logic
+
+    // if (!user || !user.roles) {
+    //   throw new UnauthorizedException('User does not have required roles');
+    // }
+
+    // if (!false) {
+    //   throw new UnauthorizedException('Insufficient permissions');
+    // }
+
+    // return true;
   }
 
   private isUserAuthorizedToAccessPath(request: Request): boolean {

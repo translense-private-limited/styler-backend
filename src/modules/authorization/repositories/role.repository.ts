@@ -5,7 +5,6 @@ import { getMysqlDataSource } from '@modules/database/data-source';
 import { Repository } from 'typeorm';
 import { RoleEntity } from '../entities/role.entity';
 
-
 @Injectable()
 export class RoleRepository extends BaseRepository<RoleEntity> {
   constructor(

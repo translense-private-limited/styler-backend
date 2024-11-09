@@ -1,9 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class EncryptionService {
- 
-  
   findAll() {
     // Logic for finding all records
     return [];
@@ -11,7 +9,7 @@ export class EncryptionService {
 
   create() {
     // Logic for creating a new record
-    this.encryptionRepository.getRepository().save()
-    return { message: "Created successfully" };
+    this.encryptionRepository.getRepository().save();
+    return { message: 'Created successfully' };
   }
 }

@@ -33,7 +33,11 @@ const createFoldersAndFiles = (name, location) => {
   });
 
   // Create the repository file
-  const repositoryFilePath = path.join(basePath, 'repository', `${name}.repository.ts`);
+  const repositoryFilePath = path.join(
+    basePath,
+    'repository',
+    `${name}.repository.ts`,
+  );
   const repositoryFileContent = `
 import { InjectRepository } from "@nestjs/typeorm";
 import { ${capitalizedName}Entity } from "../entities/${name}.entity";
@@ -92,7 +96,11 @@ export class ${capitalizedName}Module { }
   fs.writeFileSync(moduleFilePath, moduleFileContent);
 
   // Create the controller file
-  const controllerFilePath = path.join(basePath, 'controllers', `${name}.controller.ts`);
+  const controllerFilePath = path.join(
+    basePath,
+    'controllers',
+    `${name}.controller.ts`,
+  );
   const controllerFileContent = `
 import { Controller, Get, Post } from "@nestjs/common";
 import { ${capitalizedName}Service } from "../services/${name}.service";
@@ -137,7 +145,9 @@ export class ${capitalizedName}Service {
 `.trim();
   fs.writeFileSync(serviceFilePath, serviceFileContent);
 
-  console.log(`Folders and files for ${name} created successfully at ${location}!`);
+  console.log(
+    `Folders and files for ${name} created successfully at ${location}!`,
+  );
 };
 
 // Get the input name and location from command line arguments

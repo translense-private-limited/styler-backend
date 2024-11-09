@@ -1,5 +1,5 @@
 export enum UserEnum {
-    customer = 'customer',
-    seller = 'seller',
-    admin = 'admin'
+  customer = 'customer',
+  seller = 'seller',
+  admin = 'admin',
 }
