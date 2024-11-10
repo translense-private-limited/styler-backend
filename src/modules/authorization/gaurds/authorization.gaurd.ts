@@ -1,10 +1,5 @@
 // auth.guard.ts
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { REQUIRED_PERMISSION } from '@src/utils/decorators/roles.decorator';
 import { Observable } from 'rxjs';
