@@ -1,4 +1,3 @@
-#!/bin/bash
 
 MYSQL_PASSWORD="root"
 
@@ -29,3 +28,45 @@ echo "$SQL_COMMANDS"
 
 # Connect to MySQL container and execute SQL commands
 echo "$SQL_COMMANDS" | docker exec -i styler-mysql mysql -u user -p"$MYSQL_PASSWORD"
+
+
+
+############################# MONGODB CONNECTION #####################
+MONGO_USERNAME="root"
+MONGO_PASSWORD="root"
+MONGO_DB="styler"
+MONGO_CONTAINER="styler-mongodb"
+
+# Categories data with predefined _id values
+categories='[
+  { "_id": ObjectId("64b350d3b95e7bc7f13bb3cd"), "name": "Hair Care", "description": "Hair Care products" },
+  { "_id": ObjectId("64b350d3b95e7bc7f13bb3ce"), "name": "Skin Care", "description": "Skin Care products" },
+  { "_id": ObjectId("64b350d3b95e7bc7f13bb3cf"), "name": "Nail Care", "description": "Nail Care products" },
+  { "_id": ObjectId("64b350d3b95e7bc7f13bb3d0"), "name": "Makeup", "description": "Makeup products" },
+  { "_id": ObjectId("64b350d3b95e7bc7f13bb3d1"), "name": "Fragrance", "description": "Fragrance products" }
+]'
+
+# Insert data using mongosh
+docker exec -i $MONGO_CONTAINER mongosh "mongodb://$MONGO_USERNAME:$MONGO_PASSWORD@localhost:27017/$MONGO_DB?authSource=admin" <<EOF
+try {
+    const categories = $categories;
+    const result = db.categories.bulkWrite(
+        categories.map(category => ({
+            updateOne: {
+                filter: { _id: category._id },
+                update: { \$set: category },
+                upsert: true  // This ensures that if the document doesn't exist, it's inserted
+            }
+        }))
+    );
+
+    if (result.insertedCount > 0) {
+        print("Category data inserted successfully.");
+    } else {
+        print("No new data inserted, all data already exists.");
+    }
+} catch (e) {
+    print("Error inserting category data: " + e);
+}
+EOF
+

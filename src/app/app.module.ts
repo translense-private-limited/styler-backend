@@ -21,8 +21,8 @@ import { AuthenticationGuard } from '@modules/atuhentication/gaurds/authenticati
 import { ServiceModule } from '@modules/client/services/service.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 
-import { AdminModule } from '@modules/admin/category/admin.module';
 import { OutletGuard } from '@modules/authorization/gaurds/outlet-gaurd';
+import { AdminModule } from '@modules/admin/admin.module';
 
 @Module({
   imports: [
