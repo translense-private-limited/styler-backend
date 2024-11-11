@@ -6,6 +6,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { RoleInterface } from '../interfaces/role.interface';
+import { roles } from '../enums/roles.enum';
 
 export class CreateRoleDto implements RoleInterface {
   @IsNotEmpty()
@@ -16,6 +17,9 @@ export class CreateRoleDto implements RoleInterface {
   @IsOptional()
   isSystemDefined: boolean; // Required field
 
+  @IsNotEmpty()
+  keyScope: roles;
+  
   @IsNotEmpty()
   @IsNumber()
   outletId: number; // Required field
