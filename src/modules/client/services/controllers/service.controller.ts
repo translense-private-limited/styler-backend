@@ -14,7 +14,7 @@ import { ServiceDto } from '../dtos/Service.dto';
 import { ServiceSchema } from '../schema/service.schema';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@Controller('admin')
+@Controller('client')
 @ApiBearerAuth('jwt')
 @ApiTags('services')
 export class ServiceController {
