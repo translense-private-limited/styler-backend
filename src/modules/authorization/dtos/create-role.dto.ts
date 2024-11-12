@@ -6,7 +6,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { RoleInterface } from '../interfaces/role.interface';
-import { roles } from '../enums/roles.enum';
+import { UserType } from '../enums/usertype.enum';
 
 export class CreateRoleDto implements RoleInterface {
   @IsNotEmpty()
@@ -18,7 +18,7 @@ export class CreateRoleDto implements RoleInterface {
   isSystemDefined: boolean; // Required field
 
   @IsNotEmpty()
-  keyScope: roles;
+  Scope: UserType;
   
   @IsNotEmpty()
   @IsNumber()

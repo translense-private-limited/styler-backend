@@ -2,9 +2,10 @@ import { Controller, Get, Param } from "@nestjs/common";
 import { RoleClientService } from "../services/role-client.service";
 import { RoleEntity } from "../entities/role.entity";
 import { ApiTags } from "@nestjs/swagger";
+import { ReturnRolesTypeDTO } from "../dtos/return-role.dto";
 
 @Controller('client')
-@ApiTags('Client/Roles')
+@ApiTags('Client/Role')
 export class RoleClientController {
     constructor(
         private readonly roleClientService:RoleClientService
@@ -13,22 +14,22 @@ export class RoleClientController {
 
     @Get('role')
     async getAllSystemDefinedRoles():Promise<RoleEntity[]>{
-        return await this.roleClientService.getAllSystemDefinedRoles()
+        return this.roleClientService.getAllSystemDefinedRoles()
     }
 
     @Get('role/custom/:outletId')
     async getAllCustomRoles(
         @Param('outletId') outletId:number
     ):Promise<RoleEntity[]>{
-        return await this.roleClientService.getAllCustomRoles(outletId)
+        return this.roleClientService.getAllCustomRoles(outletId)
     }   
 
     @Get('role/:outletId')
     async getAllRoles(
         @Param('outletId') outletId:number
-    ):Promise<{ custom: RoleEntity[]; systemDefined: RoleEntity[] }>
+    ):Promise<ReturnRolesTypeDTO>
     {
-        return await this.roleClientService.getAllRoles(outletId)
+        return this.roleClientService.getAllRoles(outletId)
     }
 
 }
