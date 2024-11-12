@@ -23,6 +23,7 @@ import { AuthorizationModule } from '@modules/authorization/authorization.module
 
 import { OutletGuard } from '@modules/authorization/gaurds/outlet-gaurd';
 import { AdminModule } from '@modules/admin/admin.module';
+import * as mongoose from 'mongoose';
 
 @Module({
   imports: [
@@ -73,6 +74,10 @@ import { AdminModule } from '@modules/admin/admin.module';
   ],
 })
 export class AppModule {
+  constructor() {
+    // Enable Mongoose debug logging
+    mongoose.set('debug', false);
+  }
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(RequestIdMiddleware) // Apply your middleware here
