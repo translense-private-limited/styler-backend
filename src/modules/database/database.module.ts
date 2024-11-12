@@ -18,6 +18,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       username: 'user',
       password: 'root',
       database: 'styler',
+      // eslint-disable-next-line no-undef
       entities: [path.join(__dirname, '../../**/*.entity{.ts,.js}')],
       synchronize: true,
       timezone: 'Z',

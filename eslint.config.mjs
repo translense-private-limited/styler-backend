@@ -30,6 +30,7 @@ export default [
       ecmaVersion: 2020,
       globals: {
         ...globals.browser,
+        process: "readonly",
       },
       parserOptions: {
         project: "./tsconfig.json",
@@ -59,7 +60,7 @@ export default [
         { selector: "interface", format: ["PascalCase"], suffix: ["Interface"] },
 
       ],
-      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      // "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     },
   },
   {
