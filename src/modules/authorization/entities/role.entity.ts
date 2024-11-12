@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import {  UserType } from '../enums/usertype.enum';
 
 @Entity('roles')
 export class RoleEntity extends BaseEntity {
@@ -10,6 +11,12 @@ export class RoleEntity extends BaseEntity {
 
   @Column()
   isSystemDefined: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: UserType,
+  })
+  scope: UserType;  
 
   @Column()
   outletId: number;

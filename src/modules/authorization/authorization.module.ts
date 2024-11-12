@@ -9,6 +9,8 @@ import { getMysqlDataSource } from '@modules/database/data-source';
 import { roleController } from './controllers/role.controller';
 import { RoleService } from './services/role.service';
 import { RoleRepository } from './repositories/role.repository';
+import { RoleClientController } from './controllers/role-client.controller';
+import { RoleClientService } from './services/role-client.service';
 
 @Module({
   imports: [
@@ -17,7 +19,7 @@ import { RoleRepository } from './repositories/role.repository';
       getMysqlDataSource(),
     ),
   ],
-  controllers: [ResourceController, roleController],
-  providers: [ResourceService, ResourceRepository, RoleService, RoleRepository],
+  controllers: [ResourceController, roleController,RoleClientController],
+  providers: [ResourceService, ResourceRepository, RoleService, RoleRepository,RoleClientService],
 })
 export class AuthorizationModule {}
