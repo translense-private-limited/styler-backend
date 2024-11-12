@@ -18,7 +18,7 @@ export class CreateRoleDto implements RoleInterface {
   isSystemDefined: boolean; // Required field
 
   @IsNotEmpty()
-  Scope: UserType;
+  scope: UserType;
   
   @IsNotEmpty()
   @IsNumber()

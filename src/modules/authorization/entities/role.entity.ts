@@ -16,7 +16,7 @@ export class RoleEntity extends BaseEntity {
     type: 'enum',
     enum: UserType,
   })
-  Scope: UserType;  
+  scope: UserType;  
 
   @Column()
   outletId: number;

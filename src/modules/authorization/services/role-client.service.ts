@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { RoleEntity } from "../entities/role.entity";
 import { RoleRepository } from "../repositories/role.repository";
 import { UserType } from "../enums/usertype.enum";
-import { ReturnRolesTypeDTO } from "../dtos/return-role.dto";
+import { SystemAndCustomRolesDto } from "../dtos/system-custom-roles.dto";
 
 @Injectable()
 export class RoleClientService{
@@ -14,7 +14,7 @@ export class RoleClientService{
         return await this.roleRepository.getRepository()
         .find(
             {where:
-                {isSystemDefined:true,Scope:UserType.CLIENT}
+                {isSystemDefined:true,scope:UserType.CLIENT}
             }
         )
     }
@@ -23,15 +23,15 @@ export class RoleClientService{
         return await this.roleRepository.getRepository()
         .find(
             {where:
-                {isSystemDefined:false,outletId:outletId,Scope:UserType.CLIENT}
+                {isSystemDefined:false,outletId:outletId,scope:UserType.CLIENT}
             }
         )
     }
 
-    async getAllRoles(outletId:number):Promise<ReturnRolesTypeDTO>{
+    async getAllRoles(outletId:number):Promise<SystemAndCustomRolesDto>{
         return {
-            custom: await this.getAllCustomRoles(outletId),
-            systemDefined: await this.getAllSystemDefinedRoles(),
+            systemRoles: await this.getAllCustomRoles(outletId),
+            customRoles: await this.getAllSystemDefinedRoles(),
         }
     }
 }

@@ -2,7 +2,7 @@ import { Controller, Get, Param } from "@nestjs/common";
 import { RoleClientService } from "../services/role-client.service";
 import { RoleEntity } from "../entities/role.entity";
 import { ApiTags } from "@nestjs/swagger";
-import { ReturnRolesTypeDTO } from "../dtos/return-role.dto";
+import { SystemAndCustomRolesDto } from "../dtos/system-custom-roles.dto";
 
 @Controller('client')
 @ApiTags('Client/Role')
@@ -27,7 +27,7 @@ export class RoleClientController {
     @Get('role/:outletId')
     async getAllRoles(
         @Param('outletId') outletId:number
-    ):Promise<ReturnRolesTypeDTO>
+    ):Promise<SystemAndCustomRolesDto>
     {
         return this.roleClientService.getAllRoles(outletId)
     }
