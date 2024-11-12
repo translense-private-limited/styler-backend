@@ -1,12 +1,12 @@
 // auth.guard.ts
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { REQUIRED_PERMISSION } from '@src/utils/decorators/roles.decorator';
+import { requiredPermission } from '@src/utils/decorators/roles.decorator';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) { }
 
   canActivate(
     context: ExecutionContext,
@@ -17,7 +17,7 @@ export class AuthorizationGuard implements CanActivate {
       return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const meta = this.reflector.getAllAndMerge(REQUIRED_PERMISSION, [
+    const meta = this.reflector.getAllAndMerge(requiredPermission, [
       context.getClass(),
       context.getHandler(),
     ]);

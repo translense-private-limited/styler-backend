@@ -1,7 +1,7 @@
-import { Gender } from '@src/utils/enums/gender.enums';
-export interface serviceInterface {
+import { GenderEnum } from '@src/utils/enums/gender.enums';
+export interface ServiceInterface {
   categoryId: string;
-  gender: Gender;
+  gender: GenderEnum;
   serviceName: string;
   type: string;
   price: number;
