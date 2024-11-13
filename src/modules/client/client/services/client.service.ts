@@ -22,7 +22,7 @@ export class ClientService {
     private bcryptEncryptionService: BcryptEncryptionService,
   ) {}
   
-  async getTeamMember(outletId: number, clientId: number) {
+  async getTeamMemberById(outletId: number, clientId: number) {
     try {
       // console.log("Received clientId:", clientId);
   

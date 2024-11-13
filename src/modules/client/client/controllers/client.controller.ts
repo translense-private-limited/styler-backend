@@ -21,7 +21,7 @@ export class ClientController {
   }
 
   @Get(':outletId/:clientId')
-  async getTeamMemeber(
+  async getTeamMemeberByIdOrThrow(
     @Param('clientId') clientId:number,
     @Param('outletId') outletId:number
   ){
