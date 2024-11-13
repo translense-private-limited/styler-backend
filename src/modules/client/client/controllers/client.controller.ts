@@ -28,7 +28,7 @@ export class ClientController {
     if(!clientId){
       throw new Error('clientId is missing in the request')
     }
-    return this.clientService.getTeamMember(outletId,clientId);
+    return this.clientService.getTeamMemberById(outletId,clientId);
   }
   
 
