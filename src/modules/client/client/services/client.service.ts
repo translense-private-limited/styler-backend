@@ -3,23 +3,63 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  HttpException,
+  HttpStatus
 } from '@nestjs/common';
 import { CreateClientDto } from '../dtos/client.dto';
 import { ClientRepository } from '../repository/client.repository';
 import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
 import { SellerLoginDto } from '@modules/atuhentication/dtos/seller-login.dto';
 import { ClientEntity } from '../entities/client.entity';
+import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
+import { RoleClientService } from '@modules/authorization/services/role-client.service';
 
 @Injectable()
 export class ClientService {
   constructor(
     private clientRepository: ClientRepository,
+    private roleClientService:RoleClientService,
     private bcryptEncryptionService: BcryptEncryptionService,
   ) {}
-  findAll() {
-    // Logic for finding all records
-    return [];
+  
+  async getTeamMember(outletId: number, clientId: number) {
+    try {
+      // console.log("Received clientId:", clientId);
+  
+      const teamMember = await this.clientRepository.getRepository().findOne({ where: { id: clientId, outletId } });
+      if (!teamMember) {
+        throw new HttpException('Team member not found.', HttpStatus.NOT_FOUND);
+      }
+  
+      return teamMember;
+    } catch (error) {
+      console.error('Error fetching team member:', error);
+  
+      throw new HttpException('An unexpected error occurred.', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
+  
+  
+  
+  async getAllTeamMembers(outletId: number) {
+    try {
+      const teamMembers = await this.clientRepository
+        .getRepository()
+        .createQueryBuilder('client')
+        .where('client.outletId = :outletId', { outletId })
+        .getMany();
+  
+      if (!teamMembers.length) {
+        return { message: 'No team members found for this outletId', teamMembers };
+      }
+  
+      return teamMembers;
+    } catch (error) {
+      console.error('Error retrieving team members:', error);
+      throw new Error('An error occurred while fetching team members');
+    }
+  }
+  
 
   private async getEncryptedPassword(
     createClientDto: CreateClientDto,
@@ -41,21 +81,31 @@ export class ClientService {
     }
   }
 
-  async createSeller(createClientDto: CreateClientDto) {
-    await this.checkSellerUniqueness(createClientDto);
 
+  async createTeamMember(createClientDto: CreateClientDto, clientIdDto: ClientIdDto) {
+    await this.checkSellerUniqueness(createClientDto);
+    // console.log(clientIdDto)
+    // Check outletId permission
+    if (!clientIdDto.outletIds.includes(createClientDto.outletId)) 
+      throw new HttpException('Outlet permission denied.', HttpStatus.FORBIDDEN);    
+
+    const roleExists = await this.roleClientService.getRoleById(createClientDto.roleId);
+    if (!roleExists) {
+      throw new HttpException('Role not found.', HttpStatus.BAD_REQUEST);
+    }
+    const roleName = roleExists.name;
+
+    // Set and encrypt password
+    createClientDto.password = createClientDto.password || createClientDto.name || 'password';
+    const plainPassword = createClientDto.password;
     const encryptedPassword = await this.getEncryptedPassword(createClientDto);
     createClientDto.password = encryptedPassword;
-
-    const client = await this.clientRepository
-      .getRepository()
-      .save(createClientDto);
-
-    client.password = 'XXXXXX';
-
-    return client;
+  
+    // Save client and return response with original password
+    const client = await this.clientRepository.getRepository().save(createClientDto);
+    return { ...client, password: plainPassword,roleId:roleName };
   }
-
+  
   async getSellerByEmail(
     sellerLoginDto: SellerLoginDto,
   ): Promise<ClientEntity> {

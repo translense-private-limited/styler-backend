@@ -9,9 +9,10 @@ SQL_COMMANDS=$(cat <<EOF
 CREATE DATABASE IF NOT EXISTS styler;
 USE styler;
 
-INSERT INTO client (id, name, email, password, createdAt, updatedAt) 
-VALUES (1, 'Sample Outlet Client', 'client@translense.com', '${HASHED_PASSWORD}', NOW(), NOW()) 
+INSERT INTO client (id, name, email, password, contactNumber, roleId, gender, pastExperience, about, outletId, createdAt, updatedAt)
+VALUES (1, 'Sample Outlet Client', 'client@translense.com', '${HASHED_PASSWORD}', '1234567890', 21, 'MALE', 5, 'Experienced professional', 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE id=id;
+
 
 INSERT INTO outlets (id, name, description, status, address, latitude, longitude, phoneNumber, email, website, createdAt, updatedAt, clientId) 
 VALUES (1, 'Sample Outlet', 'This is a sample outlet description.', 'UNDER_CONSTRUCTION', '123 Main Street, City, Country', 37.7749, -122.4194, '+1234567890', 'sample@translense.com', 'http://www.sampleoutlet.com', NOW(), NOW(), 1) 
@@ -19,15 +20,15 @@ ON DUPLICATE KEY UPDATE id=id;
 
 INSERT INTO client_outlet_mapping (clientId, outletId) VALUES (1, 1) 
 ON DUPLICATE KEY UPDATE clientId = VALUES(clientId), outletId = VALUES(outletId);
-INSERT INTO roles (id, name, isSystemDefined, scope, outletId)
+INSERT INTO roles (name, isSystemDefined, scope, outletId)
 VALUES
-  (21, 'owner', true, 'CLIENT', 1),
-  (22,'manager',true,'CLIENT,1 )
+  ('owner', 1, 'CLIENT', 1),
+  ('manager', 1, 'CLIENT', 1)
 ON DUPLICATE KEY UPDATE
   name=VALUES(name),
   isSystemDefined=VALUES(isSystemDefined),
   outletId=VALUES(outletId),
-  Scope=VALUES(Scope);
+  scope=VALUES(scope);
 EOF
 )
 

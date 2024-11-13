@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { RoleEntity } from "../entities/role.entity";
 import { RoleRepository } from "../repositories/role.repository";
 import { UserType } from "../enums/usertype.enum";
@@ -33,5 +33,11 @@ export class RoleClientService{
             systemRoles: await this.getAllCustomRoles(outletId),
             customRoles: await this.getAllSystemDefinedRoles(),
         }
+    }
+
+    async getRoleById(roleId:number){
+        const role =  await this.roleRepository.getRepository().findOne({where:{id:roleId}})
+        if(!role) return new HttpException('role does not exist',HttpStatus.FORBIDDEN);
+        return role;
     }
 }
