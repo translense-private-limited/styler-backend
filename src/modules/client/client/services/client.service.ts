@@ -46,15 +46,17 @@ export class ClientService {
       const teamMembers = await this.clientRepository.getRepository().find({
         where: { outletId },
       });
-      const roles = await Promise.all(
+      const teamMembersWithRoles = await Promise.all(
         teamMembers.map(async (teamMember) => {
-          return this.roleClientService.getRoleByIdOrThrow(teamMember.roleId);
+          const role = await this.roleClientService.getRoleByIdOrThrow(teamMember.roleId);
+          return {
+            client: teamMember,
+            role: role,
+          };
         })
       );
-  
       return {
-        client: teamMembers,
-        role: roles,
+        teamMembers: teamMembersWithRoles,
       };
     } catch (error) {
       console.error('Error retrieving team members:', error);
