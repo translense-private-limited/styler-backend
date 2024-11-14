@@ -18,6 +18,6 @@ export class RoleEntity extends BaseEntity {
   })
   scope: UserType;  
 
-  @Column()
-  outletId: number;
+  @Column({nullable:true})
+  outletId: number|null;
 }

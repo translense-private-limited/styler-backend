@@ -22,8 +22,8 @@ INSERT INTO client_outlet_mapping (clientId, outletId) VALUES (1, 1)
 ON DUPLICATE KEY UPDATE clientId = VALUES(clientId), outletId = VALUES(outletId);
 INSERT INTO roles (name, isSystemDefined, scope, outletId)
 VALUES
-  ('owner', 1, 'CLIENT', 1),
-  ('manager', 1, 'CLIENT', 1)
+  (21, 'owner', true, 'CLIENT', null),
+  (22,'manager',true,'CLIENT',null )
 ON DUPLICATE KEY UPDATE
   name=VALUES(name),
   isSystemDefined=VALUES(isSystemDefined),

@@ -22,15 +22,10 @@ export class ClientService {
     private bcryptEncryptionService: BcryptEncryptionService,
   ) {}
   
-  async getTeamMemberById(outletId: number, clientId: number) {
+  async getTeamByIdOrThrow(outletId: number, clientId: number) {
     try {
       // console.log("Received clientId:", clientId);
-  
       const teamMember = await this.clientRepository.getRepository().findOne({ where: { id: clientId, outletId } });
-      if (!teamMember) {
-        throw new HttpException('Team member not found.', HttpStatus.NOT_FOUND);
-      }
-  
       return teamMember;
     } catch (error) {
       console.error('Error fetching team member:', error);
@@ -41,17 +36,13 @@ export class ClientService {
   
   
   
-  async getAllTeamMembers(outletId: number) {
+  async getAllTeamMembersForOutlet(outletId: number) {
     try {
       const teamMembers = await this.clientRepository
         .getRepository()
         .createQueryBuilder('client')
         .where('client.outletId = :outletId', { outletId })
         .getMany();
-  
-      if (!teamMembers.length) {
-        return { message: 'No team members found for this outletId', teamMembers };
-      }
   
       return teamMembers;
     } catch (error) {
@@ -86,14 +77,14 @@ export class ClientService {
     await this.checkSellerUniqueness(createClientDto);
     // console.log(clientIdDto)
     // Check outletId permission
-    if (!clientIdDto.outletIds.includes(createClientDto.outletId)) 
-      throw new HttpException('Outlet permission denied.', HttpStatus.FORBIDDEN);    
-
-    const roleExists = await this.roleClientService.getRoleById(createClientDto.roleId);
-    if (!roleExists) {
+    if (!clientIdDto.outletIds.includes(createClientDto.outletId)){ 
+      console.log("ClientIdDto",ClientIdDto)
+      throw new UnauthorizedException('Outlet permission denied.');
+    }
+    const role = await this.roleClientService.getRoleByIdOrThrow(createClientDto.roleId);
+    if (!role) {
       throw new HttpException('Role not found.', HttpStatus.BAD_REQUEST);
     }
-    const roleName = roleExists.name;
 
     // Set and encrypt password
     createClientDto.password = createClientDto.password || createClientDto.name || 'password';
@@ -103,7 +94,7 @@ export class ClientService {
   
     // Save client and return response with original password
     const client = await this.clientRepository.getRepository().save(createClientDto);
-    return { ...client, password: plainPassword,roleId:roleName };
+    return { ...client, password: plainPassword,role:role };
   }
   
   async getSellerByEmail(

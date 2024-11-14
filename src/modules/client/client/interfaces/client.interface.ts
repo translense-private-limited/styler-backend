@@ -7,7 +7,7 @@ export interface clientInterface{
     contactNumber:string;
     roleId:number;
     gender:Gender;
-    pastExperience:number;
-    about:string;
-    outletId:number;
+    pastExperience?:number;
+    about?:string;
+    outletId?:number;
 }
