@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { RoleEntity } from "../entities/role.entity";
 import { RoleRepository } from "../repositories/role.repository";
 import { UserType } from "../enums/usertype.enum";
@@ -35,9 +35,9 @@ export class RoleClientService{
         }
     }
 
-    async getRoleById(roleId:number){
+    async getRoleByIdOrThrow(roleId:number):Promise<RoleEntity>{
         const role =  await this.roleRepository.getRepository().findOne({where:{id:roleId}})
-        if(!role) return new HttpException('role does not exist',HttpStatus.FORBIDDEN);
+        if(!role) throw new NotFoundException('role does not exist');
         return role;
     }
 }

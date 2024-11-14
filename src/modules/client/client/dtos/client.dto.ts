@@ -12,7 +12,6 @@ export class CreateClientDto implements clientInterface {
   email: string;
 
   @IsOptional()
-  @Length(6, 255, { message: 'Password must be at least 6 characters long' })
   password: string;
 
   @IsNotEmpty({ message: 'Contact number should not be empty' })
@@ -27,12 +26,12 @@ export class CreateClientDto implements clientInterface {
   @IsNotEmpty({message:'Gender should not be empty'})
   gender:Gender;
 
-  @IsNotEmpty({message:'past experience should not be empty'})
-  pastExperience:number;
-
-  @IsNotEmpty({message:'about should not be empty'})
-  about:string;
+  @IsOptional()
+  pastExperience?:number;
 
   @IsOptional()
-  outletId:number;
+  about?:string;
+
+  @IsOptional()
+  outletId?:number;
 }
