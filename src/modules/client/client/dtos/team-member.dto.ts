@@ -4,6 +4,6 @@ import { RoleEntity } from "@modules/authorization/entities/role.entity";
 export class TeamMember{
 
     client:ClientEntity;
-    password:string;
+    password?:string;
     role:RoleEntity;
 }

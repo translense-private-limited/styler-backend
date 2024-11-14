@@ -15,6 +15,7 @@ import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
 import { In } from 'typeorm';
 import { TeamMember } from '../dtos/team-member.dto';
+import { AllTeamMembers } from '../dtos/all-team-members.dto';
 
 @Injectable()
 export class ClientService {
@@ -24,12 +25,13 @@ export class ClientService {
     private bcryptEncryptionService: BcryptEncryptionService,
   ) {}
   
-  async getTeamByIdOrThrow(clientId: number,clientIdDto:ClientIdDto):Promise<ClientEntity> {
+  async getTeamByIdOrThrow(clientId: number,clientIdDto:ClientIdDto):Promise<TeamMember> {
     try {
 
       const {outletIds} = clientIdDto;
       const teamMember = await this.clientRepository.getRepository().findOne({ where: { id: clientId ,outletId: In(outletIds)} });
-      return teamMember;
+      const role = await this.roleClientService.getRoleByIdOrThrow(teamMember.roleId)
+      return {client:teamMember,role};
     } catch (error) {
       console.error('Error fetching team member:', error);
   
@@ -39,20 +41,27 @@ export class ClientService {
   
   
   
-  async getAllTeamMembersForOutlet(outletId: number):Promise<ClientEntity[]> {
+  async getAllTeamMembersForOutlet(outletId: number): Promise<AllTeamMembers> {
     try {
-      const teamMembers = await this.clientRepository
-        .getRepository()
-        .createQueryBuilder('client')
-        .where('client.outletId = :outletId', { outletId })
-        .getMany();
+      const teamMembers = await this.clientRepository.getRepository().find({
+        where: { outletId },
+      });
+      const roles = await Promise.all(
+        teamMembers.map(async (teamMember) => {
+          return this.roleClientService.getRoleByIdOrThrow(teamMember.roleId);
+        })
+      );
   
-      return teamMembers;
+      return {
+        client: teamMembers,
+        role: roles,
+      };
     } catch (error) {
       console.error('Error retrieving team members:', error);
       throw new Error('An error occurred while fetching team members');
     }
   }
+  
   
 
   private async getEncryptedPassword(

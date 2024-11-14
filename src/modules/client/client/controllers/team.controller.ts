@@ -4,8 +4,8 @@ import { ClientService } from "../services/client.service";
 import { CreateClientDto } from "../dtos/client.dto";
 import { ClientIdDecorator } from "@src/utils/decorators/client-id.decorator";
 import { ClientIdDto } from "@src/utils/dtos/client-id.dto";
-import { ClientEntity } from "../entities/client.entity";
 import { TeamMember } from "../dtos/team-member.dto";
+import { AllTeamMembers } from "../dtos/all-team-members.dto";
 
 @Controller('client')
 @ApiTags('Client/teams')
@@ -17,7 +17,7 @@ export class TeamController{
 
     @ApiBearerAuth('jwt')
     @Get('teams/:outletId') 
-    async getAllTeamMembersForOutlet(@Param('outletId',ParseIntPipe) outletId: number):Promise<ClientEntity[]> {
+    async getAllTeamMembersForOutlet(@Param('outletId',ParseIntPipe) outletId: number):Promise<AllTeamMembers> {
       return this.clientService.getAllTeamMembersForOutlet(outletId);
     }
 
@@ -26,7 +26,7 @@ export class TeamController{
         @Param('clientId',ParseIntPipe) clientId:number,
         @ClientIdDecorator() clientIdDto:ClientIdDto
 
-    ):Promise<ClientEntity>{
+    ):Promise<TeamMember>{
         return this.clientService.getTeamByIdOrThrow(clientId,clientIdDto);
     }
 
