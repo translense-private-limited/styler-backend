@@ -14,7 +14,7 @@ import { ClientEntity } from '../entities/client.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
 import { In } from 'typeorm';
-import { TeamMemberRole } from '../dtos/team-role.dto';
+import { TeamMembers } from '../dtos/teamMembers.dto';
 
 @Injectable()
 export class ClientService {
@@ -76,7 +76,7 @@ export class ClientService {
   }
 
 
-  async createTeamMember(createClientDto: CreateClientDto, clientIdDto: ClientIdDto):Promise<TeamMemberRole> {
+  async createTeamMember(createClientDto: CreateClientDto, clientIdDto: ClientIdDto):Promise<TeamMembers> {
 
     await this.checkSellerUniqueness(createClientDto);
 

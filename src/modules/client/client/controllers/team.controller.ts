@@ -5,7 +5,7 @@ import { CreateClientDto } from "../dtos/client.dto";
 import { ClientIdDecorator } from "@src/utils/decorators/client-id.decorator";
 import { ClientIdDto } from "@src/utils/dtos/client-id.dto";
 import { ClientEntity } from "../entities/client.entity";
-import { TeamMemberRole } from "../dtos/team-role.dto";
+import { TeamMembers } from "../dtos/teamMembers.dto";
 
 @Controller('client')
 @ApiTags('Client/teams')
@@ -31,7 +31,7 @@ export class TeamController{
     }
 
     @Post('team')
-    async createTeamMember(@Body() createClientDto: CreateClientDto, @ClientIdDecorator() clientIdDto: ClientIdDto):Promise<TeamMemberRole> {
+    async createTeamMember(@Body() createClientDto: CreateClientDto, @ClientIdDecorator() clientIdDto: ClientIdDto):Promise<TeamMembers> {
         return this.clientService.createTeamMember(createClientDto,clientIdDto);
     }
 }
