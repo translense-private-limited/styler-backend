@@ -7,7 +7,7 @@ import { getMysqlDataSource } from '@modules/database/data-source';
 import { ClientExternalService } from './services/client-external.service';
 import { EncryptionModule } from '@modules/encryption/encryption.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
-import { TeamControllers } from './controllers/team.controller';
+import { TeamController } from './controllers/team.controller';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { TeamControllers } from './controllers/team.controller';
     AuthorizationModule
   ],
   providers: [ClientService, ClientRepository, ClientExternalService],
-  controllers: [TeamControllers],
+  controllers: [TeamController],
   exports: [ClientExternalService],
 })
 export class ClientModule {}
