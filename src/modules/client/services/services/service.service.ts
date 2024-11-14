@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
-import { ServiceDto } from '../dtos/Service.dto';
+import { ServiceDto } from '../dtos/Reservice.dto';
 import { CategoryExternal } from '@modules/admin/category/services/category-external';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class ServiceService {
   constructor(
     private readonly serviceRepository: ServiceRepository,
     private readonly categoryExternal: CategoryExternal,
-  ) {}
+  ) { }
 
   async createService(createServiceDto: ServiceDto): Promise<ServiceSchema> {
     await this.categoryExternal.getCategoryById(createServiceDto.categoryId);

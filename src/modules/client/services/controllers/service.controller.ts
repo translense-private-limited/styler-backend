@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ServiceService } from '../services/service.service';
 
-import { ServiceDto } from '../dtos/Service.dto';
+import { ServiceDto } from '../dtos/Reservice.dto';
 import { ServiceSchema } from '../schema/service.schema';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
@@ -18,7 +18,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @ApiBearerAuth('jwt')
 @ApiTags('services')
 export class ServiceController {
-  constructor(private readonly serviceService: ServiceService) {}
+  constructor(private readonly serviceService: ServiceService) { }
 
   @Post('service')
   async createService(
