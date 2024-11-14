@@ -13,6 +13,7 @@ import { SellerLoginDto } from '@modules/atuhentication/dtos/seller-login.dto';
 import { ClientEntity } from '../entities/client.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
+import { In } from 'typeorm';
 
 @Injectable()
 export class ClientService {
@@ -22,10 +23,11 @@ export class ClientService {
     private bcryptEncryptionService: BcryptEncryptionService,
   ) {}
   
-  async getTeamByIdOrThrow(outletId: number, clientId: number) {
+  async getTeamByIdOrThrow(clientId: number,clientIdDto:ClientIdDto) {
     try {
-      // console.log("Received clientId:", clientId);
-      const teamMember = await this.clientRepository.getRepository().findOne({ where: { id: clientId, outletId } });
+
+      const {outletIds} = clientIdDto;
+      const teamMember = await this.clientRepository.getRepository().findOne({ where: { id: clientId ,outletId: In(outletIds)} });
       return teamMember;
     } catch (error) {
       console.error('Error fetching team member:', error);
@@ -74,13 +76,13 @@ export class ClientService {
 
 
   async createTeamMember(createClientDto: CreateClientDto, clientIdDto: ClientIdDto) {
+
     await this.checkSellerUniqueness(createClientDto);
-    // console.log(clientIdDto)
-    // Check outletId permission
+
     if (!clientIdDto.outletIds.includes(createClientDto.outletId)){ 
-      console.log("ClientIdDto",ClientIdDto)
       throw new UnauthorizedException('Outlet permission denied.');
     }
+    
     const role = await this.roleClientService.getRoleByIdOrThrow(createClientDto.roleId);
     if (!role) {
       throw new HttpException('Role not found.', HttpStatus.BAD_REQUEST);

@@ -13,7 +13,7 @@ export class ClientEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
-  @Column({ nullable:true })
+  @Column({ nullable:true, default:null })
   password: string;
 
   @Column()
@@ -29,9 +29,9 @@ export class ClientEntity extends BaseEntity {
   pastExperience:number;
 
   @Column()
-  about:string;
+  about?:string;
   
-  @Column()
+  @Column({default:null})
   outletId:number;
 
 }

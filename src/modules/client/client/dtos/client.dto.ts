@@ -1,5 +1,5 @@
 import { Gender } from '@src/utils/enums/gender.enums';
-import { IsEmail, IsNotEmpty, IsOptional, Length,Matches } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, Length,Matches } from 'class-validator';
 import { clientInterface } from '../interfaces/client.interface';
 
 export class CreateClientDto implements clientInterface {
@@ -12,7 +12,7 @@ export class CreateClientDto implements clientInterface {
   email: string;
 
   @IsOptional()
-  password: string;
+  password?: string;
 
   @IsNotEmpty({ message: 'Contact number should not be empty' })
   @Length(10, 15, { message: 'Contact number must be between 10 to 15 digits' })
@@ -23,6 +23,7 @@ export class CreateClientDto implements clientInterface {
   @IsNotEmpty({message:'role should not be empty'})
   roleId:number;
 
+  @IsEnum(Gender)
   @IsNotEmpty({message:'Gender should not be empty'})
   gender:Gender;
 

@@ -19,17 +19,17 @@ export class TeamControllers{
       return this.clientService.getAllTeamMembersForOutlet(outletId);
     }
 
-    @Get(':clientId/outlet/:outletId')
+    @Get(':clientId')
     async getTeamMemeberById(
         @Param('clientId',ParseIntPipe) clientId:number,
-        @Param('outletId',ParseIntPipe) outletId:number
+        @ClientIdDecorator() clientIdDto:ClientIdDto
+
     ){
-        return this.clientService.getTeamByIdOrThrow(outletId,clientId);
+        return this.clientService.getTeamByIdOrThrow(clientId,clientIdDto);
     }
 
     @Post('team')
     async createTeamMember(@Body() createClientDto: CreateClientDto, @ClientIdDecorator() clientIdDto: ClientIdDto) {
-        console.log('create seller called ');
         return this.clientService.createTeamMember(createClientDto,clientIdDto);
     }
 }
