@@ -23,6 +23,7 @@
     "user-sync": "sh -x ./seed/user-sync.sh"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.691.0",
     "@google-cloud/storage": "^7.7.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",

@@ -1,6 +1,5 @@
 version: '3.8'
 services:
-
   mysql:
     container_name: styler-mysql
     image: mysql
@@ -18,7 +17,7 @@ services:
     networks:
       - styler
     healthcheck:
-      test: [ 'CMD', 'mysqladmin', 'ping', '-h', 'localhost' ]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -37,12 +36,33 @@ services:
     networks:
       - styler
     healthcheck:
-      test: [ 'CMD-SHELL', 'mongosh', '--eval', "db.runCommand('ping').ok" ]
+      test: ['CMD-SHELL', 'mongosh', '--eval', "db.runCommand('ping').ok"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 30s
-
+  minio:
+    image: 'minio/minio:latest'
+    container_name: styler-minio
+    ports:
+      - '${FORWARD_MINIO_PORT:-9000}:9000'
+      - '${FORWARD_MINIO_CONSOLE_PORT:-8900}:8900'
+    environment:
+      MINIO_ROOT_USER: root
+      MINIO_ROOT_PASSWORD: password
+    volumes:
+      - styler-minio:/data/minio
+    networks:
+      - styler
+    command: 'minio server /data/minio --console-address ":8900"'
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - '-f'
+        - 'http://localhost:9000/minio/health/live'
+      retries: 3
+      timeout: 5s
 networks:
   styler:
     driver: bridge
@@ -54,3 +74,4 @@ volumes:
   styler-mysql:
   styler-backend:
   styler-mongodb:
+  styler-minio:
