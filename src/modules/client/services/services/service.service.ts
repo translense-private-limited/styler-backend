@@ -3,7 +3,6 @@ import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
 import { ServiceDto } from '../dtos/service.dto';
 import { CategoryExternal } from '@modules/admin/category/services/category-external';
-import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 
 @Injectable()
 export class ServiceService {
@@ -12,7 +11,7 @@ export class ServiceService {
   constructor(
     private readonly serviceRepository: ServiceRepository,
     private readonly categoryExternal: CategoryExternal,
-  ) { }
+  ) {}
 
   async createService(createServiceDto: ServiceDto): Promise<ServiceSchema> {
     await this.categoryExternal.getCategoryById(createServiceDto.categoryId);
