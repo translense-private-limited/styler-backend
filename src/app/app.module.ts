@@ -43,33 +43,33 @@ import { ImageService } from './image.service';
     ImageService,
     AppService,
     Logger,
-    {
-      provide: APP_FILTER,
-      useClass: DatabaseExceptionFilter,
-    },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: DatabaseExceptionFilter,
+    // },
 
-    {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: GlobalExceptionFilter,
+    // },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: HttpExceptionFilter,
+    // },
 
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseTransformInterceptor,
-    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: ResponseTransformInterceptor,
+    // },
 
-    {
-      provide: APP_GUARD,
-      useClass: AuthenticationGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: OutletGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthenticationGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: OutletGuard,
+    // },
     // {
     //   provide: APP_GUARD,
     //   useClass: AuthorizationGuard,
