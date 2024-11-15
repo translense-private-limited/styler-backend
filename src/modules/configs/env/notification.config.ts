@@ -1,4 +1,4 @@
-export interface NotificationConfig {
+export interface NotificationConfigInterface {
   sendInBlueApiKey: string;
   twilioSid: string;
   twilioAuthToken: string;

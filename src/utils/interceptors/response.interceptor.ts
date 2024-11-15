@@ -9,8 +9,7 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ResponseTransformInterceptor<T>
-  implements NestInterceptor<T, ResponseFormat<T>>
-{
+  implements NestInterceptor<T, ResponseFormatInterface<T>> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<any> {
     const response = context.switchToHttp().getResponse();
@@ -49,7 +48,7 @@ export class ResponseTransformInterceptor<T>
     );
   }
 }
-interface ResponseFormat<T> {
+interface ResponseFormatInterface<T> {
   status: number;
   data: T;
   meta: {

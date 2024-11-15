@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Gender } from '@src/utils/enums/gender.enums';
+import { GenderEnum } from '@src/utils/enums/gender.enums';
 
 @Schema({ timestamps: true }) // This will automatically add `createdAt` and `updatedAt`
 export class ServiceSchema extends Document {
@@ -8,7 +8,7 @@ export class ServiceSchema extends Document {
   categoryId: string;
 
   @Prop({ required: true })
-  gender: Gender;
+  gender: GenderEnum;
 
   @Prop({ required: true })
   serviceName: string;
@@ -27,5 +27,8 @@ export class ServiceSchema extends Document {
 
   @Prop({ required: true })
   description: string;
+
+  @Prop({ required: true })
+  outletId: number;
 }
 export const ServiceModel = SchemaFactory.createForClass(ServiceSchema);

@@ -6,17 +6,17 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY } from '@src/utils/decorators/public.decorator';
+import { isPublicKey } from '@src/utils/decorators/public.decorator';
 
 @Injectable()
 export class OutletGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private reflector: Reflector) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // Check if the route is marked as public using the `@Public()` decorator.
     const isPublic =
-      this.reflector.get<boolean>(IS_PUBLIC_KEY, context.getHandler()) ||
-      this.reflector.get<boolean>(IS_PUBLIC_KEY, context.getClass());
+      this.reflector.get<boolean>(isPublicKey, context.getHandler()) ||
+      this.reflector.get<boolean>(isPublicKey, context.getClass());
 
     if (isPublic) {
       // Allow access if the route is public.

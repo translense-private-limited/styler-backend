@@ -6,7 +6,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { RoleInterface } from '../interfaces/role.interface';
-import { UserType } from '../enums/usertype.enum';
+import { UserTypeEnum } from '../enums/usertype.enum';
 
 export class CreateRoleDto implements RoleInterface {
   @IsNotEmpty()
@@ -18,8 +18,8 @@ export class CreateRoleDto implements RoleInterface {
   isSystemDefined: boolean; // Required field
 
   @IsNotEmpty()
-  scope: UserType;
-  
+  scope: UserTypeEnum;
+
   @IsNotEmpty()
   @IsNumber()
   outletId: number; // Required field
