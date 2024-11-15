@@ -1,8 +1,8 @@
-import { UserType } from "../enums/usertype.enum";
+import { UserTypeEnum } from "../enums/usertype.enum";
 
 export interface RoleInterface {
   name: string;
   isSystemDefined?: boolean;
-  scope:UserType;
-  outletId:number;
+  scope: UserTypeEnum;
+  outletId: number;
 }

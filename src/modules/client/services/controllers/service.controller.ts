@@ -10,13 +10,9 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ServiceService } from '../services/service.service';
-
 import { ServiceDto } from '../dtos/service.dto';
 import { ServiceSchema } from '../schema/service.schema';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
-import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
-import { Client } from 'twilio/lib/base/BaseTwilio';
 
 @Controller('client')
 @ApiBearerAuth('jwt')

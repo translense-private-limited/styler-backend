@@ -1,7 +1,7 @@
 // roles.decorator.ts
 // import { SetMetadata } from '@nestjs/common';
 
-export const REQUIRED_PERMISSION = 'required_permission';
+export const requiredPermission = 'required_permission';
 
 // type PermissionDto = {
 //   [key in ResourceEnum]: PermissionEnum[];

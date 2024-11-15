@@ -1,13 +1,13 @@
 import { join } from 'path';
 import { readFileSync } from 'fs';
-import { EnvConfig } from './env.config';
+import { EnvConfigInterface } from './env.config';
 import { ConfigFactory, registerAs } from '@nestjs/config';
-import { AppConfig } from './app.config';
-import { EnvNamespace } from './enums/env-namespace.enum';
-import { RateLimitterConfig } from './rate-limitter.config';
-import { NotificationConfig } from './notification.config';
+import { AppConfigInterface } from './app.config';
+import { EnvNamespaceEnum } from './enums/env-namespace.enum';
+import { RateLimitterConfigInterface } from './rate-limitter.config';
+import { NotificationConfigInterface } from './notification.config';
 
-export function loadConfigFile(): EnvConfig {
+export function loadConfigFile(): EnvConfigInterface {
   const ENVIRONMENT: string = process.env.ENVIRONMENT || 'development';
   const envFilePath = join(
     'src',
@@ -20,22 +20,22 @@ export function loadConfigFile(): EnvConfig {
 }
 
 export const setupConfig = (): [
-  ConfigFactory<AppConfig>,
-  ConfigFactory<RateLimitterConfig>,
-  ConfigFactory<NotificationConfig>,
+  ConfigFactory<AppConfigInterface>,
+  ConfigFactory<RateLimitterConfigInterface>,
+  ConfigFactory<NotificationConfigInterface>,
 ] => {
   const envVariables = loadConfigFile();
-  const appConfig = registerAs<AppConfig>(
-    EnvNamespace.APP_CONFIG,
+  const appConfig = registerAs<AppConfigInterface>(
+    EnvNamespaceEnum.APP_CONFIG,
     () => envVariables.APP_CONFIG,
   );
-  const rateLimiterConfig = registerAs<RateLimitterConfig>(
-    EnvNamespace.RATE_LIMITTER_CONFIG,
+  const rateLimiterConfig = registerAs<RateLimitterConfigInterface>(
+    EnvNamespaceEnum.RATE_LIMITTER_CONFIG,
     () => envVariables.RATE_LIMITTER_CONFIG,
   );
 
-  const notificationConfig = registerAs<NotificationConfig>(
-    EnvNamespace.NOTIFICATION_CONFIG,
+  const notificationConfig = registerAs<NotificationConfigInterface>(
+    EnvNamespaceEnum.NOTIFICATION_CONFIG,
     () => envVariables.NOTIFICATION_CONFIG,
   );
   return [appConfig, rateLimiterConfig, notificationConfig];

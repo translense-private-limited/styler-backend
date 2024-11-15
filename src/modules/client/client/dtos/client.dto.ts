@@ -1,4 +1,4 @@
-import { Gender } from '@src/utils/enums/gender.enums';
+import { GenderEnum } from '@src/utils/enums/gender.enums';
 import {
   IsEmail,
   IsEnum,
@@ -9,9 +9,9 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { clientInterface } from '../interfaces/client.interface';
+import { ClientInterface } from '../interfaces/client.interface';
 
-export class CreateClientDto implements clientInterface {
+export class CreateClientDto implements ClientInterface {
   @IsNotEmpty({ message: 'Name should not be empty' })
   @Length(1, 255, { message: 'Name must be between 1 and 255 characters' })
   name: string;
@@ -33,9 +33,9 @@ export class CreateClientDto implements clientInterface {
   @IsNumber()
   roleId: number;
 
-  @IsEnum(Gender)
+  @IsEnum(GenderEnum)
   @IsNotEmpty({ message: 'Gender should not be empty' })
-  gender: Gender;
+  gender: GenderEnum;
 
   @IsOptional()
   @IsNumber()

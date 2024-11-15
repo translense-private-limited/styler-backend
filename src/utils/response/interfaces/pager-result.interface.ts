@@ -1,6 +1,6 @@
-import { PagerOptions } from './pager-options.interface';
+import { PagerOptionsInterface } from './pager-options.interface';
 
-export interface PagerResult<T> {
+export interface PagerResultInterface<T> {
   readonly data: T[];
-  readonly pagerOptions?: PagerOptions;
+  readonly pagerOptions?: PagerOptionsInterface;
 }

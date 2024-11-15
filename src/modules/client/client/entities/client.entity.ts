@@ -1,5 +1,5 @@
 import { BaseEntity } from '@src/utils/entities/base.entity';
-import { Gender } from '@src/utils/enums/gender.enums';
+import { GenderEnum } from '@src/utils/enums/gender.enums';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('client')
@@ -13,25 +13,25 @@ export class ClientEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
-  @Column({ nullable:true, default:null })
+  @Column({ nullable: true, default: null })
   password: string;
 
   @Column()
-  contactNumber:string;
+  contactNumber: string;
 
   @Column()
-  roleId:number;
+  roleId: number;
 
   @Column()
-  gender:Gender;
+  gender: GenderEnum;
 
   @Column()
-  pastExperience:number;
+  pastExperience: number;
 
   @Column()
-  about?:string;
-  
-  @Column({default:null})
-  outletId:number;
+  about?: string;
+
+  @Column({ default: null })
+  outletId: number;
 
 }

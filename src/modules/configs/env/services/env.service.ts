@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { EnvNamespace } from '../enums/env-namespace.enum';
+import { EnvNamespaceEnum } from '../enums/env-namespace.enum';
 
 @Injectable()
 export class EnvService {
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) { }
 
-  getEnvValue<T>(namespaceKey: EnvNamespace): T {
+  getEnvValue<T>(namespaceKey: EnvNamespaceEnum): T {
     return this.configService.getOrThrow(namespaceKey);
   }
 }

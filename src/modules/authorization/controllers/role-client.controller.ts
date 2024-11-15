@@ -3,7 +3,6 @@ import { RoleClientService } from '../services/role-client.service';
 import { RoleEntity } from '../entities/role.entity';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SystemAndCustomRolesDto } from '../dtos/system-custom-roles.dto';
-import { Public } from '@src/utils/decorators/public.decorator';
 
 @Controller('client')
 @ApiTags('Client/Role')

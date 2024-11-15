@@ -1,4 +1,4 @@
-export enum EnvNamespace {
+export enum EnvNamespaceEnum {
   APP_CONFIG = 'APP_CONFIG',
   RATE_LIMITTER_CONFIG = 'RATE_LIMITTER_CONFIG',
   NOTIFICATION_CONFIG = 'NOTIFICATION_CONFIG',
