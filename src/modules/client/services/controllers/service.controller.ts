@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ServiceService } from '../services/service.service';
 
-import { ServiceDto } from '../dtos/Reservice.dto';
+import { ServiceDto } from '../dtos/service.dto';
 import { ServiceSchema } from '../schema/service.schema';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
