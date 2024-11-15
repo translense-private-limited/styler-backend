@@ -8,7 +8,6 @@ import {
 import { AppService } from './app.service';
 
 import { Public } from '@src/utils/decorators/public.decorator';
-import { main } from '@src/utils/aws/aws-sdk';
 
 @Controller()
 @Public()
@@ -18,7 +17,6 @@ export class AppController {
 
   @Get('/heartbeat')
   getHeartbeat() {
-    console.log();
     return {
       status: 'OK',
       message: 'Service is up and running....',
@@ -43,10 +41,5 @@ export class AppController {
   @Get('/error')
   getError() {
     throw new BadRequestException('invalid email');
-  }
-
-  @Get('aws')
-  awsTest() {
-    main();
   }
 }

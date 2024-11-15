@@ -24,6 +24,8 @@ import { AuthorizationModule } from '@modules/authorization/authorization.module
 import { OutletGuard } from '@modules/authorization/gaurds/outlet-gaurd';
 import { AdminModule } from '@modules/admin/admin.module';
 import * as mongoose from 'mongoose';
+import { ImageController } from './image.controller';
+import { ImageService } from './image.service';
 
 @Module({
   imports: [
@@ -36,8 +38,9 @@ import * as mongoose from 'mongoose';
     AuthorizationModule,
     AdminModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ImageController],
   providers: [
+    ImageService,
     AppService,
     Logger,
     {

@@ -9,7 +9,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class CategoryClientController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Get('categories')
+  @Get('/categories')
   async findAll(): Promise<CategorySchema[]> {
     return this.categoryService.findAll();
   }

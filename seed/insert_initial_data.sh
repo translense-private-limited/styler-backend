@@ -1,4 +1,3 @@
-
 MYSQL_PASSWORD="root"
 
 # The bcrypt hash
@@ -19,15 +18,16 @@ ON DUPLICATE KEY UPDATE id=id;
 
 INSERT INTO client_outlet_mapping (clientId, outletId) VALUES (1, 1) 
 ON DUPLICATE KEY UPDATE clientId = VALUES(clientId), outletId = VALUES(outletId);
+
 INSERT INTO roles (id, name, isSystemDefined, scope, outletId)
 VALUES
   (21, 'owner', true, 'CLIENT', 1),
-  (22,'manager',true,'CLIENT,1 )
+  (22, 'manager', true, 'CLIENT', 1)
 ON DUPLICATE KEY UPDATE
   name=VALUES(name),
   isSystemDefined=VALUES(isSystemDefined),
   outletId=VALUES(outletId),
-  Scope=VALUES(Scope);
+  scope=VALUES(scope);
 EOF
 )
 
@@ -78,4 +78,3 @@ try {
     print("Error inserting category data: " + e);
 }
 EOF
-
