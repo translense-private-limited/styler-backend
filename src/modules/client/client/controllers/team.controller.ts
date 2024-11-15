@@ -26,6 +26,7 @@ export class TeamController {
     return this.clientService.getAllTeamMembersForOutlet(outletId);
   }
 
+  @ApiBearerAuth('jwt')
   @Get(':clientId')
   async getTeamMemberById(
     @Param('clientId', ParseIntPipe) clientId: number,
@@ -34,6 +35,7 @@ export class TeamController {
     return this.clientService.getTeamMemberById(clientId, clientIdDto);
   }
 
+  @ApiBearerAuth('jwt')
   @Post('team')
   async createTeamMember(
     @Body() createClientDto: CreateClientDto,
