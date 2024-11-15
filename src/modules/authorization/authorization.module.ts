@@ -21,5 +21,6 @@ import { RoleClientService } from './services/role-client.service';
   ],
   controllers: [ResourceController, roleController,RoleClientController],
   providers: [ResourceService, ResourceRepository, RoleService, RoleRepository,RoleClientService],
+  exports:[RoleClientService]
 })
 export class AuthorizationModule {}

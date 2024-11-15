@@ -1,15 +1,15 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { ServiceInterface } from '../interfaces/service.interface';
-import { GenderEnum } from '@src/utils/enums/gender.enums';
+import { serviceInterface } from '../interfaces/service.interface';
+import { Gender } from '@src/utils/enums/gender.enums';
 
-export class ServiceDto implements ServiceInterface {
+export class ServiceDto implements serviceInterface {
   @IsString()
   @IsNotEmpty()
   categoryId: string;
 
-  @IsEnum(GenderEnum)
+  @IsEnum(Gender)
   @IsNotEmpty()
-  gender: GenderEnum;
+  gender: Gender;
 
   @IsString()
   @IsNotEmpty()
