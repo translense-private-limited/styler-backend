@@ -3,6 +3,7 @@ import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
 import { ServiceDto } from '../dtos/service.dto';
 import { CategoryExternal } from '@modules/admin/category/services/category-external';
+import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 
 @Injectable()
 export class ServiceService {
@@ -21,6 +22,10 @@ export class ServiceService {
 
   async getServices(): Promise<ServiceSchema[]> {
     return this.serviceRepository.getRepository().find();
+  }
+
+  async getAllServicesByOutletId(outletId: number): Promise<ServiceSchema[]> {
+    return this.serviceRepository.getRepository().find({ outletId });
   }
 
   async getServiceByIdOrThrow(serviceId: string): Promise<ServiceSchema> {

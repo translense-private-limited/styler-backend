@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { RoleClientService } from '../services/role-client.service';
 import { RoleEntity } from '../entities/role.entity';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SystemAndCustomRolesDto } from '../dtos/system-custom-roles.dto';
 import { Public } from '@src/utils/decorators/public.decorator';
 
@@ -11,7 +11,10 @@ export class RoleClientController {
   constructor(private readonly roleClientService: RoleClientService) {}
 
   @ApiBearerAuth('jwt')
-  @Get('role')
+  @Get('roles/system-defined')
+  @ApiOperation({
+    description: 'Get all system defined roles',
+  })
   async getAllSystemDefinedRoles(): Promise<RoleEntity[]> {
     return this.roleClientService.getAllSystemDefinedRoles();
   }

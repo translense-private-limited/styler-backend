@@ -27,5 +27,8 @@ export class ServiceSchema extends Document {
 
   @Prop({ required: true })
   description: string;
+
+  @Prop({ required: true })
+  outletId: number;
 }
 export const ServiceModel = SchemaFactory.createForClass(ServiceSchema);
