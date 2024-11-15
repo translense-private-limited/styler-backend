@@ -1,6 +1,6 @@
 import { Gender } from "@src/utils/enums/gender.enums";
 
-export interface clientInterface{
+export interface ClientInterface{
     name:string;
     email:string;
     password?:string;

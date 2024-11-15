@@ -1,5 +1,5 @@
 import { Gender } from '@src/utils/enums/gender.enums';
-export interface serviceInterface {
+export interface ServiceInterface {
   categoryId: string;
   gender: Gender;
   serviceName: string;
