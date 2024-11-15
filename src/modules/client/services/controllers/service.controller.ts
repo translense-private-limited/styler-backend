@@ -7,11 +7,15 @@ import {
   Body,
   Patch,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ServiceService } from '../services/service.service'
 import { ServiceDto } from '../dtos/service.dto';
 import { ServiceSchema } from '../schema/service.schema';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
+import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
+import { Client } from 'twilio/lib/base/BaseTwilio';
 
 @Controller('client')
 @ApiBearerAuth('jwt')
@@ -26,9 +30,11 @@ export class ServiceController {
     return this.serviceService.createService(createServiceDto);
   }
 
-  @Get('services')
-  async getServices(): Promise<ServiceSchema[]> {
-    return this.serviceService.getServices();
+  @Get('services/outlet/:outletId')
+  async getServices(
+    @Param('outletId', ParseIntPipe) outletId: number,
+  ): Promise<ServiceSchema[]> {
+    return this.serviceService.getAllServicesByOutletId(outletId);
   }
 
   @Get('service/:id')

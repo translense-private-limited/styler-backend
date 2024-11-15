@@ -8,4 +8,5 @@ export interface ServiceInterface {
   timeTaken: number;
   about: string;
   description: string;
+  outletId: number;
 }
