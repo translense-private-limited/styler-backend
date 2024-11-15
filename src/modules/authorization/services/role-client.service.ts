@@ -26,9 +26,11 @@ export class RoleClientService {
   }
 
   async getAllRoles(outletId: number): Promise<SystemAndCustomRolesDto> {
+    const systemRoles = await this.getAllSystemDefinedRoles();
+    const customRoles = await this.getAllCustomRoles(outletId);
     return {
-      systemRoles: await this.getAllCustomRoles(outletId),
-      customRoles: await this.getAllSystemDefinedRoles(),
+      systemRoles,
+      customRoles,
     };
   }
 

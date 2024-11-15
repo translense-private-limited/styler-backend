@@ -1,6 +1,4 @@
-version: '3.8'
 services:
-
   mysql:
     container_name: styler-mysql
     image: mysql
@@ -18,7 +16,7 @@ services:
     networks:
       - styler
     healthcheck:
-      test: [ 'CMD', 'mysqladmin', 'ping', '-h', 'localhost' ]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -37,7 +35,7 @@ services:
     networks:
       - styler
     healthcheck:
-      test: [ 'CMD-SHELL', 'mongosh', '--eval', "db.runCommand('ping').ok" ]
+      test: ['CMD-SHELL', 'mongosh', '--eval', "db.runCommand('ping').ok"]
       interval: 30s
       timeout: 10s
       retries: 5
