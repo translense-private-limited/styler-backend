@@ -15,6 +15,7 @@ import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
 
 import { TeamMember } from '../dtos/team-member.dto';
+import { UpdateClientDto } from '../dtos/update-client.dto';
 
 @Injectable()
 export class ClientService {
@@ -127,6 +128,102 @@ export class ClientService {
     return { ...client, password: plainPassword, role: role };
   }
 
+  async updateTeamMember(
+    updateClientDto: UpdateClientDto,
+    clientIdDto: ClientIdDto,
+    clientId: number,
+  ): Promise<TeamMember> {
+    // Fetch the existing client
+    const teamMember = await this.clientRepository
+      .getRepository()
+      .findOne({ where: { id: clientId } });
+    if (!teamMember) {
+      throw new NotFoundException('Team member not found.');
+    }
+  
+    // Ensure the client has permission to modify the team member
+    if (!clientIdDto.outletIds.includes(teamMember.outletId)) {
+      throw new UnauthorizedException('Outlet permission denied.');
+    }
+  
+    // Check role if it's being updated
+    if (updateClientDto.roleId) {
+      const role = await this.roleClientService.getRoleByIdOrThrow(
+        updateClientDto.roleId,
+      );
+      if (!role) {
+        throw new HttpException('Role not found.', HttpStatus.BAD_REQUEST);
+      }
+    }
+    
+    if (
+      updateClientDto.outletId &&
+      updateClientDto.outletId !== teamMember.outletId
+    ) {
+      throw new BadRequestException('Updating outletId is not allowed');
+    }
+    // If password is being updated, encrypt the new password
+    if (updateClientDto.password) {
+      updateClientDto.password = await this.getEncryptedPassword({
+        ...teamMember,
+        password: updateClientDto.password,
+      });
+    }
+  
+    // Merge the updates into the existing client object
+    const updatedClient = this.clientRepository.getRepository().merge(
+      teamMember,
+      updateClientDto,
+    );
+  
+    // Save the updated client entity
+    const savedClient = await this.clientRepository
+      .getRepository()
+      .save(updatedClient);
+  
+    // Remove sensitive fields and include role details if updated
+    delete savedClient.roleId;
+    const role =
+      updateClientDto.roleId &&
+      (await this.roleClientService.getRoleByIdOrThrow(updateClientDto.roleId));
+  
+    return { ...savedClient, role };
+  }
+  
+  async deleteTeamMember(teamMemberId: number, clientIdDto: ClientIdDto): Promise<void> {
+    const teamMember = await this.clientRepository.getRepository().findOne({
+      where: { id: teamMemberId },
+    });
+  
+    if (!teamMember) {
+      throw new NotFoundException('Team member not found.');
+    }
+  
+    if (!clientIdDto.outletIds.includes(teamMember.outletId)) {
+      throw new UnauthorizedException('You do not have permission to delete this team member.');
+    }
+  
+    await this.clientRepository.getRepository().delete(teamMemberId);
+  }
+
+  async deleteAllTeamMembersForOutlet(
+    outletId: number,
+    clientIdDto: ClientIdDto,
+  ): Promise<void> {
+
+    if (!clientIdDto.outletIds.includes(outletId)) {
+      throw new UnauthorizedException('Outlet permission denied.');
+    }
+  
+    const teamMembers = await this.getAllTeamMembersForOutlet(outletId);
+  
+    // Extract team member IDs for deletion
+    const teamMemberIds = teamMembers.map((teamMember) => teamMember.id);
+  
+    // Perform the deletion
+    await this.clientRepository.getRepository().delete(teamMemberIds);
+  }
+  
   async getSellerByEmail(
     sellerLoginDto: SellerLoginDto,
   ): Promise<ClientEntity> {
