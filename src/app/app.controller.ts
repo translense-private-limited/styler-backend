@@ -17,7 +17,6 @@ export class AppController {
 
   @Get('/heartbeat')
   getHeartbeat() {
-    console.log();
     return {
       status: 'OK',
       message: 'Service is up and running....',

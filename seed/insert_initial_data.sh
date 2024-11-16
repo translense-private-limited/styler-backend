@@ -1,4 +1,3 @@
-
 MYSQL_PASSWORD="root"
 
 # The bcrypt hash
@@ -91,4 +90,3 @@ try {
     print("Error inserting category data: " + e);
 }
 EOF
-

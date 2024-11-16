@@ -19,7 +19,7 @@ export class TeamController {
   constructor(private clientService: ClientService) {}
 
   @ApiBearerAuth('jwt')
-  @Get('teams/:outletId')
+  @Get('teams/outlet/:outletId')
   async getAllTeamMembersForOutlet(
     @Param('outletId', ParseIntPipe) outletId: number,
   ): Promise<TeamMember[]> {
@@ -27,9 +27,9 @@ export class TeamController {
   }
 
   @ApiBearerAuth('jwt')
-  @Get(':clientId')
+  @Get('team/:teamMemberId')
   async getTeamMemberById(
-    @Param('clientId', ParseIntPipe) clientId: number,
+    @Param('teamMemberId', ParseIntPipe) clientId: number,
     @ClientIdDecorator() clientIdDto: ClientIdDto,
   ): Promise<TeamMember> {
     return this.clientService.getTeamMemberById(clientId, clientIdDto);
