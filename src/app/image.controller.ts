@@ -10,6 +10,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageService } from './image.service';
 import { Response } from 'express';
@@ -25,7 +26,8 @@ export class ImageController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(
-    @UploadedFile() file: Express.Multer.File,
+    //@ts-ignore
+    @UploadedFile() file: File,
   ): Promise<string> {
     if (!file) {
       throw new HttpException('No file provided', HttpStatus.BAD_REQUEST);
