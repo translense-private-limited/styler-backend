@@ -3,6 +3,9 @@ MYSQL_PASSWORD="root"
 # The bcrypt hash
 HASHED_PASSWORD='$2b$10$We.1TuspN0s/OCg5UgkIte6s8aPreGZGpqXOcrDOze2hgKfLko8kC'
 
+# Connect to MySQL container and execute SQL commands
+echo "$SQL_COMMANDS" | docker exec -i styler-mysql mysql -u user -p"$MYSQL_PASSWORD"
+
 # SQL commands to execute
 SQL_COMMANDS=$(cat <<EOF
 CREATE DATABASE IF NOT EXISTS styler;
@@ -47,8 +50,7 @@ EOF
 echo "Executing SQL Commands..."
 echo "$SQL_COMMANDS"
 
-# Connect to MySQL container and execute SQL commands
-echo "$SQL_COMMANDS" | docker exec -i styler-mysql mysql -u user -p"$MYSQL_PASSWORD"
+
 
 
 

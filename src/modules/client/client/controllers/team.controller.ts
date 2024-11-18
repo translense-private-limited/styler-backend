@@ -1,9 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -12,11 +16,15 @@ import { CreateClientDto } from '../dtos/client.dto';
 import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { TeamMember } from '../dtos/team-member.dto';
+import { TeamMemberService } from '../services/team-member.service';
 
 @Controller('client')
 @ApiTags('Client/teams')
 export class TeamController {
-  constructor(private clientService: ClientService) {}
+  constructor(
+    private clientService: ClientService,
+    private teamMemberService: TeamMemberService,
+  ) {}
 
   @ApiBearerAuth('jwt')
   @Get('teams/outlet/:outletId')
@@ -42,5 +50,28 @@ export class TeamController {
     @ClientIdDecorator() clientIdDto: ClientIdDto,
   ): Promise<TeamMember> {
     return this.clientService.createTeamMember(createClientDto, clientIdDto);
+  }
+
+  @ApiBearerAuth('jwt')
+  @Patch('team/:teamId')
+  async updateTeamMember(
+    @Param('teamMemberId', ParseIntPipe) teamMemberId: number,
+    @Body() updateTeamMemberDto: Partial<TeamMember>,
+  ): Promise<TeamMember> {
+    return await this.teamMemberService.updateTeamMember(
+      teamMemberId,
+      updateTeamMemberDto,
+    );
+  }
+
+  @ApiBearerAuth('jwt')
+  @Delete('team/:teamId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteTeamMember(
+    @Param('teamMemberId', ParseIntPipe) teamMemberId: number,
+    @ClientIdDecorator() clientIdDto: ClientIdDto,
+  ): Promise<String> {
+    await this.teamMemberService.deleteTeamMember(teamMemberId, clientIdDto);
+    return;
   }
 }

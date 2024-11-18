@@ -8,14 +8,20 @@ import { ClientExternalService } from './services/client-external.service';
 import { EncryptionModule } from '@modules/encryption/encryption.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 import { TeamController } from './controllers/team.controller';
+import { TeamMemberService } from './services/team-member.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ClientEntity], getMysqlDataSource()),
     EncryptionModule,
-    AuthorizationModule
+    AuthorizationModule,
   ],
-  providers: [ClientService, ClientRepository, ClientExternalService],
+  providers: [
+    ClientService,
+    ClientRepository,
+    ClientExternalService,
+    TeamMemberService,
+  ],
   controllers: [TeamController],
   exports: [ClientExternalService],
 })
