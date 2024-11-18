@@ -53,7 +53,7 @@ export class TeamController {
   }
 
   @ApiBearerAuth('jwt')
-  @Patch('team/:teamId')
+  @Patch('team/:teamMemberId')
   async updateTeamMember(
     @Param('teamMemberId', ParseIntPipe) teamMemberId: number,
     @Body() updateTeamMemberDto: Partial<TeamMember>,
@@ -65,7 +65,7 @@ export class TeamController {
   }
 
   @ApiBearerAuth('jwt')
-  @Delete('team/:teamId')
+  @Delete('team/:teamMemberId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteTeamMember(
     @Param('teamMemberId', ParseIntPipe) teamMemberId: number,
