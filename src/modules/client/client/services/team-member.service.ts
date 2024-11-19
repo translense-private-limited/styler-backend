@@ -1,3 +1,4 @@
+import { TeamMemberService } from './team-member.service';
 import {
   BadRequestException,
   Injectable,
@@ -33,6 +34,19 @@ export class TeamMemberService {
 
     // make sure password will not be updated
     delete updateDto.password;
+
+    // make sure existing email id is not used ,
+    if (updateDto.email) {
+      const teamMember = await this.clientRepository
+        .getRepository()
+        .findOne({ where: { email: updateDto.email } });
+      if (teamMember) {
+        throw new BadRequestException(
+          `Client registered with ${updateDto.email}, please provide different email`,
+        );
+      }
+    }
+
     let role;
 
     // check is role going to be updated
