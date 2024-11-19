@@ -3,8 +3,6 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
-  HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 
 import { ClientRepository } from '../repository/client.repository';
