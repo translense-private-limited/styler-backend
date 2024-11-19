@@ -1,4 +1,3 @@
-import { TeamMemberService } from './team-member.service';
 import {
   BadRequestException,
   Injectable,
@@ -7,10 +6,10 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { CreateClientDto } from '../dtos/client.dto';
+
 import { ClientRepository } from '../repository/client.repository';
 import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
-import { SellerLoginDto } from '@modules/atuhentication/dtos/seller-login.dto';
+
 import { ClientEntity } from '../entities/client.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
