@@ -10,7 +10,7 @@ import { Response, Request } from 'express';
 export class GlobalExceptionFilter implements ExceptionFilter {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   catch(exception: any, host: ArgumentsHost) {
-    console.log('Global exception captured');
+    console.log('Global exception captured', exception);
 
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();

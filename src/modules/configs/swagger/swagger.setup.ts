@@ -21,16 +21,16 @@ function filterPathsByPrefix(document: any, prefixes: string[]) {
   }
   document.paths = filteredPaths;
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function filterPathsByNotPrefix(document: any, prefixes: string[]) {
-  const filteredPaths = {};
-  for (const [path, operations] of Object.entries(document.paths)) {
-    if (!prefixes.some((prefix) => path.startsWith(prefix))) {
-      filteredPaths[path] = operations;
-    }
-  }
-  document.paths = filteredPaths;
-}
+
+// function filterPathsByNotPrefix(document: any, prefixes: string[]) {
+//   const filteredPaths = {};
+//   for (const [path, operations] of Object.entries(document.paths)) {
+//     if (!prefixes.some((prefix) => path.startsWith(prefix))) {
+//       filteredPaths[path] = operations;
+//     }
+//   }
+//   document.paths = filteredPaths;
+// }
 
 export function swaggerSetup(app: INestApplication) {
   const swaggerDocument = createSwaggerDocument(app);
@@ -55,7 +55,7 @@ export function swaggerSetup(app: INestApplication) {
   );
 
   const customerSwaggerDocument = createCustomerSwaggerDocument(app);
-  filterPathsByNotPrefix(customerSwaggerDocument, ['/admin', '/client']);
+  filterPathsByPrefix(customerSwaggerDocument, ['/customer']);
   SwaggerModule.setup(
     'swagger/customer',
     app,
