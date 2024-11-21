@@ -15,14 +15,16 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status = HttpStatus.BAD_REQUEST; // Set the status code, e.g., 400 for a bad request
+    const status = HttpStatus.INTERNAL_SERVER_ERROR; // Set the status code, e.g., 400 for a bad request
 
     response.status(status).json({
       statusCode: status,
       error: {
-        code: 'DATABASE_ERROR',
+        //@ts-ignore
+        code: exception.code || 'DATABASE_ERROR',
         message: 'A database error occurred.',
-        details: exception.message || null, // You can format or provide more details about the error here
+        //@ts-ignore
+        details: exception.sqlMessage || null, // You can format or provide more details about the error here
       },
       meta: {
         timestamp: new Date().toISOString(),

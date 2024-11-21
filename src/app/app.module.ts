@@ -26,6 +26,7 @@ import { AdminModule } from '@modules/admin/admin.module';
 import * as mongoose from 'mongoose';
 import { ImageController } from './image.controller';
 import { ImageService } from './image.service';
+import { CustomerModule } from '@modules/customer/customer.module';
 
 @Module({
   imports: [
@@ -37,20 +38,21 @@ import { ImageService } from './image.service';
     ServiceModule,
     AuthorizationModule,
     AdminModule,
+    CustomerModule,
   ],
   controllers: [AppController, ImageController],
   providers: [
     ImageService,
     AppService,
     Logger,
-    {
-      provide: APP_FILTER,
-      useClass: DatabaseExceptionFilter,
-    },
 
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: DatabaseExceptionFilter,
     },
     {
       provide: APP_FILTER,
