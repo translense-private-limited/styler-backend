@@ -1,9 +1,16 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+} from '@nestjs/common';
 import { OtpService } from '../services/otp.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { SendOtpResponseInterface } from '../interfaces/send-otp-response.interface';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { Public } from '@src/utils/decorators/public.decorator';
+import { OtpVerifyDto } from '../dtos/otp-verify.dto';
 
 @Controller('customer')
 @ApiBearerAuth('jwt')
@@ -31,5 +38,14 @@ export class OtpController {
   ): Promise<string> {
     await this.otpService.resetPassword(resetPasswordDto);
     return 'Password updated successfully';
+  }
+
+  @Get('verify-otp')
+  async verifyOtp(@Body() otpVerifyDto: OtpVerifyDto): Promise<any> {
+    const isValidOtp = await this.otpService.verifyOtp(otpVerifyDto);
+    if (isValidOtp) {
+      return true;
+    }
+    throw new BadRequestException('Invalid Otp');
   }
 }
