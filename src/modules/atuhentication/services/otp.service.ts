@@ -8,6 +8,8 @@ import { SendOtpResponseInterface } from '../interfaces/send-otp-response.interf
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { CustomerExternalService } from '@modules/customer/services/customer-external.service';
 import { CustomerEntity } from '@modules/customer/entities/customer.entity';
+import { MoreThan } from 'typeorm';
+import { OtpVerifyDto } from '../dtos/otp-verify.dto';
 
 @Injectable()
 export class OtpService {
@@ -114,5 +116,23 @@ export class OtpService {
 
     // Delete the OTP record to prevent reuse
     await this.otpRepository.getRepository().delete({ recipient });
+  }
+
+  async verifyOtp(verifyOtpDto: OtpVerifyDto): Promise<boolean> {
+    const { recipient, otp } = verifyOtpDto;
+
+    const otpRecord = await this.otpRepository.getRepository().findOne({
+      where: {
+        recipient,
+        otp,
+        expirationTime: MoreThan(new Date()), // Assuming expirationTime is a Date type field
+      },
+    });
+
+    if (!otpRecord) {
+      return false; // OTP is invalid or expired
+    }
+
+    return true; // OTP is valid and not expired
   }
 }
