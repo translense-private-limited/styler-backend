@@ -123,7 +123,9 @@ export class CustomerAuthenticationService {
         `User already registered with provided details`,
       );
     }
-    await this.signupSendOtp(username);
+    const otp = await this.otpService.generateOtp();
+    // send otp
+    await this.otpService.sendOtpToRecipient(username, otp);
     return `Otp send successfully to ${username}`;
   }
 }

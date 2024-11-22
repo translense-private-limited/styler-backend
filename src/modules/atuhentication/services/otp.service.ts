@@ -18,7 +18,7 @@ export class OtpService {
     private customerExternalService: CustomerExternalService,
   ) {}
 
-  private async generateOtp(): Promise<number> {
+  async generateOtp(): Promise<number> {
     return 123456;
   }
 
