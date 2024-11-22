@@ -1,3 +1,4 @@
+import { OtpService } from './otp.service';
 import { CustomerLoginResponseInterface } from './../interfaces/customer-login-response.interface';
 import { CustomerTokenPayloadDto } from './../dtos/customer-token-payload.dto';
 
@@ -21,6 +22,7 @@ export class CustomerAuthenticationService {
     private customerExternalService: CustomerExternalService,
     private bcryptEncryptionService: BcryptEncryptionService,
     private jwtService: JwtService,
+    private otpService: OtpService,
   ) {}
 
   async registerCustomer(
@@ -52,6 +54,12 @@ export class CustomerAuthenticationService {
     const tokenPayload = await this.constructJwtPayload(customer);
 
     const token = this.jwtService.generateToken(tokenPayload);
+
+    // delete data from otp entity
+    await this.otpService.deleteByRecipient(
+      customerSignupDto.contactNumber.toString(),
+    );
+    await this.otpService.deleteByRecipient(customerSignupDto.email);
 
     return {
       token,
@@ -102,5 +110,20 @@ export class CustomerAuthenticationService {
       token,
       customer,
     };
+  }
+
+  async signupSendOtp(username: string): Promise<string> {
+    // identify the  type to send
+    const customer =
+      await this.customerExternalService.getCustomerByEmailOrContactNumber(
+        username,
+      );
+    if (customer) {
+      throw new ConflictException(
+        `User already registered with provided details`,
+      );
+    }
+    await this.signupSendOtp(username);
+    return `Otp send successfully to ${username}`;
   }
 }

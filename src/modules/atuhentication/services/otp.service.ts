@@ -135,4 +135,8 @@ export class OtpService {
 
     return true; // OTP is valid and not expired
   }
+
+  async deleteByRecipient(recipient: string) {
+    this.otpRepository.getRepository().delete({ recipient });
+  }
 }

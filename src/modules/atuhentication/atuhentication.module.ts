@@ -17,6 +17,7 @@ import { OtpRepository } from './repositories/otp.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OtpEntity } from './entities/otp.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
+import { OtpExternalService } from './services/otp-external.service';
 
 @Module({
   imports: [
@@ -31,8 +32,9 @@ import { getMysqlDataSource } from '@modules/database/data-source';
     CustomerAuthenticationService,
     OtpService,
     OtpRepository,
+    OtpExternalService,
   ],
-  exports: [SellerAuthService, JwtService],
+  exports: [SellerAuthService, JwtService, OtpExternalService],
 
   controllers: [
     ClientAuthController,

@@ -27,4 +27,11 @@ export class CustomerAuthenticationController {
   ): Promise<CustomerLoginResponseInterface> {
     return this.customerAuthenticationService.customerLogin(loginDto);
   }
+
+  @Post('signup/send-otp')
+  async signupOtp(@Body() sendOtpDto: { username: string }): Promise<string> {
+    return this.customerAuthenticationService.signupSendOtp(
+      sendOtpDto.username,
+    );
+  }
 }
