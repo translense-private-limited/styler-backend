@@ -3,7 +3,6 @@ import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 import { CustomerInterface } from '../interfaces/customer.interface';
 
 @Entity('customers')
-@Index(['email', 'contactNumber'], { unique: true }) // Compound index for uniqueness
 export class CustomerEntity extends BaseEntity implements CustomerInterface {
   @PrimaryGeneratedColumn()
   id: number;
