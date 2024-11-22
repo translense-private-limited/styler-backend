@@ -10,11 +10,12 @@ export class CustomerEntity extends BaseEntity implements CustomerInterface {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Index() // Individual index for faster lookups
+  @Index('IX_customers_contactNumber')
+  // Individual index for faster lookups
   @Column({ type: 'varchar', length: 15, unique: true })
   contactNumber: number;
 
-  @Index() // Individual index for faster lookups
+  @Index('IX_customers_email') // Individual index for faster lookups
   @Column({ name: 'email', type: 'varchar', length: 100, unique: true })
   email: string;
 
