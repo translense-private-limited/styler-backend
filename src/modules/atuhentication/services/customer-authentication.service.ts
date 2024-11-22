@@ -6,6 +6,7 @@ import { CustomerExternalService } from './../../customer/services/customer-exte
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDto } from '../dtos/login.dto';
@@ -77,6 +78,10 @@ export class CustomerAuthenticationService {
       await this.customerExternalService.getCustomerByEmailOrContactNumber(
         username,
       );
+
+    if (!customer) {
+      throw new NotFoundException('No user found with provided credentials');
+    }
     const isValid = await this.bcryptEncryptionService.validate(
       password,
       customer.password,
