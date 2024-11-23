@@ -6,11 +6,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OutletEntity } from './entities/outlet.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
 import { OutletExternalService } from './services/outlet-external.service';
+import { OutletCustomerController } from './controllers/outlet-customer.controller';
+import { OutletCustomerService } from './services/outlet-customer.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OutletEntity], getMysqlDataSource())],
-  providers: [OutletService, OutletRepository, OutletExternalService],
-  controllers: [OutletController],
+  providers: [
+    OutletService,
+    OutletRepository,
+    OutletExternalService,
+    OutletCustomerService,
+  ],
+  controllers: [OutletController, OutletCustomerController],
   exports: [OutletExternalService],
 })
 export class OutletModule {}
