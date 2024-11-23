@@ -1,10 +1,8 @@
+#!/bin/bash
+
+# Environment variables
 MYSQL_PASSWORD="root"
-
-# The bcrypt hash
 HASHED_PASSWORD='$2b$10$We.1TuspN0s/OCg5UgkIte6s8aPreGZGpqXOcrDOze2hgKfLko8kC'
-
-# Connect to MySQL container and execute SQL commands
-echo "$SQL_COMMANDS" | docker exec -i styler-mysql mysql -u user -p"$MYSQL_PASSWORD"
 
 # SQL commands to execute
 SQL_COMMANDS=$(cat <<EOF
@@ -14,6 +12,7 @@ USE styler;
 INSERT INTO client (id, name, email, password, contactNumber, roleId, gender, pastExperience, about, outletId, createdAt, updatedAt)
 VALUES (1, 'Sample Outlet Client', 'client@translense.com', '${HASHED_PASSWORD}', '1234567890', 21, 'MALE', 5, 'Experienced professional', 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE id=id;
+
 INSERT INTO outlets (id, name, description, status, address, latitude, longitude, phoneNumber, email, website, createdAt, updatedAt, clientId) 
 VALUES 
 (1, 'Sample Outlet', 'This is a sample outlet description.', 'UNDER_CONSTRUCTION', '123 Main Street, City, Country', 37.7749, -122.4194, '+1234567890', 'sample@translense.com', 'http://www.sampleoutlet.com', NOW(), NOW(), 1),
@@ -34,22 +33,24 @@ ON DUPLICATE KEY UPDATE
 
 INSERT INTO client_outlet_mapping (clientId, outletId) VALUES (1, 1) 
 ON DUPLICATE KEY UPDATE clientId = VALUES(clientId), outletId = VALUES(outletId);
-INSERT INTO roles (id,name, isSystemDefined, scope, outletId)
+
+INSERT INTO roles (id, name, isSystemDefined, scope, outletId)
 VALUES
   (21, 'owner', true, 'CLIENT', null),
-  (22,'manager',true,'CLIENT',null )
+  (22, 'manager', true, 'CLIENT', null)
 ON DUPLICATE KEY UPDATE
-  name=VALUES(name),
-  isSystemDefined=VALUES(isSystemDefined),
-  outletId=VALUES(outletId),
-  scope=VALUES(scope);
+  name = VALUES(name),
+  isSystemDefined = VALUES(isSystemDefined),
+  outletId = VALUES(outletId),
+  scope = VALUES(scope);
 EOF
 )
 
-# Debugging output
-echo "Executing SQL Commands..."
-echo "$SQL_COMMANDS"
+# Execute the SQL commands inside the Docker container
+docker exec -i styler-mysql mysql -uuser -p"${MYSQL_PASSWORD}" -e "${SQL_COMMANDS}"
 
+# Debugging output
+echo "SQL Commands executed successfully."
 
 
 

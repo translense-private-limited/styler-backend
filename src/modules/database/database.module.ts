@@ -9,7 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
-      logging: false,
+      logging: true,
       type: 'mysql',
       //  host: 'mysql', // uncomment it if you want to run via docker
       host: '127.0.0.1', // uncomment it if you want to run backend service independently
@@ -35,4 +35,4 @@ import { MongooseModule } from '@nestjs/mongoose';
   exports: [],
   providers: [],
 })
-export class DatabaseModule { }
+export class DatabaseModule {}

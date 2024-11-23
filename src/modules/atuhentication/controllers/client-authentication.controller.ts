@@ -11,6 +11,7 @@ import { SellerLoginDto } from '../dtos/seller-login.dto';
 import { Response } from 'express';
 
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { Public } from '@src/utils/decorators/public.decorator';
 
 @Controller('client')
 @ApiTags('Auth')
@@ -18,6 +19,7 @@ export class ClientAuthController {
   constructor(private clientAuthService: SellerAuthService) {}
 
   @Post('login')
+  @Public()
   @ApiBody({
     description: 'Client Login',
     schema: {
