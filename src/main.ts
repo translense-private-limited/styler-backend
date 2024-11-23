@@ -14,11 +14,13 @@ async function bootstrap() {
     logger: createWinstonLoggerService(),
   });
   const envService = app.get(EnvService);
-  const port = envService.getEnvValue<AppConfigInterface>(EnvNamespaceEnum.APP_CONFIG).port;
+  const port = envService.getEnvValue<AppConfigInterface>(
+    EnvNamespaceEnum.APP_CONFIG,
+  ).port;
   //app.enableCors({ methods: '*', origin: '*', credentials: true });
   app.enableCors({
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow all methods
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Allow all methods
     allowedHeaders: '*', // Allow all headers
     credentials: true, // Allow credentials
   });
