@@ -1,4 +1,4 @@
-import { UserEnum } from '@modules/atuhentication/enums/user.enum';
+import { UserEnum } from '@modules/authentication/enums/user.enum';
 import { BaseEntity } from '@src/utils/entities/base.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 

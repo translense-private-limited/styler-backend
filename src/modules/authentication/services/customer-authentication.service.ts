@@ -1,9 +1,9 @@
 import { OtpService } from './otp.service';
-import { CustomerLoginResponseInterface } from './../interfaces/customer-login-response.interface';
-import { CustomerTokenPayloadDto } from './../dtos/customer-token-payload.dto';
+import { CustomerLoginResponseInterface } from '../interfaces/customer-login-response.interface';
+import { CustomerTokenPayloadDto } from '../dtos/customer-token-payload.dto';
 
 import { CustomerSignupDto } from '../dtos/customer-signup.dto';
-import { CustomerExternalService } from './../../customer/services/customer-external.service';
+import { CustomerExternalService } from '../../customer/services/customer-external.service';
 import {
   ConflictException,
   Injectable,

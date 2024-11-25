@@ -26,7 +26,7 @@ async function bootstrap() {
   });
 
   swaggerSetup(app);
-  // Utilised for validating the input field based on dto
+  // Utilized for validating the input field based on dto
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

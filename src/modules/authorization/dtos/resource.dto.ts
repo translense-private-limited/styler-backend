@@ -1,4 +1,4 @@
-import { UserEnum } from '@modules/atuhentication/enums/user.enum';
+import { UserEnum } from '@modules/authentication/enums/user.enum';
 import { IsEnum, IsString } from 'class-validator';
 
 export class ResourceDto {

@@ -18,6 +18,6 @@ import { CategoryClientController } from './controllers/category-client.controll
   ],
   providers: [CategoryService, CategoryRepository, CategoryExternal],
   controllers: [CategoryController, CategoryClientController],
-  exports: [CategoryExternal],
+  exports: [CategoryExternal, CategoryRepository],
 })
 export class CategoryModule {}

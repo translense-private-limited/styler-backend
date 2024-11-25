@@ -35,7 +35,7 @@ export class CategoryService {
     }
   }
 
-  async findByIdOrThrow(id: string): Promise<CategorySchema> {
+  async findByIdOrThrow(id: Types.ObjectId): Promise<CategorySchema> {
     const category = await this.categoryRepository.getRepository().findById(id);
     if (!category) {
       this.logger.error('Invalid Category id');
@@ -44,7 +44,7 @@ export class CategoryService {
     return category;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: Types.ObjectId): Promise<void> {
     await this.findByIdOrThrow(id);
     try {
       await this.categoryRepository

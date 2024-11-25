@@ -1,11 +1,11 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { GenderEnum } from '@src/utils/enums/gender.enums';
 
 @Schema({ timestamps: true }) // This will automatically add `createdAt` and `updatedAt`
 export class ServiceSchema extends Document {
-  @Prop({ required: true })
-  categoryId: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })
+  categoryId: mongoose.Schema.Types.ObjectId; // Reference to Category collection
 
   @Prop({ required: true })
   gender: GenderEnum;

@@ -1,4 +1,4 @@
-import { LoginDto } from '@modules/atuhentication/dtos/login.dto';
+import { LoginDto } from '@modules/authentication/dtos/login.dto';
 import { Injectable } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { ClientEntity } from '../entities/client.entity';

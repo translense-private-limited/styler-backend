@@ -13,6 +13,7 @@ import { CategoryService } from '../services/category.service';
 import { CategorySchema } from '../entities/category.schema';
 import { CategoryDto } from '../dtos/category.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 
 @ApiTags('category')
 @ApiBearerAuth('jwt')
@@ -36,14 +37,16 @@ export class CategoryController {
 
   // Get a specific category by its ID
   @Get('category/:id')
-  async getById(@Param('id') categoryId: string): Promise<CategorySchema> {
+  async getById(
+    @Param('id') categoryId: Types.ObjectId,
+  ): Promise<CategorySchema> {
     return this.categoryService.findByIdOrThrow(categoryId);
   }
 
   // Delete a specific category by its ID and return 204 status
   @Delete('category/:id')
   @HttpCode(HttpStatus.NO_CONTENT) // Return status 204 No Content on successful delete
-  async deleteCategory(@Param('id') categoryId: string): Promise<void> {
+  async deleteCategory(@Param('id') categoryId: Types.ObjectId): Promise<void> {
     await this.categoryService.delete(categoryId);
   }
 
