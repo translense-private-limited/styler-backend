@@ -6,6 +6,8 @@ import { ServiceController } from './controllers/service.controller';
 import { ServiceService } from './services/service.service';
 import { ServiceRepository } from './repositories/service.repository';
 import { CategoryModule } from '@modules/admin/category/category.module';
+import { ServiceCustomerController } from './controllers/service-customer.controller';
+import { ServiceCustomerService } from './services/service-customer.service';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { CategoryModule } from '@modules/admin/category/category.module';
     CategoryModule,
   ],
   exports: [],
-  providers: [ServiceService, ServiceRepository],
-  controllers: [ServiceController],
+  providers: [ServiceService, ServiceRepository, ServiceCustomerService],
+  controllers: [ServiceController, ServiceCustomerController],
 })
 export class ServiceModule {}

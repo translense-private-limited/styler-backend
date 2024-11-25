@@ -1,11 +1,19 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Validate,
+} from 'class-validator';
 import { ServiceInterface } from '../interfaces/service.interface';
 import { GenderEnum } from '@src/utils/enums/gender.enums';
+import { Types } from 'mongoose';
+import { IsObjectId } from '@src/utils/validators/is-object-id.validator';
 
 export class ServiceDto implements ServiceInterface {
-  @IsString()
+  @Validate(IsObjectId) // Custom validator to check ObjectId format
   @IsNotEmpty()
-  categoryId: string;
+  categoryId: Types.ObjectId;
 
   @IsEnum(GenderEnum)
   @IsNotEmpty()

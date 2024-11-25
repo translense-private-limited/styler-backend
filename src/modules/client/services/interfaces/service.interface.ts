@@ -1,6 +1,7 @@
 import { GenderEnum } from '@src/utils/enums/gender.enums';
+import { Types } from 'mongoose';
 export interface ServiceInterface {
-  categoryId: string;
+  categoryId: Types.ObjectId;
   gender: GenderEnum;
   serviceName: string;
   type: string;
