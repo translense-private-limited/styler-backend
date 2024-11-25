@@ -32,7 +32,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       connectionName: getMongodbDataSource(), // MongoDB connection name
     }),
   ],
-  exports: [],
+  exports: [TypeOrmModule],
   providers: [],
 })
 export class DatabaseModule {}

@@ -23,6 +23,6 @@ import { TeamMemberService } from './services/team-member.service';
     TeamMemberService,
   ],
   controllers: [TeamController],
-  exports: [ClientExternalService],
+  exports: [ClientExternalService,ClientRepository],
 })
 export class ClientModule {}

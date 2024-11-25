@@ -18,6 +18,6 @@ import { OutletCustomerService } from './services/outlet-customer.service';
     OutletCustomerService,
   ],
   controllers: [OutletController, OutletCustomerController],
-  exports: [OutletExternalService],
+  exports: [OutletExternalService,OutletRepository],
 })
 export class OutletModule {}
