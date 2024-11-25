@@ -27,6 +27,44 @@ export class ServiceRepository extends BaseSchema<ServiceSchema> {
    * @param outletId - The unique identifier of the outlet to filter services.
    * @returns An array of categories, each including its details and the count of services.
    */
+  // async getCategoriesWithServiceCountByOutlet(
+  //   outletId: number,
+  // ): Promise<CategoryWithServiceCountDto[]> {
+  //   return await this.categoryRepository.getRepository().aggregate([
+  //     {
+  //       $lookup: {
+  //         from: this.serviceRepository.collection.name, // Dynamically resolve the collection name for services
+  //         let: { categoryId: '$_id' },
+  //         pipeline: [
+  //           {
+  //             $match: {
+  //               $expr: {
+  //                 $and: [
+  //                   {
+  //                     $eq: [
+  //                       '$categoryId',
+  //                       { $toObjectId: '$$categoryId' }, // Ensure comparison with ObjectId
+  //                     ],
+  //                   },
+  //                   { $eq: ['$outletId', outletId] }, // Match outletId with the provided outlet
+  //                 ],
+  //               },
+  //             },
+  //           },
+  //         ],
+  //         as: 'services', // Name the joined array as 'services'
+  //       },
+  //     },
+  //     {
+  //       $project: {
+  //         _id: 1,
+  //         name: 1,
+  //         description: 1,
+  //         serviceCount: { $size: '$services' }, // Add a field for the count of services
+  //       },
+  //     },
+  //   ]);
+  // }
   async getCategoriesWithServiceCountByOutlet(
     outletId: number,
   ): Promise<CategoryWithServiceCountDto[]> {
@@ -61,6 +99,11 @@ export class ServiceRepository extends BaseSchema<ServiceSchema> {
           name: 1,
           description: 1,
           serviceCount: { $size: '$services' }, // Add a field for the count of services
+        },
+      },
+      {
+        $match: {
+          serviceCount: { $gt: 0 }, // Only include categories with a serviceCount greater than 0
         },
       },
     ]);

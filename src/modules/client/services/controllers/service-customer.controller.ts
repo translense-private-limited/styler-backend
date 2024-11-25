@@ -9,15 +9,6 @@ import { ServiceSchema } from '../schema/service.schema';
 export class ServiceCustomerController {
   constructor(private serviceCustomerService: ServiceCustomerService) {}
 
-  @Get()
-  @ApiOperation({
-    summary: 'Get customer details',
-    description: 'Retrieve the details of the logged-in customer',
-  })
-  async getCustomerDetails() {
-    return `Returning customer details`;
-  }
-
   @Get('outlets/:outletId/categories')
   @ApiOperation({
     summary: 'List service categories for an outlet',

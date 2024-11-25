@@ -12,6 +12,7 @@ export class OutletCustomerController {
   @Public()
   @ApiOperation({
     description: 'Get nearby outlet',
+    summary: 'List outlet nearest to users locations',
   })
   async getNearbyOutlet(@Query() nearbyOutletDto: NearbyOutletDto) {
     return this.outletCustomerService.getNearbyOutlet(nearbyOutletDto);
