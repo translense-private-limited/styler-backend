@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { MongoClient, ObjectId } from 'mongodb';
 import { GenderEnum } from '@src/utils/enums/gender.enums';
 import { UserTypeEnum } from '@modules/authorization/enums/usertype.enum'; // Import the enum
@@ -7,15 +6,23 @@ import { OutletStatusEnum } from '@modules/client/outlet/enums/outlet-status.enu
 import { ClientRepository } from '@modules/client/client/repository/client.repository';
 import { OutletRepository } from '@modules/client/outlet/repositories/outlet.repository';
 import { RoleRepository } from '@modules/authorization/repositories/role.repository';
+import { QueryRunner,  } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class SeedService {
   constructor(
+    private readonly dataSource: DataSource, 
     private readonly clientRepository: ClientRepository, // Inject ClientRepository directly
     private readonly outletRepository: OutletRepository,
-    private readonly roleRepository: RoleRepository,
-  ) {}
+    private readonly roleRepository: RoleRepository,  ) {}
   async seedMySQL(): Promise<void> {
+
+    const queryRunner: QueryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.query('CREATE DATABASE IF NOT EXISTS styler');
+    await queryRunner.query('USE styler');
     // Insert data into MySQL tables
     await this.clientRepository.getRepository().save({
       name: 'Sample Outlet Client',

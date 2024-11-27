@@ -9,13 +9,16 @@ import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
 import { RoleEntity } from '@modules/authorization/entities/role.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
+import { DatabaseModule } from '@modules/database/database.module';
 
 @Module({
   imports: [
-    ClientModule, 
+    ClientModule,
     OutletModule, 
     AuthorizationModule,  
-    TypeOrmModule.forFeature([ClientEntity, OutletEntity, RoleEntity], getMysqlDataSource()),  // Register entities
+    TypeOrmModule.forFeature([ClientEntity, OutletEntity, RoleEntity], getMysqlDataSource()),
+    DatabaseModule,
+    // Register entities
   ],
   controllers: [SeedController],
   providers: [SeedService],  // Provide SeedService
