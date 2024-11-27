@@ -10,7 +10,7 @@ import { Types } from 'mongoose';
 @ValidatorConstraint({ async: false })
 export class IsObjectIdConstraint implements ValidatorConstraintInterface {
   // eslint-disable-next-line no-unused-vars
-  validate(value: any, _args: ValidationArguments): boolean {
+  validate(value: string, _args: ValidationArguments): boolean {
     return Types.ObjectId.isValid(value); // Check if the value is a valid ObjectId
   }
 
