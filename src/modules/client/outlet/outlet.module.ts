@@ -8,10 +8,9 @@ import { getMysqlDataSource } from '@modules/database/data-source';
 import { OutletExternalService } from './services/outlet-external.service';
 import { OutletCustomerController } from './controllers/outlet-customer.controller';
 import { OutletCustomerService } from './services/outlet-customer.service';
-import { ServiceModule } from '../services/service.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OutletEntity], getMysqlDataSource()),ServiceModule],
+  imports: [TypeOrmModule.forFeature([OutletEntity], getMysqlDataSource())],
   providers: [
     OutletService,
     OutletRepository,

@@ -33,16 +33,4 @@ export class OutletCustomerController {
   ){
     return this.outletService.getOutletById(outletId)
   }
-
-  @Get('outletDetails/:outletId')
-  @Public()
-  @ApiOperation({
-    description:'get outlet by Id',
-    summary:'show the details of outlet by outletId'
-  })
-  async getOutletDetailsById(
-    @Param('outletId',ParseIntPipe) outletId:number
-  ){
-    return this.outletCustomerService.getOutletDetails(outletId)
-  }
 }
