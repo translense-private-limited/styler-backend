@@ -17,7 +17,7 @@ import { ServiceCustomerService } from './services/service-customer.service';
     ),
     CategoryModule,
   ],
-  exports: [],
+  exports: [ServiceService],
   providers: [ServiceService, ServiceRepository, ServiceCustomerService],
   controllers: [ServiceController, ServiceCustomerController],
 })
