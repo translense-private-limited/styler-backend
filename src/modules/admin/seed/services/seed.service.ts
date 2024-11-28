@@ -27,7 +27,7 @@ export class SeedService {
       await queryRunner.query('SET FOREIGN_KEY_CHECKS = 0;');
       await queryRunner.query('TRUNCATE TABLE outlets;');
       await queryRunner.query('TRUNCATE TABLE roles;');
-      await queryRunner.query('TRUNCATE TABLE clients;');
+      await queryRunner.query('TRUNCATE TABLE client;');
       await queryRunner.query('SET FOREIGN_KEY_CHECKS = 1;');
 
       // Insert data into the clients table
