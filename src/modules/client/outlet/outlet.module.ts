@@ -9,8 +9,6 @@ import { OutletExternalService } from './services/outlet-external.service';
 import { OutletCustomerController } from './controllers/outlet-customer.controller';
 import { OutletCustomerService } from './services/outlet-customer.service';
 import { ServiceModule } from '../services/service.module';
-import { CustomerOutletController } from './controllers/customer-outlet.controller';
-import { CustomerOutletService } from './services/customer-outlet.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OutletEntity], getMysqlDataSource()),ServiceModule],
@@ -19,9 +17,8 @@ import { CustomerOutletService } from './services/customer-outlet.service';
     OutletRepository,
     OutletExternalService,
     OutletCustomerService,
-    CustomerOutletService,
   ],
-  controllers: [OutletController, OutletCustomerController,CustomerOutletController],
+  controllers: [OutletController, OutletCustomerController,],
   exports: [OutletExternalService],
 })
 export class OutletModule {}

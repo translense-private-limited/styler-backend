@@ -33,4 +33,12 @@ export class OutletCustomerController {
   ){
     return this.outletService.getOutletById(outletId)
   }
+
+  @Get('outlet/:outletId/services')
+    @Public()
+    async getAllServicesForAnOutlet(
+        @Param('outletId',ParseIntPipe) outletId:number
+    ){
+        return this.outletCustomerService.getAllServicesForAnOutlet(outletId)
+    }
 }
