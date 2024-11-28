@@ -18,7 +18,7 @@ export class OutletCustomerService {
     return this.serviceExternal.getAllServicesForAnOutlet(outletId);
 }
 async getServiceByServiceAndOutletId(outletId:number,serviceId:string,customer:CustomerDecoratorDto){
-    return this.serviceExternal.getServiceByServiceAndOutletId(outletId,serviceId,customer)
+    return this.serviceExternal.getServiceDetailsByServiceAndOutletIdOrThrow(outletId,serviceId,customer)
 }
 
 }

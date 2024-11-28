@@ -13,7 +13,7 @@ export class ServiceExternal{
         return this.serviceService.getAllServicesByOutletId(outletId);
     }
 
-    async getServiceByServiceAndOutletId(outletId: number, serviceId: string, customer: CustomerDecoratorDto) {
+    async getServiceDetailsByServiceAndOutletIdOrThrow(outletId: number, serviceId: string, customer: CustomerDecoratorDto) {
         const serviceDetails = await this.serviceRepository.getRepository().findOne({
           where: { id: serviceId, outletId: outletId, whitelabelId: customer.whitelabelId,},
         });
