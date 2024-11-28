@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { OutletRepository } from '../repositories/outlet.repository';
 import { NearbyOutletDto } from '../dtos/nearby-outlet.dto';
 import { ServiceExternal } from '@modules/client/services/services/service-external';
+import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 @Injectable()
 export class OutletCustomerService {
   constructor(private outletRepository: OutletRepository,
@@ -16,10 +17,8 @@ export class OutletCustomerService {
   async getAllServicesForAnOutlet(outletId:number){
     return this.serviceExternal.getAllServicesForAnOutlet(outletId);
 }
-  async getServiceDetailsByIdInAnOutlet(outletId:number,serviceId:string){
+async getServiceDetailsByOutlet(outletId:number,serviceId:string,customer:CustomerDecoratorDto){
+    return this.serviceExternal.getServiceDetailsByOutlet(outletId,serviceId,customer)
+}
 
-    const services = await this.getAllServicesForAnOutlet(outletId);
-    const serviceDetails = services.find((service)=>service.id === serviceId)
-    return serviceDetails;
-  }
 }

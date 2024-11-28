@@ -30,5 +30,8 @@ export class ServiceSchema extends Document {
 
   @Prop({ required: true })
   outletId: number;
+
+  @Prop({required:true})
+  whitelabelId:number;
 }
 export const ServiceModel = SchemaFactory.createForClass(ServiceSchema);

@@ -4,6 +4,8 @@ import { OutletCustomerService } from '../services/outlet-customer.service';
 import { NearbyOutletDto } from '../dtos/nearby-outlet.dto';
 import { Public } from '@src/utils/decorators/public.decorator';
 import { OutletService } from '../services/outlet.service';
+import { CustomerDecorator } from '@src/utils/decorators/customer.decorator';
+import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 
 @Controller('customer')
 @ApiTags('customer/outlets')
@@ -50,7 +52,8 @@ export class OutletCustomerController {
   async getServiceDetails(
       @Param('outletId',ParseIntPipe) outletId:number,
       @Param('serviceId') serviceId:string,
+      @CustomerDecorator() customer:CustomerDecoratorDto
   ){
-      return this.outletCustomerService.getServiceDetailsByIdInAnOutlet(outletId,serviceId);
+      return this.outletCustomerService.getServiceDetailsByOutlet(outletId,serviceId,customer);
     }
 }
