@@ -41,4 +41,16 @@ export class OutletCustomerController {
     ){
         return this.outletCustomerService.getAllServicesForAnOutlet(outletId)
     }
+
+  @Get('outlet/:outletId/service/:serviceId')
+  @ApiOperation({
+      description:'get service details',
+      summary:'get service details by serviceId in an outlet by outletId'
+  })
+  async getServiceDetails(
+      @Param('outletId',ParseIntPipe) outletId:number,
+      @Param('serviceId') serviceId:string,
+  ){
+      return this.outletCustomerService.getServiceDetailsByIdInAnOutlet(outletId,serviceId);
+    }
 }

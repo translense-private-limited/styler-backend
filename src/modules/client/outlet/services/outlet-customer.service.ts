@@ -16,4 +16,10 @@ export class OutletCustomerService {
   async getAllServicesForAnOutlet(outletId:number){
     return this.serviceExternal.getAllServicesForAnOutlet(outletId);
 }
+  async getServiceDetailsByIdInAnOutlet(outletId:number,serviceId:string){
+
+    const services = await this.getAllServicesForAnOutlet(outletId);
+    const serviceDetails = services.find((service)=>service.id === serviceId)
+    return serviceDetails;
+  }
 }
