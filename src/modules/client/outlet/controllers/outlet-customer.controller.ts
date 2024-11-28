@@ -54,6 +54,6 @@ export class OutletCustomerController {
       @Param('serviceId') serviceId:string,
       @CustomerDecorator() customer:CustomerDecoratorDto
   ){
-      return this.outletCustomerService.getServiceDetailsByOutlet(outletId,serviceId,customer);
+      return this.outletCustomerService.getServiceByServiceAndOutletId(outletId,serviceId,customer);
     }
 }
