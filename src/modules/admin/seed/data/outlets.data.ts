@@ -3,11 +3,20 @@ import { OutletRepository } from "@modules/client/outlet/repositories/outlet.rep
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
-export class outletData{
+export class SeedOutletData{
     constructor( private readonly outletRepository:OutletRepository){}
 
-    async seedOutlet():Promise<void>{
+    async seedOutlets():Promise<void>{
+        const queryRunner = this.outletRepository.getRepository().manager.connection.createQueryRunner();
+
         try{
+
+            await queryRunner.startTransaction();
+
+            await queryRunner.query('SET FOREIGN_KEY_CHECKS = 0;');
+            await queryRunner.query('TRUNCATE TABLE outlets;');
+            await queryRunner.query('SET FOREIGN_KEY_CHECKS = 1;');
+      
             const outlets = [
                 {
                   id: 1,
@@ -42,10 +51,15 @@ export class outletData{
               ];
 
               await this.outletRepository.getRepository().save(outlets);
+              await queryRunner.commitTransaction();
+
               console.log('outlets table seeding completed');
         }catch (error) {
+            await queryRunner.rollbackTransaction();
             console.error('Error during outlets table seeding:', error);
             throw error;
+          }finally {
+            await queryRunner.release();
           }
     }
 }

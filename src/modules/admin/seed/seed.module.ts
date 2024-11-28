@@ -10,6 +10,10 @@ import { RoleEntity } from '@modules/authorization/entities/role.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 import { DatabaseModule } from '@modules/database/database.module';
+import { SeedCategoryData } from './data/category.data';
+import { SeedOutletData } from './data/outlets.data';
+import { SeedRoleData } from './data/roles.data';
+import { SeedClientData } from './data/client.data';
 
 @Module({
   imports: [
@@ -21,6 +25,6 @@ import { DatabaseModule } from '@modules/database/database.module';
     // Register entities
   ],
   controllers: [SeedController],
-  providers: [SeedService],  // Provide SeedService
+  providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData],  // Provide SeedService
 })
 export class SeedModule {}

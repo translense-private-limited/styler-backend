@@ -3,11 +3,18 @@ import { Injectable } from "@nestjs/common";
 import { GenderEnum } from "@src/utils/enums/gender.enums";
 
 @Injectable()
-export class clientData{
+export class SeedClientData{
     constructor(private readonly clientRepository:ClientRepository){}
 
     async seedClients():Promise<void>{
+            const queryRunner = this.clientRepository.getRepository().manager.connection.createQueryRunner();
         try{
+            await queryRunner.startTransaction();
+
+            await queryRunner.query('SET FOREIGN_KEY_CHECKS = 0;');
+            await queryRunner.query('TRUNCATE TABLE client;');
+            await queryRunner.query('SET FOREIGN_KEY_CHECKS = 1;');
+      
             const clients = [
                 {
                     name:'Sample Outlet Client',
@@ -25,11 +32,15 @@ export class clientData{
             ];
 
             await this.clientRepository.getRepository().save(clients);
+            await queryRunner.commitTransaction();
             console.log('client table seeding completed')
         }
         catch(error){
+            await queryRunner.rollbackTransaction();
             console.error('Error during client table seeding:',error);
             throw error;
-        }
+        }finally {
+            await queryRunner.release();
+          }
     }
 }
