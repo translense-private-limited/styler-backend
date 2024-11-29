@@ -14,13 +14,15 @@ export class ServiceExternal{
     }
 
     async getServiceDetailsByServiceAndOutletIdOrThrow(outletId: number, serviceId: string, customer: CustomerDecoratorDto) {
-        const serviceDetails = await this.serviceRepository.getRepository().findOne({
-          where: { id: serviceId, outletId: outletId, whitelabelId: customer.whitelabelId,},
-        });
-      
-        if (!serviceDetails) {
+        // const serviceDetails = await this.serviceRepository.getRepository().findOne({
+        //   where: { id: serviceId, outletId: outletId, whitelabelId: customer.whitelabelId,},
+        // });
+        const serviceDetails = await this.serviceRepository.getRepository().findById(serviceId);
+        if (serviceDetails && serviceDetails.outletId === outletId && serviceDetails.whitelabelId === customer.whitelabelId) {
+          console.log(serviceDetails)
+          return serviceDetails;
+        } else {
           throw new NotFoundException('Service not found for the given outlet and whitelabel');
         }
-        return serviceDetails;
       }
 }

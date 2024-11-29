@@ -20,7 +20,7 @@ export class CustomerSignupDto {
   emailOtp: number; // OTP for email verification
 
   @IsNumberString()
-  @Length(10, 10) // Assuming a valid contact number is 10 digits
+  @Length(9,11) // Assuming a valid contact number is 10 digits
   contactNumber: number; // Use string type for phone number
 
   @IsNumberString()

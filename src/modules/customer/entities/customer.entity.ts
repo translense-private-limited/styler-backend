@@ -21,4 +21,7 @@ export class CustomerEntity extends BaseEntity implements CustomerInterface {
 
   @Column({ name: 'password', type: 'varchar', length: 255 })
   password: string;
+
+  @Column({default:1})
+  whitelabelId:number;
 }

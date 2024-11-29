@@ -19,6 +19,9 @@ export class ServiceSchema extends Document {
   @Prop({ required: true })
   price: number;
 
+  @Prop({required:false,type:Number,default:0})
+  discount?:number
+
   @Prop({ required: true })
   timeTaken: number;
 
