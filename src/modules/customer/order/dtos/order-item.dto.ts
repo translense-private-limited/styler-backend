@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional, IsPositive, IsString, IsUUID } from "class-validator";
 import { OrderItemInterface } from "../interfaces/order-item.interface";
 
-export class OrderItemDto implements OrderItemInterface{ 
+export class OrderItemPayloadDto implements OrderItemInterface{ 
     @IsNotEmpty()
     @IsUUID()
     serviceId:string;

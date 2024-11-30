@@ -13,29 +13,29 @@ export class ServiceExternal{
         return this.serviceService.getAllServicesByOutletId(outletId);
     }
 
-    // async getServiceDetailsByServiceAndOutletIdOrThrow(outletId: number, serviceId: string, customer: CustomerDecoratorDto) {
-    //     const serviceDetails = await this.serviceService.getServiceByIdOrThrow(serviceId)
-    //     if (serviceDetails && serviceDetails.outletId === outletId && serviceDetails.whitelabelId === customer.whitelabelId) {
-    //       return serviceDetails;
-    //     } else {
-    //       throw new NotFoundException('Service not found for the given outlet and whitelabel');
-    //     }
-    //   }
     async getServiceDetailsByServiceAndOutletIdOrThrow(outletId: number, serviceId: string, customer: CustomerDecoratorDto) {
-      console.log(serviceId,outletId,customer)
-      const serviceDetails = await this.serviceRepository.getRepository().findOne({
-          where: {
-              serviceId,
-              outletId,
-              whitelabelId: customer.whitelabelId
-          }
-      });
-  
-      if (!serviceDetails) {
+        const serviceDetails = await this.serviceService.getServiceByIdOrThrow(serviceId)
+        if (serviceDetails && serviceDetails.outletId === outletId && serviceDetails.whitelabelId === customer.whitelabelId) {
+          return serviceDetails;
+        } else {
           throw new NotFoundException('Service not found for the given outlet and whitelabel');
+        }
       }
+    // async getServiceDetailsByServiceAndOutletIdOrThrow(outletId: number, serviceId: string, customer: CustomerDecoratorDto) {
+    //   console.log(serviceId,outletId,customer)
+    //   const serviceDetails = await this.serviceRepository.getRepository().findOne({
+    //       where: {
+    //           serviceId,
+    //           outletId,
+    //           whitelabelId: customer.whitelabelId
+    //       }
+    //   });
   
-      return serviceDetails;
-  }
+    //   if (!serviceDetails) {
+    //       throw new NotFoundException('Service not found for the given outlet and whitelabel');
+    //   }
+  
+    //   return serviceDetails;
+  // }
   
 }

@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { OrderItemDto } from '../dtos/order-item.dto';
+import { OrderItemPayloadDto } from '../dtos/order-item.dto';
 import { OrderItemRepository } from '../repositories/order-item.repository';
 import { OrderItemEntity } from '../entities/order-item.entity';
 
 @Injectable()
 export class OrderItemService {
-  constructor(private readonly orderItemRepository: OrderItemRepository) {}
+  constructor(private readonly orderItemRepository: OrderItemRepository,) {}
 
   // Method to calculate the total for a service (with discount)
-  calculateServiceTotal(price: number, discount: number, quantity: number): number {
+  calculateDiscountedPrice(price: number, discount: number,quantity:number): number {
     const discountedPrice = price - price * (discount / 100);
-    return discountedPrice * quantity;
+    return discountedPrice * quantity ;
   }
 
   // Method to calculate the end time of a service
@@ -25,7 +25,8 @@ export class OrderItemService {
   }
 
   // Method to create ordered service data to return as a DTO
-  createOrderedService(serviceId: string, startTime: Date, endTime: Date, quantity: number, outletId: number, notes?: string): OrderItemDto {
-    return { serviceId, startTime, endTime, quantity, outletId, notes };
+  createOrderedService(orderedServices:OrderItemPayloadDto): OrderItemPayloadDto {
+    // return { serviceId, startTime, endTime, quantity, outletId, notes };
+    return orderedServices;
   }
 }
