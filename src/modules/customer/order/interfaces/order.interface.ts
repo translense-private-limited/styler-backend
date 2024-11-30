@@ -1,6 +1,7 @@
 export interface OrderInterface{
     orderId:number;
     amountPaid:number;
-    paymentId:number;
+    paymentId?:string;
     customerId:number;
+    outletId:number
 }

@@ -1,11 +1,11 @@
 import { IsArray, IsNotEmpty, } from "class-validator";
 import { CreateOrderInterface } from "../interfaces/create-order.interface";
-import { OrderedServicesDetailsDto } from "./ordered-services-details.dto";
+import { OrderItemDto } from "./order-item.dto";
 
 export class CreateOrderDto implements CreateOrderInterface{
     @IsArray()
     @IsNotEmpty()
-    services:OrderedServicesDetailsDto[]
+    services:OrderItemDto[]
 
     @IsNotEmpty()
     customerId:number;

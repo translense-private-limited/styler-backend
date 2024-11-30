@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { CustomerController } from './controllers/customer.controller';
 import { CustomerService } from './services/customer.service';
 import { CustomerExternalService } from './services/customer-external.service';
 import { CustomerRepository } from './repositories/customer.repository';
@@ -16,7 +15,7 @@ import { OrderModule } from './order/order.module';
     EncryptionModule,
     OrderModule
   ],
-  controllers: [CustomerController],
+  controllers: [],
   providers: [CustomerService, CustomerExternalService, CustomerRepository],
   exports: [CustomerExternalService],
 })

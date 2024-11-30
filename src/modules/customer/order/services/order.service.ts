@@ -1,111 +1,112 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { OrderRepositoy } from "../repositories/order.repository";
 import { CreateOrderDto } from "../dtos/create-order.dto";
 import { OrderItemRepository } from "../repositories/order-item.repository";
 import { OutletExternalService } from "@modules/client/outlet/services/outlet-external.service";
 import { CustomerDecoratorDto } from "@src/utils/dtos/customer-decorator.dto";
-import { OrderedServicesDetailsDto } from "../dtos/ordered-services-details.dto";
+import { OrderItemDto } from "../dtos/order-item.dto";
+import { OrderDto } from "../dtos/order.dto";
+import { OrderItemService } from "./order-item.service"; // Import the OrderItemService
+import { EntityManager, } from "typeorm";
+import { OrderEntity } from "../entities/orders.entity";
+import { OrderItemEntity } from "../entities/order-item.entity";
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepositoy,
     private readonly orderItemRepository: OrderItemRepository,
-    private readonly outletExternalService: OutletExternalService
-  ) {}
+    private readonly outletExternalService: OutletExternalService,
+    private readonly orderItemService: OrderItemService // Inject the OrderItemService
+) {}
 
-  async createOrder(createOrderDto: CreateOrderDto, customer: CustomerDecoratorDto): Promise<CreateOrderDto> {
-    const { services, customerId, outletId, paymentId } = createOrderDto;
+async createOrder(createOrderDto: CreateOrderDto, customer: CustomerDecoratorDto): Promise<CreateOrderDto> {
+  const { services, customerId, outletId, paymentId } = createOrderDto;
 
-    // Process services to validate, calculate, and prepare data
-    const { amountPaid, orderItems, orderedServices } = await this.prepareOrderData(services, customer);
+  // Prepare data for order creation
+  const { amountPaid, orderItems, orderedServices } = await this.prepareOrderData(services, customer);
 
-    // Create and save the order
-    const savedOrder = await this.saveOrder({ customerId, paymentId, amountPaid });
+  // Use transaction to ensure atomicity
+  const queryRunner = this.orderRepository.getRepository().manager.connection.createQueryRunner();
 
-    // Save order items associated with the order
-    await this.saveOrderItems(orderItems, savedOrder);
+  await queryRunner.startTransaction();
+  try {
+// When passing to saveOrder and saveOrderItems, use queryRunner.manager
+    const savedOrder = await this.saveOrder(queryRunner.manager, { customerId, paymentId, amountPaid });
+    await this.saveOrderItems(queryRunner.manager, orderItems, savedOrder);
 
-    // Return a structured response payload
+    // Commit the transaction
+    await queryRunner.commitTransaction();
+
+    // Return structured response
     return this.createResponsePayload(orderedServices, customerId, outletId, paymentId);
+  } catch (error) {
+    // If any error occurs, rollback the transaction
+    await queryRunner.rollbackTransaction();
+    throw error; // Re-throw the error to handle it outside
+  } finally {
+    // Release the query runner regardless of success or failure
+    await queryRunner.release();
+  }
+}
+
+private async prepareOrderData(services: OrderItemDto[], customer: CustomerDecoratorDto) {
+  let amountPaid = 0;
+  const orderItems = [];
+  const orderedServices: OrderItemDto[] = [];
+
+  for (const service of services) {
+    const { serviceTotal, orderItem, orderedService } = await this.processService(service, customer);
+
+    amountPaid += serviceTotal;
+    orderItems.push(orderItem);
+    orderedServices.push(orderedService);
   }
 
-  private async prepareOrderData(services: any[], customer: CustomerDecoratorDto) {
-    const orderItems = [];
-    const orderedServices: OrderedServicesDetailsDto[] = [];
-    let amountPaid = 0;
+  return { amountPaid, orderItems, orderedServices };
+}
 
-    for (const service of services) {
-      const { serviceTotal, orderItem, orderedService } = await this.processService(service, customer);
+private async processService(service: OrderItemDto, customer: CustomerDecoratorDto) {
+  const { serviceId, quantity, outletId, startTime, notes } = service;
 
-      amountPaid += serviceTotal; // Replacing totalPrice with amountPaid
-      orderItems.push(orderItem);
-      orderedServices.push(orderedService);
-    }
+  // Validate service and outlet
+  const serviceData = await this.validateServiceAndOutlet(outletId, serviceId, customer);
 
-    return { amountPaid, orderItems, orderedServices };
-  }
+  // Use OrderItemService to calculate service total and end time
+  const serviceTotal = this.orderItemService.calculateServiceTotal(serviceData.price, serviceData.discount, quantity);
+  const endTime = this.orderItemService.calculateEndTime(serviceData.duration, quantity, startTime);
 
-  private async processService(service: any, customer: CustomerDecoratorDto) {
-    const { serviceId, quantity, outletId, startTime, notes } = service;
+  // Prepare order item and service details
+  const orderItem = this.orderItemService.createOrderItem(serviceId, quantity, serviceData.discount, notes);
+  const orderedService: OrderItemDto = this.orderItemService.createOrderedService(serviceId, startTime, endTime, quantity, outletId, notes);
 
-    const serviceData = await this.validateServiceAndOutlet(outletId, serviceId, customer);
-    if (!serviceData) {
-      throw new BadRequestException(`Invalid serviceId: ${serviceId} or outletId: ${outletId}`);
-    }
+  return { serviceTotal, orderItem, orderedService };
+}
 
-    const { price, duration, discount } = serviceData;
-    const { serviceTotal, endTime } = this.calculateServiceDetails(price, discount, duration, quantity, startTime);
+private async validateServiceAndOutlet(outletId: number, serviceId: string, customer: CustomerDecoratorDto) {
+  const service = await this.outletExternalService.getServiceByServiceAndOutletIdOrThrow(outletId, serviceId, customer);
+  return { price: service.price, duration: service.timeTaken, discount: service.discount };
+}
 
-    // Prepare order item and service details
-    const orderItem = this.createOrderItem(serviceId, quantity, discount, notes);
-    const orderedService: OrderedServicesDetailsDto = { serviceId, startTime, endTime, quantity, outletId, notes };
+private async saveOrder(queryRunnerManager: EntityManager, orderData: { customerId: number; paymentId: string; amountPaid: number }) {
+    const order = this.orderRepository.getRepository().create(orderData); // Create the order entity
+    return queryRunnerManager.save(OrderEntity, order); // Save the entity using the manager from queryRunner
+}
 
-    return { serviceTotal, orderItem, orderedService };
-  }
+private async saveOrderItems(queryRunner: EntityManager, orderItems: Partial<OrderItemDto[]>, savedOrder: OrderDto) {
+  const itemsToSave = orderItems.map((item) => ({
+    ...item,
+    order: savedOrder,
+  }));
+  await queryRunner.save(OrderItemEntity, itemsToSave); // Directly call save() on queryRunner
+}
 
-  private calculateServiceDetails(price: number, discount: number, duration: number, quantity: number, startTime: Date) {
-    const discountedPrice = price - price * (discount / 100);
-    const serviceTotal = discountedPrice * quantity;
-    const totalDuration = duration * quantity; // Duration in minutes
-    const endTime = new Date(new Date(startTime).getTime() + totalDuration * 60000);
-
-    return { serviceTotal, endTime };
-  }
-
-  private createOrderItem(serviceId: string, quantity: number, discount: number, notes: string) {
-    return this.orderItemRepository.getRepository().create({
-      serviceId,
-      quantity,
-      discount,
-      notes,
-    });
-  }
-
-  private async saveOrder(orderData: { customerId: number; paymentId: string; amountPaid: number }) {
-    const order = this.orderRepository.getRepository().create(orderData);
-    return this.orderRepository.getRepository().save(order);
-  }
-
-  private async saveOrderItems(orderItems: any[], savedOrder: any) {
-    const itemsToSave = orderItems.map((item) => ({
-      ...item,
-      order: savedOrder,
-    }));
-    await this.orderItemRepository.getRepository().save(itemsToSave);
-  }
-
-  private async validateServiceAndOutlet(outletId: number, serviceId: string, customer: CustomerDecoratorDto) {
-    const service = await this.outletExternalService.getServiceByServiceAndOutletIdOrThrow(outletId, serviceId, customer);
-    return { price: service.price, duration: service.timeTaken, discount: service.discount };
-  }
-
-  private createResponsePayload(
-    orderedServices: OrderedServicesDetailsDto[],
-    customerId: number,
-    outletId: number,
-    paymentId: string
-  ): CreateOrderDto {
-    return { services: orderedServices, customerId, outletId, paymentId };
-  }
+private createResponsePayload(
+  orderedServices: OrderItemDto[],
+  customerId: number,
+  outletId: number,
+  paymentId: string
+): CreateOrderDto {
+  return { services: orderedServices, customerId, outletId, paymentId };
+}
 }

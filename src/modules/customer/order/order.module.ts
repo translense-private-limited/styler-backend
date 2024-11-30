@@ -8,6 +8,7 @@ import { OrderService } from "./services/order.service";
 import { OutletModule } from "@modules/client/outlet/outlet.module";
 import { OrderRepositoy } from "./repositories/order.repository";
 import { OrderItemRepository } from "./repositories/order-item.repository";
+import { OrderItemService } from "./services/order-item.service";
 
 @Module({
     imports:[
@@ -15,7 +16,7 @@ import { OrderItemRepository } from "./repositories/order-item.repository";
         OutletModule
     ],
     controllers:[OrderController],
-    providers:[OrderService,OrderRepositoy,OrderItemRepository],
+    providers:[OrderService,OrderRepositoy,OrderItemRepository,OrderItemService],
     exports:[]
     
 })

@@ -1,9 +1,9 @@
-import { OrderedServicesDetailsInterface } from "./ordered-services-details.interface";
+import { OrderItemInterface } from "./order-item.interface";
 
 
 export interface CreateOrderInterface {
-  services: OrderedServicesDetailsInterface[];     
+  services: OrderItemInterface[];     
   customerId: number; 
   outletId:number;          
-  paymentId: string;            
+  paymentId?: string;            
 }

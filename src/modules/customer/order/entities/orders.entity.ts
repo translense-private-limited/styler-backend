@@ -1,8 +1,9 @@
 import { BaseEntity } from '@src/utils/entities/base.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { OrderInterface } from '../interfaces/order.interface';
 
 @Entity('orders') // Table name
-export class OrderEntity extends BaseEntity {
+export class OrderEntity extends BaseEntity implements OrderInterface{
   @PrimaryGeneratedColumn()
   orderId: number; // Primary key for the order
 
@@ -14,5 +15,8 @@ export class OrderEntity extends BaseEntity {
 
   @Column()
   customerId: number; // ID of the customer placing the order
+
+  @Column()
+  outletId: number;
 
 }
