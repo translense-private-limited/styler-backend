@@ -34,7 +34,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.2.0",
     "@nestjs/throttler": "^5.1.1",
-    "@nestjs/typeorm": "^10.0.1",
+    "@nestjs/typeorm": "^10.0.2",
     "@types/twilio": "^3.19.3",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",

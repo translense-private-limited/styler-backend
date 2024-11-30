@@ -18,7 +18,8 @@ import { ServiceModule } from '../services/service.module';
     OutletExternalService,
     OutletCustomerService,
   ],
-  controllers: [OutletController, OutletCustomerController,],
-  exports: [OutletExternalService],
+  controllers: [OutletController, OutletCustomerController],
+  exports: [OutletExternalService,OutletRepository],
+
 })
 export class OutletModule {}
