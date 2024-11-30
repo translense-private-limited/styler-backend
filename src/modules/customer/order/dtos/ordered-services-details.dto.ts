@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional, IsPositive, IsString, IsUUID } from "class-validator";
-import { ServicesInterface } from "../interfaces/services.interface";
+import { OrderedServicesDetailsInterface } from "../interfaces/ordered-services-details.interface";
 
-export class ServicesDto implements ServicesInterface{ 
+export class OrderedServicesDetailsDto implements OrderedServicesDetailsInterface{ 
     @IsNotEmpty()
     @IsUUID()
     serviceId:string;

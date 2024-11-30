@@ -8,11 +8,13 @@ import { CustomerEntity } from './entities/customer.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
 
 import { EncryptionModule } from '@modules/encryption/encryption.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([CustomerEntity], getMysqlDataSource()),
     EncryptionModule,
+    OrderModule
   ],
   controllers: [CustomerController],
   providers: [CustomerService, CustomerExternalService, CustomerRepository],

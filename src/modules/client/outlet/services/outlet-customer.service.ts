@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { OutletRepository } from '../repositories/outlet.repository';
 import { NearbyOutletDto } from '../dtos/nearby-outlet.dto';
-import { ServiceExternal } from '@modules/client/services/services/service-external';
+import { ServiceExternal } from '@modules/client/services/services/service-external.service';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 @Injectable()
 export class OutletCustomerService {

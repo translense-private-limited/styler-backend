@@ -1,7 +1,9 @@
-import { ServicesDto } from "../dtos/services.dto";
+import { OrderedServicesDetailsInterface } from "./ordered-services-details.interface";
+
 
 export interface CreateOrderInterface {
-  services: ServicesDto[];     
-  customerId: number;           
+  services: OrderedServicesDetailsInterface[];     
+  customerId: number; 
+  outletId:number;          
   paymentId: string;            
 }

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { OutletService } from './outlet.service';
 import { OutletEntity } from '../entities/outlet.entity';
-import { ServiceExternal } from '@modules/client/services/services/service-external';
+import { ServiceExternal } from '@modules/client/services/services/service-external.service';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 
 @Injectable()
 export class OutletExternalService {
-  constructor(private outletService: OutletService,
-    private serviceExternal:ServiceExternal
+  constructor(private readonly outletService: OutletService,
+    private readonly serviceExternal:ServiceExternal
   ) {}
 
   async getOutletById(outletId: number): Promise<OutletEntity> {
@@ -15,7 +15,7 @@ export class OutletExternalService {
     return outlet;
   }
 
-  async getServiceByServiceAndOutletId(outletId:number,serviceId:string,customer:CustomerDecoratorDto){
+  async getServiceByServiceAndOutletIdOrThrow(outletId:number,serviceId:string,customer:CustomerDecoratorDto){
     return this.serviceExternal.getServiceDetailsByServiceAndOutletIdOrThrow(outletId,serviceId,customer)
 }
 }

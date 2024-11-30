@@ -27,7 +27,6 @@ import * as mongoose from 'mongoose';
 import { ImageController } from './image.controller';
 import { ImageService } from './image.service';
 import { CustomerModule } from '@modules/customer/customer.module';
-import { OrderModule } from '@modules/customer/order/order.module';
 
 @Module({
   imports: [
@@ -40,7 +39,6 @@ import { OrderModule } from '@modules/customer/order/order.module';
     AuthorizationModule,
     AdminModule,
     CustomerModule,
-    OrderModule,
   ],
   controllers: [AppController, ImageController],
   providers: [

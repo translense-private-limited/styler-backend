@@ -1,4 +1,4 @@
-export interface ServicesInterface {
+export interface OrderedServicesDetailsInterface {
     serviceId: string;
     startTime: Date;
     endTime?: Date;

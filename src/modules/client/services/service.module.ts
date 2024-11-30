@@ -8,7 +8,7 @@ import { ServiceRepository } from './repositories/service.repository';
 import { CategoryModule } from '@modules/admin/category/category.module';
 import { ServiceCustomerController } from './controllers/service-customer.controller';
 import { ServiceCustomerService } from './services/service-customer.service';
-import { ServiceExternal } from './services/service-external';
+import { ServiceExternal } from './services/service-external.service';
 
 @Module({
   imports: [

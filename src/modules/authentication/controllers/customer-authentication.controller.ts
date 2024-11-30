@@ -7,7 +7,7 @@ import { CustomerSignupDto } from '../dtos/customer-signup.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('CustomerAuth')
-@Controller('customers')
+@Controller('customer')
 @Public() // This marks the entire controller as public
 export class CustomerAuthenticationController {
   constructor(
