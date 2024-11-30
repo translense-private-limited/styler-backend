@@ -41,7 +41,7 @@ export class OtpController {
   }
 
   @Get('verify-otp')
-  async verifyOtp(@Body() otpVerifyDto: OtpVerifyDto): Promise<any> {
+  async verifyOtp(@Body() otpVerifyDto: OtpVerifyDto): Promise<boolean> {
     const isValidOtp = await this.otpService.verifyOtp(otpVerifyDto);
     if (isValidOtp) {
       return true;
