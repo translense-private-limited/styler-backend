@@ -4,7 +4,9 @@ import { CustomerAuthenticationService } from '../services/customer-authenticati
 import { CustomerLoginResponseInterface } from '../interfaces/customer-login-response.interface';
 import { LoginDto } from '../dtos/login.dto';
 import { CustomerSignupDto } from '../dtos/customer-signup.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('CustomerAuth')
 @Controller('customer')
 @Public() // This marks the entire controller as public
 export class CustomerAuthenticationController {

@@ -2,6 +2,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   Validate,
 } from 'class-validator';
@@ -30,6 +31,10 @@ export class ServiceDto implements ServiceInterface {
   @IsNumber()
   @IsNotEmpty()
   price: number;
+
+  @IsNumber()
+  @IsOptional()
+  discount?:number
 
   @IsNumber()
   @IsNotEmpty()

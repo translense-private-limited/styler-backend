@@ -11,8 +11,8 @@ export const CustomerDecorator = createParamDecorator(
 
     const customerDetailDto = new CustomerDecoratorDto();
     ///customerDetailDto.contactNumber = request.user.
-    customerDetailDto.whitelabelId = whitelabelId;
-    customerDetailDto.customerId = customerId;
+    customerDetailDto.whitelabelId = whitelabelId || 1;
+    customerDetailDto.customerId = customerId ||1;
     customerDetailDto.contactNumber = request.user.contactNumber;
     customerDetailDto.name = request.user.name;
     customerDetailDto.email = request.user.email;

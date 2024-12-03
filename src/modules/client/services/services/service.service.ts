@@ -37,6 +37,20 @@ export class ServiceService {
     return service;
   }
 
+  async getServiceByServiceAndOutletIdOrThrow(
+    serviceId: string,
+    outletId: number,
+  ): Promise<ServiceSchema> {
+    const service = await this.serviceRepository.getRepository().findOne({
+      outletId:outletId,
+      _id:serviceId,
+    });
+    if (!service) {
+      throw new NotFoundException('no service exist with provided Id');
+    }
+    return service;
+  }
+
   async updateServiceById(
     serviceId: string,
     updateServiceDto: Partial<ServiceDto>,
