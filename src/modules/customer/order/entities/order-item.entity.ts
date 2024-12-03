@@ -13,7 +13,7 @@ export class OrderItemEntity extends BaseEntity{
   @Column('int')
   quantity: number; // Quantity of the service ordered
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column('decimal', { precision: 10, scale: 2,default:0 })
   @IsOptional()
   discount?: number; // Discount applied to this order item
 

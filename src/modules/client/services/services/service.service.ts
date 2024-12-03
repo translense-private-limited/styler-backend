@@ -42,8 +42,8 @@ export class ServiceService {
     outletId: number,
   ): Promise<ServiceSchema> {
     const service = await this.serviceRepository.getRepository().findOne({
-      outletId,
-      serviceId,
+      outletId:outletId,
+      _id:serviceId,
     });
     if (!service) {
       throw new NotFoundException('no service exist with provided Id');

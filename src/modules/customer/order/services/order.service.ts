@@ -5,7 +5,6 @@ import { OrderItemPayloadDto } from '../dtos/order-item.dto';
 import { EntityManager } from 'typeorm';
 import { OrderEntity } from '../entities/orders.entity';
 import { OrderItemEntity } from '../entities/order-item.entity';
-import { ServiceSchema } from '@modules/client/services/schema/service.schema';
 import { OrderInterface } from '../interfaces/order.interface';
 import { ExpandedOrderItemInterface } from '../interfaces/expanded-order-item.interface';
 import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
@@ -16,45 +15,45 @@ import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepositoy,
-    private serviceExternalService: ServiceExternalService,
+    private readonly serviceExternalService: ServiceExternalService,
   ) {}
 
   private async expandOrderItem(
     orderItems: OrderItemPayloadDto[],
   ): Promise<ExpandedOrderItemInterface[]> {
     const expandedOrderItems: ExpandedOrderItemInterface[] = [];
-    orderItems.forEach(async (orderItem) => {
+  
+    for (const orderItem of orderItems) {
+      const service = await this.serviceExternalService.getServiceByServiceAndOutletIdOrThrow(
+        orderItem.serviceId,
+        orderItem.outletId,
+      );
+  
       const expandedOrderItem: ExpandedOrderItemInterface = {
         quantity: orderItem.quantity,
         outletId: orderItem.outletId,
         notes: orderItem?.notes || '',
-        service:
-          await this.serviceExternalService.getServiceByServiceAndOutletIdOrThrow(
-            orderItem.serviceId,
-            orderItem.outletId,
-          ),
+        service,
       };
       expandedOrderItems.push(expandedOrderItem);
-    });
+    }
+  
     return expandedOrderItems;
   }
+  
 
-  private calculateTotalServicePrice(services: ServiceSchema[]): number {
-    // need changes when we think of discount
-    return services.reduce((acc, service) => acc + service.price, 0);
-  }
+  private calculateTotalServicePrice(expandedOrderItems: ExpandedOrderItemInterface[]): number {
+    // Calculate the total price considering quantity and price
+    return expandedOrderItems.reduce((acc, expandedOrderItem) => acc + (expandedOrderItem.service.price * expandedOrderItem.quantity), 0);
+  }  
 
   private getOrderInstance(
     expandedOrderItems: ExpandedOrderItemInterface[],
     customerId: number,
   ): OrderInterface {
-    // calculate the order order total
-    const services = expandedOrderItems.map(
-      (expandedOrderItem) => expandedOrderItem.service,
-    );
 
     const outletId = expandedOrderItems[0].outletId;
-    const totalPrice = this.calculateTotalServicePrice(services);
+    const totalPrice = this.calculateTotalServicePrice(expandedOrderItems);
 
     const orderInstance: OrderInterface = {
       amountPaid: totalPrice,
@@ -76,15 +75,14 @@ export class OrderService {
     const orderItemInstances = expandedOrderItems.map((expandedOrderItem) => {
       // Use OrderItemEntity instead of the interface
       const orderItem = transactionManager.create(OrderItemEntity, {
-        serviceId: expandedOrderItem.service._id as string,
+        serviceId: expandedOrderItem.service._id.toString(),
         quantity: expandedOrderItem.quantity,
         notes: expandedOrderItem.notes,
-        outletId: expandedOrderItem.outletId,
+        // outletId: expandedOrderItem.outletId,
         orderId,
       });
       return orderItem;
     });
-
     return orderItemInstances;
   }
 
@@ -93,7 +91,6 @@ export class OrderService {
     customerDecoratorDto: CustomerDecoratorDto,
   ): Promise<string> {
     const { customerId } = customerDecoratorDto;
-
     // Expand the orderItem payload to include service details
     const expandedOrderItems = await this.expandOrderItem(
       createOrderDto.orderItems,
@@ -119,11 +116,14 @@ export class OrderService {
       );
 
       // Create the associated order items
-      await this.createOrderItems(
+      const orderItemInstances = await this.createOrderItems(
         order,
         expandedOrderItems,
         transactionManager.manager,
       );
+      await this.saveOrderItems(
+        transactionManager.manager, 
+        orderItemInstances); // Save the order items in the transaction
 
       // Commit the transaction
       await transactionManager.commitTransaction();
@@ -143,8 +143,16 @@ export class OrderService {
   private async saveOrder(
     queryRunnerManager: EntityManager,
     orderData: OrderInterface,
-  ) {
+  ):Promise<OrderEntity> {
     const order = this.orderRepository.getRepository().create(orderData); // Create the order entity
     return queryRunnerManager.save(OrderEntity, order); // Save the entity using the manager from queryRunner
   }
+
+  private async saveOrderItems(
+    transactionManager: EntityManager,
+    orderItemInstances: OrderItemEntity[], // The order items to be saved
+  ): Promise<OrderItemEntity[]> {
+    return transactionManager.save(OrderItemEntity, orderItemInstances); // Save all order items in the transaction
+  }
+  
 }

@@ -7,7 +7,7 @@ import { ServiceExternalService } from '@modules/client/services/services/servic
 @Injectable()
 export class OutletCustomerService {
   constructor(
-    private outletRepository: OutletRepository,
+    private readonly outletRepository: OutletRepository,
     private readonly serviceExternalService: ServiceExternalService,
   ) {}
 
