@@ -1,9 +1,8 @@
-import { OrderItemInterface } from "./order-item.interface";
+import { OrderItemInterface } from './order-item.interface';
 
+export interface CreateOrderPayloadInterface {
+  orderItems: Omit<OrderItemInterface, 'orderId'>[];
 
-export interface CreateOrderInterface {
-  orderItems: OrderItemInterface[];     
-  customerId: number; 
-  outletId:number;          
-  paymentId?: string;            
+  outletId: number;
+  paymentId?: string;
 }

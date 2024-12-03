@@ -8,7 +8,7 @@ import { ServiceRepository } from './repositories/service.repository';
 import { CategoryModule } from '@modules/admin/category/category.module';
 import { ServiceCustomerController } from './controllers/service-customer.controller';
 import { ServiceCustomerService } from './services/service-customer.service';
-import { ServiceExternal } from './services/service-external.service';
+import { ServiceExternalService } from './services/service-external.service';
 
 @Module({
   imports: [
@@ -18,8 +18,13 @@ import { ServiceExternal } from './services/service-external.service';
     ),
     CategoryModule,
   ],
-  exports: [ServiceExternal],
-  providers: [ServiceService, ServiceRepository, ServiceCustomerService,ServiceExternal],
+  exports: [ServiceExternalService],
+  providers: [
+    ServiceService,
+    ServiceRepository,
+    ServiceCustomerService,
+    ServiceExternalService,
+  ],
   controllers: [ServiceController, ServiceCustomerController],
 })
 export class ServiceModule {}

@@ -1,25 +1,27 @@
-import { IsNotEmpty, IsOptional, IsPositive, IsString, IsUUID } from "class-validator";
-import { OrderItemInterface } from "../interfaces/order-item.interface";
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+import { OrderItemInterface } from '../interfaces/order-item.interface';
 
-export class OrderItemPayloadDto implements OrderItemInterface{ 
-    @IsNotEmpty()
-    @IsUUID()
-    serviceId:string;
+export class OrderItemPayloadDto
+  implements Omit<OrderItemInterface, 'orderId'>
+{
+  @IsNotEmpty()
+  @IsUUID()
+  serviceId: string;
 
-    @IsNotEmpty()
-    startTime:Date;
+  @IsNotEmpty()
+  @IsPositive()
+  quantity: number;
 
-    @IsOptional()
-    endTime?:Date;
+  @IsNotEmpty()
+  outletId: number;
 
-    @IsNotEmpty()
-    @IsPositive()
-    quantity:number;
-
-    @IsNotEmpty()
-    outletId:number;
-
-    @IsOptional()
-    @IsString()
-    notes?:string;
+  @IsOptional()
+  @IsString()
+  notes?: string;
 }

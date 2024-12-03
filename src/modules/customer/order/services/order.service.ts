@@ -1,111 +1,150 @@
-import { Injectable } from "@nestjs/common";
-import { OrderRepositoy } from "../repositories/order.repository";
-import { CreateOrderDto } from "../dtos/create-order.dto";
-import { OrderItemRepository } from "../repositories/order-item.repository";
-import { OutletExternalService } from "@modules/client/outlet/services/outlet-external.service";
-import { CustomerDecoratorDto } from "@src/utils/dtos/customer-decorator.dto";
-import { OrderItemPayloadDto } from "../dtos/order-item.dto";
-import { OrderDto } from "../dtos/order.dto";
-import { OrderItemService } from "./order-item.service"; // Import the OrderItemService
-import { EntityManager, } from "typeorm";
-import { OrderEntity } from "../entities/orders.entity";
-import { OrderItemEntity } from "../entities/order-item.entity";
+import { Injectable } from '@nestjs/common';
+import { OrderRepositoy } from '../repositories/order.repository';
+import { CreateOrderDto } from '../dtos/create-order.dto';
+import { OrderItemPayloadDto } from '../dtos/order-item.dto';
+import { EntityManager } from 'typeorm';
+import { OrderEntity } from '../entities/orders.entity';
+import { OrderItemEntity } from '../entities/order-item.entity';
+import { ServiceSchema } from '@modules/client/services/schema/service.schema';
+import { OrderInterface } from '../interfaces/order.interface';
+import { ExpandedOrderItemInterface } from '../interfaces/expanded-order-item.interface';
+import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
+import { OrderStatusEnum } from '../enums/order-status.enum';
+import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepositoy,
-    private readonly orderItemRepository: OrderItemRepository,
-    private readonly outletExternalService: OutletExternalService,
-    private readonly orderItemService: OrderItemService // Inject the OrderItemService
-) {}
+    private serviceExternalService: ServiceExternalService,
+  ) {}
 
-async createOrder(createOrderDto: CreateOrderDto, customer: CustomerDecoratorDto): Promise<CreateOrderDto> {
-  const { orderItems, customerId, outletId, paymentId } = createOrderDto;
-
-  // Prepare data for order creation
-  const { amountPaid, orderInstance, orderedServicesPayloadData } = await this.prepareOrderData(orderItems, customer);
-
-  // Use transaction to ensure atomicity
-  const queryRunner = this.orderRepository.getRepository().manager.connection.createQueryRunner();
-
-  await queryRunner.startTransaction();
-  try {
-// When passing to saveOrder and saveOrderItems, use queryRunner.manager
-    const savedOrder = await this.saveOrder(queryRunner.manager, { customerId, paymentId, amountPaid, outletId });
-    await this.saveOrderItems(queryRunner.manager, orderInstance, savedOrder);
-
-    // Commit the transaction
-    await queryRunner.commitTransaction();
-
-    // Return structured response
-    return this.createResponsePayload(orderedServicesPayloadData, customerId, outletId, paymentId);
-  } catch (error) {
-    // If any error occurs, rollback the transaction
-    await queryRunner.rollbackTransaction();
-    throw error; // Re-throw the error to handle it outside
-  } finally {
-    // Release the query runner regardless of success or failure
-    await queryRunner.release();
-  }
-}
-
-private async prepareOrderData(services: OrderItemPayloadDto[], customer: CustomerDecoratorDto) {
-  let amountPaid = 0;
-  const orderInstance = [];
-  const orderedServicesPayloadData: OrderItemPayloadDto[] = [];
-
-  for (const service of services) {
-    const { serviceTotal, orderItem, orderedService } = await this.prepareOrderInstanceData(service, customer);
-    amountPaid += serviceTotal;
-    orderInstance.push(orderItem);
-    orderedServicesPayloadData.push(orderedService);
+  private async expandOrderItem(
+    orderItems: OrderItemPayloadDto[],
+  ): Promise<ExpandedOrderItemInterface[]> {
+    const expandedOrderItems: ExpandedOrderItemInterface[] = [];
+    orderItems.forEach(async (orderItem) => {
+      const expandedOrderItem: ExpandedOrderItemInterface = {
+        quantity: orderItem.quantity,
+        outletId: orderItem.outletId,
+        notes: orderItem?.notes || '',
+        service:
+          await this.serviceExternalService.getServiceByServiceAndOutletIdOrThrow(
+            orderItem.serviceId,
+            orderItem.outletId,
+          ),
+      };
+      expandedOrderItems.push(expandedOrderItem);
+    });
+    return expandedOrderItems;
   }
 
-  return { amountPaid, orderInstance, orderedServicesPayloadData };
-}
+  private calculateTotalServicePrice(services: ServiceSchema[]): number {
+    // need changes when we think of discount
+    return services.reduce((acc, service) => acc + service.price, 0);
+  }
 
-private async prepareOrderInstanceData(service: OrderItemPayloadDto, customer: CustomerDecoratorDto) {
-  const { serviceId, quantity, outletId, startTime, notes } = service;
+  private getOrderInstance(
+    expandedOrderItems: ExpandedOrderItemInterface[],
+    customerId: number,
+  ): OrderInterface {
+    // calculate the order order total
+    const services = expandedOrderItems.map(
+      (expandedOrderItem) => expandedOrderItem.service,
+    );
 
-  // Validate service and outlet
-  const serviceData = await this.validateServiceAndOutlet(outletId, serviceId, customer);
+    const outletId = expandedOrderItems[0].outletId;
+    const totalPrice = this.calculateTotalServicePrice(services);
 
-  // Use OrderItemService to calculate service total and end time
-  const serviceTotal = this.orderItemService.calculateDiscountedPrice(serviceData.price, serviceData.discount,quantity);
-  const endTime = this.orderItemService.calculateEndTime(serviceData.duration, quantity, startTime);
+    const orderInstance: OrderInterface = {
+      amountPaid: totalPrice,
+      paymentId: 'dummyId',
+      customerId: customerId,
+      outletId: outletId,
+      status: OrderStatusEnum.ORDER_PLACED,
+    };
+    return orderInstance;
+  }
 
-  // Prepare order item and service details
-  const orderItem = this.orderItemService.createOrderItem(serviceId, quantity, serviceData.discount, notes);
-  const orderedService: OrderItemPayloadDto = this.orderItemService.createOrderedService({serviceId, startTime, endTime, quantity, outletId, notes});
+  private async createOrderItems(
+    order: OrderEntity,
+    expandedOrderItems: ExpandedOrderItemInterface[],
+    transactionManager: EntityManager,
+  ): Promise<OrderItemEntity[]> {
+    const orderId = order.orderId;
 
-  return { serviceTotal, orderItem, orderedService };
-}
+    const orderItemInstances = expandedOrderItems.map((expandedOrderItem) => {
+      // Use OrderItemEntity instead of the interface
+      const orderItem = transactionManager.create(OrderItemEntity, {
+        serviceId: expandedOrderItem.service._id as string,
+        quantity: expandedOrderItem.quantity,
+        notes: expandedOrderItem.notes,
+        outletId: expandedOrderItem.outletId,
+        orderId,
+      });
+      return orderItem;
+    });
 
-private async validateServiceAndOutlet(outletId: number, serviceId: string, customer: CustomerDecoratorDto) {
-  const service = await this.outletExternalService.getServiceByServiceAndOutletIdOrThrow(outletId, serviceId, customer);
-  return { price: service.price, duration: service.timeTaken, discount: service.discount };
-}
+    return orderItemInstances;
+  }
 
-private async saveOrder(queryRunnerManager: EntityManager, orderData: { customerId: number; paymentId: string; amountPaid: number; outletId: number }) {
+  async createOrder(
+    createOrderDto: CreateOrderDto,
+    customerDecoratorDto: CustomerDecoratorDto,
+  ): Promise<string> {
+    const { customerId } = customerDecoratorDto;
+
+    // Expand the orderItem payload to include service details
+    const expandedOrderItems = await this.expandOrderItem(
+      createOrderDto.orderItems,
+    );
+
+    // Prepare the order instance
+    const orderInstance = await this.getOrderInstance(
+      expandedOrderItems,
+      customerId,
+    );
+
+    // Use a query runner to manage the transaction
+    const transactionManager = this.orderRepository
+      .getRepository()
+      .manager.connection.createQueryRunner();
+
+    await transactionManager.startTransaction();
+    try {
+      // Save the order
+      const order = await this.saveOrder(
+        transactionManager.manager,
+        orderInstance,
+      );
+
+      // Create the associated order items
+      await this.createOrderItems(
+        order,
+        expandedOrderItems,
+        transactionManager.manager,
+      );
+
+      // Commit the transaction
+      await transactionManager.commitTransaction();
+
+      // Return structured response
+      return 'Order created successfully';
+    } catch (error) {
+      // Rollback the transaction if an error occurs
+      await transactionManager.rollbackTransaction();
+      throw error; // Re-throw the error for handling by the caller
+    } finally {
+      // Ensure the query runner is released
+      await transactionManager.release();
+    }
+  }
+
+  private async saveOrder(
+    queryRunnerManager: EntityManager,
+    orderData: OrderInterface,
+  ) {
     const order = this.orderRepository.getRepository().create(orderData); // Create the order entity
     return queryRunnerManager.save(OrderEntity, order); // Save the entity using the manager from queryRunner
-}
-
-private async saveOrderItems(queryRunner: EntityManager, orderItems: Partial<OrderItemPayloadDto[]>, savedOrder: OrderDto) {
-  const itemsToSave = orderItems.map((item) => ({
-    ...item,
-    order: savedOrder,
-  }));
-  await queryRunner.save(OrderItemEntity, itemsToSave); // Directly call save() on queryRunner
-}
-
-private createResponsePayload(
-  orderedServicesPayloadData: OrderItemPayloadDto[],
-  customerId: number,
-  outletId: number,
-  paymentId: string
-): CreateOrderDto {
-  return { orderItems: orderedServicesPayloadData, customerId, outletId, paymentId };
-}
+  }
 }

@@ -1,18 +1,16 @@
-import { IsArray, IsNotEmpty, } from "class-validator";
-import { CreateOrderInterface } from "../interfaces/create-order.interface";
-import { OrderItemPayloadDto } from "./order-item.dto";
+import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
+import { CreateOrderPayloadInterface } from '../interfaces/create-order.interface';
+import { OrderItemPayloadDto } from './order-item.dto';
 
-export class CreateOrderDto implements CreateOrderInterface{
-    @IsArray()
-    @IsNotEmpty()
-    orderItems:OrderItemPayloadDto[]
+export class CreateOrderDto implements CreateOrderPayloadInterface {
+  @IsArray()
+  @IsNotEmpty()
+  orderItems: OrderItemPayloadDto[];
 
-    @IsNotEmpty()
-    customerId:number;
+  @IsNotEmpty()
+  outletId: number;
 
-    @IsNotEmpty()
-    outletId:number;
-    
-    @IsNotEmpty()
-    paymentId:string;
+  @IsNotEmpty()
+  @IsOptional()
+  paymentId?: string;
 }
