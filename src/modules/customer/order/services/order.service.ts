@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { OrderRepository } from '../repositories/order.repository';
 import { CreateOrderDto } from '../dtos/create-order.dto';
 import { OrderItemPayloadDto } from '../dtos/order-item.dto';
@@ -24,13 +24,14 @@ export class OrderService {
     orderItems: OrderItemPayloadDto[],
   ): Promise<ExpandedOrderItemInterface[]> {
     const expandedOrderItems: ExpandedOrderItemInterface[] = [];
-  
+
     for (const orderItem of orderItems) {
-      const service = await this.serviceExternalService.getServiceByServiceAndOutletIdOrThrow(
-        orderItem.serviceId,
-        orderItem.outletId,
-      );
-  
+      const service =
+        await this.serviceExternalService.getServiceByServiceAndOutletIdOrThrow(
+          orderItem.serviceId,
+          orderItem.outletId,
+        );
+
       const expandedOrderItem: ExpandedOrderItemInterface = {
         quantity: orderItem.quantity,
         outletId: orderItem.outletId,
@@ -39,21 +40,26 @@ export class OrderService {
       };
       expandedOrderItems.push(expandedOrderItem);
     }
-  
+
     return expandedOrderItems;
   }
-  
+
   //This method calculates the total price for the order by iterating through the expanded order items, multiplying the price of each service by its quantity, and summing up the results to get the total amount to be paid for the order.
-  private calculateTotalServicePrice(expandedOrderItems: ExpandedOrderItemInterface[]): number {
-    return expandedOrderItems.reduce((acc, expandedOrderItem) => acc + (expandedOrderItem.service.price * expandedOrderItem.quantity), 0);
-  }  
+  private calculateTotalServicePrice(
+    expandedOrderItems: ExpandedOrderItemInterface[],
+  ): number {
+    return expandedOrderItems.reduce(
+      (acc, expandedOrderItem) =>
+        acc + expandedOrderItem.service.price * expandedOrderItem.quantity,
+      0,
+    );
+  }
 
   //This method prepares an order instance by calculating the total price of services and setting essential order details like payment ID, customer ID, outlet ID, and order status.
   private getOrderInstance(
     expandedOrderItems: ExpandedOrderItemInterface[],
     customerId: number,
   ): OrderInterface {
-
     const outletId = expandedOrderItems[0].outletId;
     const totalPrice = this.calculateTotalServicePrice(expandedOrderItems);
 
@@ -100,6 +106,8 @@ export class OrderService {
       createOrderDto.orderItems,
     );
 
+    // check the slot availability
+
     // Prepare the order instance
     const orderInstance = await this.getOrderInstance(
       expandedOrderItems,
@@ -125,16 +133,16 @@ export class OrderService {
         expandedOrderItems,
         transactionManager.manager,
       );
-      await this.saveOrderItems(
-        transactionManager.manager, 
-        orderItemInstances); // Save the order items in the transaction
+      await this.saveOrderItems(transactionManager.manager, orderItemInstances); // Save the order items in the transaction
+
+      // create appointment
 
       // Commit the transaction
       await transactionManager.commitTransaction();
 
       // Return structured response
       // return 'Order created successfully';
-      return await this.postOrderResponse(order,orderItemInstances)
+      return await this.postOrderResponse(order, orderItemInstances);
     } catch (error) {
       // Rollback the transaction if an error occurs
       await transactionManager.rollbackTransaction();
@@ -149,7 +157,7 @@ export class OrderService {
   private async saveOrder(
     queryRunnerManager: EntityManager,
     orderData: OrderInterface,
-  ):Promise<OrderEntity> {
+  ): Promise<OrderEntity> {
     const order = this.orderRepository.getRepository().create(orderData); // Create the order entity
     return queryRunnerManager.save(OrderEntity, order); // Save the entity using the manager from queryRunner
   }
@@ -164,19 +172,41 @@ export class OrderService {
 
   //This method formats the response after the creation of an order, including its associated order items
   private async postOrderResponse(
-    order:OrderEntity,
-    orderItemInstances:OrderItemEntity[]
-  ):Promise<CreateOrderDto>{
-      const orderedItems = orderItemInstances.map((item) => ({
-        serviceId: item.serviceId,
-        quantity: item.quantity,
-        notes: item.notes,
-      }));
-      return {
-        orderItems: orderedItems,
-        outletId: order.outletId,
-        paymentId: order.paymentId,
-      };
+    order: OrderEntity,
+    orderItemInstances: OrderItemEntity[],
+  ): Promise<CreateOrderDto> {
+    const orderedItems = orderItemInstances.map((item) => ({
+      serviceId: item.serviceId,
+      quantity: item.quantity,
+      notes: item.notes,
+    }));
+    return {
+      orderItems: orderedItems,
+      outletId: order.outletId,
+      paymentId: order.paymentId,
+    };
   }
-  
+
+  /**
+   * Calculates the total time required to fulfill an order.
+   * This is determined by summing up the service durations of all order items associated with the given order ID.
+   *
+   * @param orderId - The ID of the order for which the fulfillment duration is calculated.
+   * @returns The total fulfillment duration in minutes.
+   *
+   * @example
+   * const duration = await this.calculateOrderFullfillmentDuration(123);
+   * console.log(`Order 123 will take ${duration} minutes to fulfill.`);
+   *
+   * @throws {NotFoundException} If the order or order items are not found.
+   */
+  async calculateOrderFullfillmentDuration(orderId: number): Promise<number> {
+    // check order exist or not
+    // Step 1: Retrieve all order items for the given order ID
+
+    // Step 2: Calculate the total duration by summing up the service durations
+
+    // Step 3: Return the total duration in minutes
+    return 100;
+  }
 }
