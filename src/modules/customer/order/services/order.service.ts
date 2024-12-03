@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { OrderRepositoy } from '../repositories/order.repository';
+import { OrderRepository } from '../repositories/order.repository';
 import { CreateOrderDto } from '../dtos/create-order.dto';
 import { OrderItemPayloadDto } from '../dtos/order-item.dto';
 import { EntityManager } from 'typeorm';
@@ -14,10 +14,12 @@ import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 @Injectable()
 export class OrderService {
   constructor(
-    private readonly orderRepository: OrderRepositoy,
+    private readonly orderRepository: OrderRepository,
     private readonly serviceExternalService: ServiceExternalService,
   ) {}
 
+  /*This method processes each orderItem from the provided list, retrieves the corresponding service details using serviceExternalService, and constructs an expanded order item with the service details, quantity, outlet ID, and notes.
+  It returns an array of expanded order items with all necessary data for further processing.*/
   private async expandOrderItem(
     orderItems: OrderItemPayloadDto[],
   ): Promise<ExpandedOrderItemInterface[]> {
@@ -41,12 +43,12 @@ export class OrderService {
     return expandedOrderItems;
   }
   
-
+  //This method calculates the total price for the order by iterating through the expanded order items, multiplying the price of each service by its quantity, and summing up the results to get the total amount to be paid for the order.
   private calculateTotalServicePrice(expandedOrderItems: ExpandedOrderItemInterface[]): number {
-    // Calculate the total price considering quantity and price
     return expandedOrderItems.reduce((acc, expandedOrderItem) => acc + (expandedOrderItem.service.price * expandedOrderItem.quantity), 0);
   }  
 
+  //This method prepares an order instance by calculating the total price of services and setting essential order details like payment ID, customer ID, outlet ID, and order status.
   private getOrderInstance(
     expandedOrderItems: ExpandedOrderItemInterface[],
     customerId: number,
@@ -65,6 +67,7 @@ export class OrderService {
     return orderInstance;
   }
 
+  //This method generates order item entities by mapping the expanded order item details into instances of OrderItemEntity with the associated order ID, ready to be saved in a transaction.
   private async createOrderItems(
     order: OrderEntity,
     expandedOrderItems: ExpandedOrderItemInterface[],
@@ -86,10 +89,11 @@ export class OrderService {
     return orderItemInstances;
   }
 
+  // This method, called by the controller, manages the entire process of creating an order, including expanding the order item details, preparing the order instance, saving the order and its items in a transaction, and returning a structured response.
   async createOrder(
     createOrderDto: CreateOrderDto,
     customerDecoratorDto: CustomerDecoratorDto,
-  ): Promise<string> {
+  ): Promise<CreateOrderDto> {
     const { customerId } = customerDecoratorDto;
     // Expand the orderItem payload to include service details
     const expandedOrderItems = await this.expandOrderItem(
@@ -129,7 +133,8 @@ export class OrderService {
       await transactionManager.commitTransaction();
 
       // Return structured response
-      return 'Order created successfully';
+      // return 'Order created successfully';
+      return await this.postOrderResponse(order,orderItemInstances)
     } catch (error) {
       // Rollback the transaction if an error occurs
       await transactionManager.rollbackTransaction();
@@ -140,6 +145,7 @@ export class OrderService {
     }
   }
 
+  //This method creates and saves an order entity to the database within a transactional context.
   private async saveOrder(
     queryRunnerManager: EntityManager,
     orderData: OrderInterface,
@@ -148,11 +154,29 @@ export class OrderService {
     return queryRunnerManager.save(OrderEntity, order); // Save the entity using the manager from queryRunner
   }
 
+  //This method saves the order items to the database within a transactional context.
   private async saveOrderItems(
     transactionManager: EntityManager,
     orderItemInstances: OrderItemEntity[], // The order items to be saved
   ): Promise<OrderItemEntity[]> {
     return transactionManager.save(OrderItemEntity, orderItemInstances); // Save all order items in the transaction
+  }
+
+  //This method formats the response after the creation of an order, including its associated order items
+  private async postOrderResponse(
+    order:OrderEntity,
+    orderItemInstances:OrderItemEntity[]
+  ):Promise<CreateOrderDto>{
+      const orderedItems = orderItemInstances.map((item) => ({
+        serviceId: item.serviceId,
+        quantity: item.quantity,
+        notes: item.notes,
+      }));
+      return {
+        orderItems: orderedItems,
+        outletId: order.outletId,
+        paymentId: order.paymentId,
+      };
   }
   
 }

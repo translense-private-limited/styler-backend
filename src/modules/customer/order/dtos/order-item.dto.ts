@@ -19,7 +19,7 @@ export class OrderItemPayloadDto
   quantity: number;
 
   @IsNotEmpty()
-  outletId: number;
+  outletId?: number;
 
   @IsOptional()
   @IsString()

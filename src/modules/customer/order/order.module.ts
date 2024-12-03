@@ -6,7 +6,7 @@ import { Module } from '@nestjs/common';
 import { OrderController } from './controllers/order.controller';
 import { OrderService } from './services/order.service';
 import { OutletModule } from '@modules/client/outlet/outlet.module';
-import { OrderRepositoy } from './repositories/order.repository';
+import { OrderRepository } from './repositories/order.repository';
 import { OrderItemRepository } from './repositories/order-item.repository';
 import { OrderItemService } from './services/order-item.service';
 import { ServiceModule } from '@modules/client/services/service.module';
@@ -23,7 +23,7 @@ import { ServiceModule } from '@modules/client/services/service.module';
   controllers: [OrderController],
   providers: [
     OrderService,
-    OrderRepositoy,
+    OrderRepository,
     OrderItemRepository,
     OrderItemService,
   ],

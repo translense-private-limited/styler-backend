@@ -14,7 +14,7 @@ export class OrderController {
   async createOrder(
     @Body() createOrderDto: CreateOrderDto,
     @CustomerDecorator() customerDecoratorDto: CustomerDecoratorDto,
-  ): Promise<string> {
+  ): Promise<CreateOrderDto> {
     return this.orderService.createOrder(createOrderDto, customerDecoratorDto);
   }
 }
