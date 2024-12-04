@@ -10,7 +10,6 @@ import { AppointmentRepository } from '../repositories/appointment.repository';
 import { CreateAppointmentDto } from '../dtos/create-appointment.interface';
 import { AppointmentEntity } from '../entities/appointment.entity';
 import { UpdateAppointmentTimeDto } from '../dtos/update-appointment-time.dto';
-import { NotFound } from '@aws-sdk/client-s3';
 import { TimeSlotDto } from '../dtos/time-slot.dto';
 
 @Injectable()

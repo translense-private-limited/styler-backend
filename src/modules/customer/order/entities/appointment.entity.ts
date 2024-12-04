@@ -13,7 +13,7 @@ export class AppointmentEntity extends BaseEntity {
   @Column({ type: 'datetime' })
   startTime: Date; // The scheduled start time of the appointment
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime',default:()=>'CURRENT_TIMESTAMP' })
   endTime: Date; // The scheduled end time of the appointment
 
   @Column({ type: 'int' })
