@@ -19,12 +19,14 @@ import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 import { OrderResponseDto } from '../dtos/order-response.dto';
 import { AppointmentEntity } from '../entities/appointment.entity';
 import { AppointmentService } from './appointment.service';
+import { OrderItemService } from './order-item.service';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly serviceExternalService: ServiceExternalService,
+    private readonly orderItemService:OrderItemService,
     @Inject(forwardRef(() => AppointmentService))
     private readonly appointmentService: AppointmentService,
   ) {}
@@ -161,7 +163,7 @@ export class OrderService {
       await this.saveOrderItems(transactionManager.manager, orderItemInstances); // Save the order items in the transaction
 
       // create appointment
-      const appointment = new AppointmentEntity();
+      const appointment = await this.createAppointment(order,createOrderDto.orderItems,createOrderDto.startTime)
 
       // Commit the transaction
       await transactionManager.commitTransaction();
@@ -252,17 +254,35 @@ export class OrderService {
   }
 
   async getEndTime(startTime: Date, orderId: number): Promise<Date> {
-    // utilise the getOrderFullmentDuration
-    // return the end time
+    // Step 1: Get the total duration using getOrderFulfillmentDuration
+    const totalDuration = await this.getOrderFulfillmentDuration(orderId);
+    const endTime = new Date(startTime.getTime() + totalDuration * 60000); 
+    // Step 2: Return the calculated end time
+    return endTime;
+  }
+  
+  async getOrderFulfillmentDuration(orderId: number): Promise<number> {
+    // Step 1: Get all order items associated with the orderId
+    const orderItems = await this.orderItemService.getAllOrderItemsByOrderId(orderId);
+  
+    // Step 2: Calculate the total duration by iterating over order items and fetching service details
+    let totalDuration = 0;
+  
+    for (const item of orderItems) {
+      try {
+        // Step 3: Fetch the service details for the item using getServiceByServiceAndOutletIdOrThrow
+        const service = await this.serviceExternalService.getServiceByIdOrThrow(item.serviceId)
+        totalDuration += service.timeTaken * item.quantity;
+      } catch (error) {
+        // Handle error, maybe log it, and decide if you want to continue or throw
+        console.error(`Error fetching service for serviceId: ${item.serviceId}`);
+        // Continue to the next item if error occurs
+      }
+    }
+  
+    // Step 5: Return the total duration in minutes
+    return totalDuration;
   }
 
-  // returns in minutes
-  async getOrderFullmentDuration(orderId: number): promise<number> {
-    // get all order items aassosiated wtih it
-    // create method in order iems service to return order item based on order id.
-    // form order items recieved get all the service id and corresponding quantity
-    // pull the service details using service SErvice
-    // use quantity adn duration to figure otu real time .
-    // return time in min
-  }
+
 }

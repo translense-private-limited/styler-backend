@@ -14,6 +14,17 @@ export class ServiceExternalService {
   async getAllServicesForAnOutlet(outletId: number) {
     return this.serviceService.getAllServicesByOutletId(outletId);
   }
+
+  async getServiceByIdOrThrow(serviceId: string): Promise<ServiceSchema> {
+    const service = await this.serviceRepository
+      .getRepository()
+      .findById(serviceId);
+    if (!service) {
+      throw new NotFoundException('no service exist with provided Id');
+    }
+    return service;
+  }
+  
   async getServiceByServiceAndOutletIdOrThrow(
     serviceId: string,
     outletId: number,

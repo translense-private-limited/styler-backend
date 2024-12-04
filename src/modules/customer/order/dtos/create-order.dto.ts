@@ -14,5 +14,6 @@ export class CreateOrderDto implements CreateOrderPayloadInterface {
   @IsOptional()
   paymentId?: string;
 
+  @IsNotEmpty()
   startTime: Date;
 }
