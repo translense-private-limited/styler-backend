@@ -18,6 +18,10 @@ export class CreateAppointmentDto
   startTime: Date; // The scheduled start time of the appointment
 
   @IsNotEmpty()
+  @IsDate()
+  endTime: Date; // The scheduled end time of the appointment
+
+  @IsNotEmpty()
   @IsInt()
   outletId: number; // The ID of the outlet where the service is scheduled
 

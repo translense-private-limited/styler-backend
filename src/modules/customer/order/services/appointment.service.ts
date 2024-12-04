@@ -42,31 +42,6 @@ export class AppointmentService {
   }
 
   /**
-   * Calculates the end time of an appointment based on the start time and the order's fulfillment duration.
-   *
-   * @param startTime - The start time of the appointment.
-   * @param orderId - The ID of the order associated with the appointment.
-   * @returns A promise resolving to the calculated end time as a `Date` object.
-   *
-   * @example
-   * const endTime = await this.getEndTime(new Date(), 123);
-   * console.log(`End time: ${endTime}`);
-   *
-   * @throws {NotFoundException} If the order or its fulfillment duration cannot be calculated.
-   */
-  private async getEndTime(startTime: Date, orderId: number): Promise<Date> {
-    // Step 1: Get the fulfillment time for the order in minutes
-    const fulfillmentDuration =
-      await this.orderService.calculateOrderFullfillmentDuration(orderId);
-
-    // Step 2: Calculate the end time by adding the fulfillment duration to the start time
-    const endTime = new Date(startTime.getTime() + fulfillmentDuration * 60000); // Convert minutes to milliseconds
-
-    // Step 3: Return the calculated end time
-    return endTime;
-  }
-
-  /**
    * Creates a new appointment.
    * @param createAppointmentDto - The data to create the appointment.
    * @returns The created appointment.
@@ -139,9 +114,13 @@ export class AppointmentService {
     updateAppointmentTimeDto: UpdateAppointmentTimeDto,
   ): Promise<AppointmentEntity> {
     // Fetch the existing appointment
-    const { orderId, startTime } = updateAppointmentTimeDto;
+    const { startTime } = updateAppointmentTimeDto;
     const appointment = await this.getAppointmentByIdOrThrow(appointmentId);
-    appointment.endTime = await this.getEndTime(startTime, orderId);
+
+    const durationInMilliseconds = appointment.endTime - appointment.startTime;
+    const newEndTime = new Date(startTime.getTime() + durationInMilliseconds); // Add duration to startTime
+
+    appointment.endTime = newEndTime;
 
     //
 
