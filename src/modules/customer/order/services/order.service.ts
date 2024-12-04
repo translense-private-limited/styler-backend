@@ -163,7 +163,7 @@ export class OrderService {
       await this.saveOrderItems(transactionManager.manager, orderItemInstances); // Save the order items in the transaction
 
       // create appointment
-      const appointment = await this.createAppointment(order,createOrderDto.orderItems,createOrderDto.startTime)
+      const appointment = await this.createAppointment(order,createOrderDto.orderItems,createOrderDto.startTime,createOrderDto.endTime)
 
       // Commit the transaction
       await transactionManager.commitTransaction();
@@ -198,20 +198,31 @@ export class OrderService {
     order: OrderEntity,
     orderItemsPayload: OrderItemPayloadDto[],
     startTime: Date,
+    providedEndTime:Date,
   ): Promise<AppointmentEntity> {
-    const endTime = await this.calculateEndTime(orderItemsPayload, startTime);
+    const calculatedEndTime = await this.calculateEndTime(orderItemsPayload, startTime);
 
     const createAppointmentDto = new CreateAppointmentDto();
     createAppointmentDto.customerId = order.customerId;
     createAppointmentDto.orderId = order.orderId;
     createAppointmentDto.outletId = order.outletId;
     createAppointmentDto.startTime = startTime;
-    createAppointmentDto.endTime = endTime;
-
+    if (this.isEndTimeMatching(providedEndTime, calculatedEndTime)) {
+      createAppointmentDto.endTime = calculatedEndTime;
+    } else {
+      console.warn(
+        `End time mismatch. Using calculated end time. Request payload: ${providedEndTime}, Calculated: ${calculatedEndTime}`
+      );
+      createAppointmentDto.endTime = calculatedEndTime;
+    }    
     const appointment =
       await this.appointmentService.createAppointment(createAppointmentDto);
     return appointment;
   }
+
+  private isEndTimeMatching(providedEndTime: Date, calculatedEndTime: Date): boolean {
+    return providedEndTime.getTime() === calculatedEndTime.getTime();
+  }  
 
   //This method saves the order items to the database within a transactional context.
   private async saveOrderItems(
