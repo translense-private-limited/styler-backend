@@ -1,5 +1,5 @@
 import { CreateAppointmentDto } from './../dtos/create-appointment.interface';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { OrderRepository } from '../repositories/order.repository';
 import { CreateOrderDto } from '../dtos/create-order.dto';
 import { OrderItemPayloadDto } from '../dtos/order-item.dto';
@@ -101,15 +101,15 @@ export class OrderService {
     return orderItemInstances;
   }
 
-  private formatOrderResponse(
+  private async formatOrderResponse(
     order: OrderEntity,
     orderItemsPayload: OrderItemPayloadDto[],
     appointment: AppointmentEntity,
-  ): OrderResponseDto {
+  ): Promise<OrderResponseDto> {
     return {
       orderId: order.orderId,
       startTime: appointment.startTime,
-      endTime: appointment.endTime,
+      endTime: await this.calculateEndTime(orderItemsPayload,appointment.startTime),
       orderItems: orderItemsPayload,
       outletId: order.outletId,
     } as OrderResponseDto;
@@ -156,7 +156,7 @@ export class OrderService {
       await this.saveOrderItems(transactionManager.manager, orderItemInstances); // Save the order items in the transaction
 
       // create appointment
-      const appointment = new AppointmentEntity();
+      const appointment = await this.createAppointment(order,createOrderDto.startTime);
 
       // Commit the transaction
       await transactionManager.commitTransaction();
@@ -249,4 +249,40 @@ export class OrderService {
     // Step 3: Return the total duration in minutes
     return 100;
   }
+
+  async calculateOrderTotalDuration(orderItemsPayload:OrderItemPayloadDto[]): Promise<number> {
+    // Step 1: Retrieve all expanded order items for the given order ID
+    const expandedOrderItems = await this.expandOrderItem(orderItemsPayload); // Expand the order items to get service details, including duration
+  
+    if (!expandedOrderItems || expandedOrderItems.length === 0) {
+      throw new NotFoundException('Order items not found.');
+    }
+  
+    // Step 2: Calculate the total duration by summing up the service durations
+    let totalDuration = 0;
+  
+    // Loop through each expanded order item
+    for (const expandedOrderItem of expandedOrderItems) {
+      // Fetch the service duration for each expanded order item
+      const serviceDuration = expandedOrderItem.service.timeTaken; // Assuming 'duration' is a property of the service
+  
+      // Sum the service duration, considering the quantity for each order item
+      totalDuration += serviceDuration * expandedOrderItem.quantity;
+    }
+  
+    return totalDuration; // The total duration in minutes
+  }
+
+  private async calculateEndTime(
+    orderItemsPayload: OrderItemPayloadDto[],
+    startTime: Date,
+  ): Promise<Date> {
+    const startTimeAsDate = typeof startTime === 'string' ? new Date(startTime) : startTime;
+    const totalDuration = await this.calculateOrderTotalDuration(orderItemsPayload);
+  
+    const endTime = new Date(startTimeAsDate.getTime() + totalDuration * 60000); // Convert minutes to milliseconds
+    return endTime;
+  }
+  
+  
 }
