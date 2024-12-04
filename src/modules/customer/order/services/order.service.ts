@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateAppointmentDto } from './../dtos/create-appointment.interface';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { OrderRepository } from '../repositories/order.repository';
 import { CreateOrderDto } from '../dtos/create-order.dto';
 import { OrderItemPayloadDto } from '../dtos/order-item.dto';
@@ -10,12 +11,17 @@ import { ExpandedOrderItemInterface } from '../interfaces/expanded-order-item.in
 import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
 import { OrderStatusEnum } from '../enums/order-status.enum';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
+import { OrderResponseDto } from '../dtos/order-response.dto';
+import { AppointmentEntity } from '../entities/appointment.entity';
+import { AppointmentService } from './appointment.service';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly serviceExternalService: ServiceExternalService,
+    @Inject(forwardRef(() => AppointmentService))
+    private readonly appointmentService: AppointmentService,
   ) {}
 
   /*This method processes each orderItem from the provided list, retrieves the corresponding service details using serviceExternalService, and constructs an expanded order item with the service details, quantity, outlet ID, and notes.
@@ -95,11 +101,25 @@ export class OrderService {
     return orderItemInstances;
   }
 
+  private formatOrderResponse(
+    order: OrderEntity,
+    orderItemsPayload: OrderItemPayloadDto[],
+    appointment: AppointmentEntity,
+  ): OrderResponseDto {
+    return {
+      orderId: order.orderId,
+      startTime: appointment.startTime,
+      endTime: appointment.endTime,
+      orderItems: orderItemsPayload,
+      outletId: order.outletId,
+    } as OrderResponseDto;
+  }
+
   // This method, called by the controller, manages the entire process of creating an order, including expanding the order item details, preparing the order instance, saving the order and its items in a transaction, and returning a structured response.
   async createOrder(
     createOrderDto: CreateOrderDto,
     customerDecoratorDto: CustomerDecoratorDto,
-  ): Promise<CreateOrderDto> {
+  ): Promise<OrderResponseDto> {
     const { customerId } = customerDecoratorDto;
     // Expand the orderItem payload to include service details
     const expandedOrderItems = await this.expandOrderItem(
@@ -136,13 +156,18 @@ export class OrderService {
       await this.saveOrderItems(transactionManager.manager, orderItemInstances); // Save the order items in the transaction
 
       // create appointment
+      const appointment = new AppointmentEntity();
 
       // Commit the transaction
       await transactionManager.commitTransaction();
 
-      // Return structured response
-      // return 'Order created successfully';
-      return await this.postOrderResponse(order, orderItemInstances);
+      // format order response
+      const orderResponse = this.formatOrderResponse(
+        order,
+        createOrderDto.orderItems,
+        appointment,
+      );
+      return orderResponse;
     } catch (error) {
       // Rollback the transaction if an error occurs
       await transactionManager.rollbackTransaction();
@@ -162,6 +187,21 @@ export class OrderService {
     return queryRunnerManager.save(OrderEntity, order); // Save the entity using the manager from queryRunner
   }
 
+  private async createAppointment(
+    order: OrderEntity,
+    startTime: Date,
+  ): Promise<AppointmentEntity> {
+    const createAppointmentDto = new CreateAppointmentDto();
+    createAppointmentDto.customerId = order.customerId;
+    createAppointmentDto.orderId = order.orderId;
+    createAppointmentDto.outletId = order.outletId;
+    createAppointmentDto.startTime = startTime;
+
+    const appointment =
+      await this.appointmentService.createAppointment(createAppointmentDto);
+    return appointment;
+  }
+
   //This method saves the order items to the database within a transactional context.
   private async saveOrderItems(
     transactionManager: EntityManager,
@@ -171,21 +211,21 @@ export class OrderService {
   }
 
   //This method formats the response after the creation of an order, including its associated order items
-  private async postOrderResponse(
-    order: OrderEntity,
-    orderItemInstances: OrderItemEntity[],
-  ): Promise<CreateOrderDto> {
-    const orderedItems = orderItemInstances.map((item) => ({
-      serviceId: item.serviceId,
-      quantity: item.quantity,
-      notes: item.notes,
-    }));
-    return {
-      orderItems: orderedItems,
-      outletId: order.outletId,
-      paymentId: order.paymentId,
-    };
-  }
+  // private async postOrderResponse(
+  //   order: OrderEntity,
+  //   orderItemInstances: OrderItemEntity[],
+  // ): Promise<CreateOrderDto> {
+  //   const orderedItems = orderItemInstances.map((item) => ({
+  //     serviceId: item.serviceId,
+  //     quantity: item.quantity,
+  //     notes: item.notes,
+  //   }));
+  //   return {
+  //     orderItems: orderedItems,
+  //     outletId: order.outletId,
+  //     paymentId: order.paymentId,
+  //   };
+  // }
 
   /**
    * Calculates the total time required to fulfill an order.

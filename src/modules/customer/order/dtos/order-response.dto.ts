@@ -1,8 +1,17 @@
-import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { CreateOrderPayloadInterface } from '../interfaces/create-order.interface';
+
+import { TimeSlotDto } from './time-slot.dto';
+
 import { OrderItemPayloadDto } from './order-item.dto';
 
-export class CreateOrderDto implements CreateOrderPayloadInterface {
+export class OrderResponseDto
+  extends TimeSlotDto
+  implements CreateOrderPayloadInterface
+{
+  @IsNumber()
+  orderId: number;
+
   @IsArray()
   @IsNotEmpty()
   orderItems: OrderItemPayloadDto[];
@@ -15,4 +24,6 @@ export class CreateOrderDto implements CreateOrderPayloadInterface {
   paymentId?: string;
 
   startTime: Date;
+
+  endTime: Date;
 }

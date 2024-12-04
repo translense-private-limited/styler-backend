@@ -1,5 +1,10 @@
 import { OrderService } from './order.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { AppointmentRepository } from '../repositories/appointment.repository';
 import { CreateAppointmentDto } from '../dtos/create-appointment.interface';
@@ -12,7 +17,8 @@ import { TimeSlotDto } from '../dtos/time-slot.dto';
 export class AppointmentService {
   constructor(
     private readonly appointmentRepository: AppointmentRepository,
-    private orderService: OrderService,
+    @Inject(forwardRef(() => OrderService))
+    private readonly orderService: OrderService,
   ) {}
 
   private async getAppointmentByIdOrThrow(
