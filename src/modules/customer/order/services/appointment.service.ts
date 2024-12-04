@@ -117,7 +117,8 @@ export class AppointmentService {
     const { startTime } = updateAppointmentTimeDto;
     const appointment = await this.getAppointmentByIdOrThrow(appointmentId);
 
-    const durationInMilliseconds = appointment.endTime - appointment.startTime;
+    const durationInMilliseconds =
+      appointment.endTime.getTime() - appointment.startTime.getTime();
     const newEndTime = new Date(startTime.getTime() + durationInMilliseconds); // Add duration to startTime
 
     appointment.endTime = newEndTime;
