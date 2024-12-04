@@ -250,4 +250,19 @@ export class OrderService {
     }
     return totalDuration; // The total duration in minutes
   }
+
+  async getEndTime(startTime: Date, orderId: number): Promise<Date> {
+    // utilise the getOrderFullmentDuration
+    // return the end time
+  }
+
+  // returns in minutes
+  async getOrderFullmentDuration(orderId: number): promise<number> {
+    // get all order items aassosiated wtih it
+    // create method in order iems service to return order item based on order id.
+    // form order items recieved get all the service id and corresponding quantity
+    // pull the service details using service SErvice
+    // use quantity adn duration to figure otu real time .
+    // return time in min
+  }
 }
