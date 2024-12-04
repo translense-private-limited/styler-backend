@@ -10,11 +10,14 @@ import { OrderRepository } from './repositories/order.repository';
 import { OrderItemRepository } from './repositories/order-item.repository';
 import { OrderItemService } from './services/order-item.service';
 import { ServiceModule } from '@modules/client/services/service.module';
+import { AppointmentRepository } from './repositories/appointment.repository';
+import { AppointmentService } from './services/appointment.service';
+import { AppointmentEntity } from './entities/appointment.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [OrderEntity, OrderItemEntity],
+      [OrderEntity, OrderItemEntity, AppointmentEntity],
       getMysqlDataSource(),
     ),
     OutletModule,
@@ -26,6 +29,8 @@ import { ServiceModule } from '@modules/client/services/service.module';
     OrderRepository,
     OrderItemRepository,
     OrderItemService,
+    AppointmentRepository,
+    AppointmentService,
   ],
   exports: [],
 })

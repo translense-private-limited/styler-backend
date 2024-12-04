@@ -7,6 +7,12 @@ import { OrderItemEntity } from '../entities/order-item.entity';
 export class OrderItemService {
   constructor(private readonly orderItemRepository: OrderItemRepository) {}
 
+  async getAllOrderItemsByOrderId(orderId:number):Promise<OrderItemEntity[]>{
+    const orderItems = this.orderItemRepository.getRepository().find({
+      where:{ orderId:orderId}
+    })
+    return orderItems;
+  }
   // Method to calculate the total for a service (with discount)
   calculateDiscountedPrice(
     price: number,

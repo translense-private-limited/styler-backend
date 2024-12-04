@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { CreateAppointmentDto } from './../dtos/create-appointment.interface';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { OrderRepository } from '../repositories/order.repository';
 import { CreateOrderDto } from '../dtos/create-order.dto';
 import { OrderItemPayloadDto } from '../dtos/order-item.dto';
@@ -10,12 +16,19 @@ import { ExpandedOrderItemInterface } from '../interfaces/expanded-order-item.in
 import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
 import { OrderStatusEnum } from '../enums/order-status.enum';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
+import { OrderResponseDto } from '../dtos/order-response.dto';
+import { AppointmentEntity } from '../entities/appointment.entity';
+import { AppointmentService } from './appointment.service';
+import { OrderItemService } from './order-item.service';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly serviceExternalService: ServiceExternalService,
+    private readonly orderItemService:OrderItemService,
+    @Inject(forwardRef(() => AppointmentService))
+    private readonly appointmentService: AppointmentService,
   ) {}
 
   /*This method processes each orderItem from the provided list, retrieves the corresponding service details using serviceExternalService, and constructs an expanded order item with the service details, quantity, outlet ID, and notes.
@@ -24,13 +37,14 @@ export class OrderService {
     orderItems: OrderItemPayloadDto[],
   ): Promise<ExpandedOrderItemInterface[]> {
     const expandedOrderItems: ExpandedOrderItemInterface[] = [];
-  
+
     for (const orderItem of orderItems) {
-      const service = await this.serviceExternalService.getServiceByServiceAndOutletIdOrThrow(
-        orderItem.serviceId,
-        orderItem.outletId,
-      );
-  
+      const service =
+        await this.serviceExternalService.getServiceByServiceAndOutletIdOrThrow(
+          orderItem.serviceId,
+          orderItem.outletId,
+        );
+
       const expandedOrderItem: ExpandedOrderItemInterface = {
         quantity: orderItem.quantity,
         outletId: orderItem.outletId,
@@ -39,21 +53,26 @@ export class OrderService {
       };
       expandedOrderItems.push(expandedOrderItem);
     }
-  
+
     return expandedOrderItems;
   }
-  
+
   //This method calculates the total price for the order by iterating through the expanded order items, multiplying the price of each service by its quantity, and summing up the results to get the total amount to be paid for the order.
-  private calculateTotalServicePrice(expandedOrderItems: ExpandedOrderItemInterface[]): number {
-    return expandedOrderItems.reduce((acc, expandedOrderItem) => acc + (expandedOrderItem.service.price * expandedOrderItem.quantity), 0);
-  }  
+  private calculateTotalServicePrice(
+    expandedOrderItems: ExpandedOrderItemInterface[],
+  ): number {
+    return expandedOrderItems.reduce(
+      (acc, expandedOrderItem) =>
+        acc + expandedOrderItem.service.price * expandedOrderItem.quantity,
+      0,
+    );
+  }
 
   //This method prepares an order instance by calculating the total price of services and setting essential order details like payment ID, customer ID, outlet ID, and order status.
   private getOrderInstance(
     expandedOrderItems: ExpandedOrderItemInterface[],
     customerId: number,
   ): OrderInterface {
-
     const outletId = expandedOrderItems[0].outletId;
     const totalPrice = this.calculateTotalServicePrice(expandedOrderItems);
 
@@ -89,16 +108,32 @@ export class OrderService {
     return orderItemInstances;
   }
 
+  private formatOrderResponse(
+    order: OrderEntity,
+    orderItemsPayload: OrderItemPayloadDto[],
+    appointment: AppointmentEntity,
+  ): OrderResponseDto {
+    return {
+      orderId: order.orderId,
+      startTime: appointment.startTime,
+      endTime: appointment.endTime,
+      orderItems: orderItemsPayload,
+      outletId: order.outletId,
+    } as OrderResponseDto;
+  }
+
   // This method, called by the controller, manages the entire process of creating an order, including expanding the order item details, preparing the order instance, saving the order and its items in a transaction, and returning a structured response.
   async createOrder(
     createOrderDto: CreateOrderDto,
     customerDecoratorDto: CustomerDecoratorDto,
-  ): Promise<CreateOrderDto> {
+  ): Promise<OrderResponseDto> {
     const { customerId } = customerDecoratorDto;
     // Expand the orderItem payload to include service details
     const expandedOrderItems = await this.expandOrderItem(
       createOrderDto.orderItems,
     );
+
+    // check the slot availability
 
     // Prepare the order instance
     const orderInstance = await this.getOrderInstance(
@@ -125,16 +160,21 @@ export class OrderService {
         expandedOrderItems,
         transactionManager.manager,
       );
-      await this.saveOrderItems(
-        transactionManager.manager, 
-        orderItemInstances); // Save the order items in the transaction
+      await this.saveOrderItems(transactionManager.manager, orderItemInstances); // Save the order items in the transaction
+
+      // create appointment
+      const appointment = await this.createAppointment(order,createOrderDto.orderItems,createOrderDto.startTime)
 
       // Commit the transaction
       await transactionManager.commitTransaction();
 
-      // Return structured response
-      // return 'Order created successfully';
-      return await this.postOrderResponse(order,orderItemInstances)
+      // format order response
+      const orderResponse = this.formatOrderResponse(
+        order,
+        createOrderDto.orderItems,
+        appointment,
+      );
+      return orderResponse;
     } catch (error) {
       // Rollback the transaction if an error occurs
       await transactionManager.rollbackTransaction();
@@ -149,9 +189,28 @@ export class OrderService {
   private async saveOrder(
     queryRunnerManager: EntityManager,
     orderData: OrderInterface,
-  ):Promise<OrderEntity> {
+  ): Promise<OrderEntity> {
     const order = this.orderRepository.getRepository().create(orderData); // Create the order entity
     return queryRunnerManager.save(OrderEntity, order); // Save the entity using the manager from queryRunner
+  }
+
+  private async createAppointment(
+    order: OrderEntity,
+    orderItemsPayload: OrderItemPayloadDto[],
+    startTime: Date,
+  ): Promise<AppointmentEntity> {
+    const endTime = await this.calculateEndTime(orderItemsPayload, startTime);
+
+    const createAppointmentDto = new CreateAppointmentDto();
+    createAppointmentDto.customerId = order.customerId;
+    createAppointmentDto.orderId = order.orderId;
+    createAppointmentDto.outletId = order.outletId;
+    createAppointmentDto.startTime = startTime;
+    createAppointmentDto.endTime = endTime;
+
+    const appointment =
+      await this.appointmentService.createAppointment(createAppointmentDto);
+    return appointment;
   }
 
   //This method saves the order items to the database within a transactional context.
@@ -162,21 +221,68 @@ export class OrderService {
     return transactionManager.save(OrderItemEntity, orderItemInstances); // Save all order items in the transaction
   }
 
-  //This method formats the response after the creation of an order, including its associated order items
-  private async postOrderResponse(
-    order:OrderEntity,
-    orderItemInstances:OrderItemEntity[]
-  ):Promise<CreateOrderDto>{
-      const orderedItems = orderItemInstances.map((item) => ({
-        serviceId: item.serviceId,
-        quantity: item.quantity,
-        notes: item.notes,
-      }));
-      return {
-        orderItems: orderedItems,
-        outletId: order.outletId,
-        paymentId: order.paymentId,
-      };
+  private async calculateEndTime(
+    orderItemsPayload: OrderItemPayloadDto[],
+    startTime: Date,
+  ): Promise<Date> {
+    const startTimeAsDate =
+      typeof startTime === 'string' ? new Date(startTime) : startTime;
+    const totalDuration =
+      await this.calculateOrderTotalDuration(orderItemsPayload);
+    const endTime = new Date(startTimeAsDate.getTime() + totalDuration * 60000); // Convert minutes to milliseconds
+    return endTime;
+  }
+
+  async calculateOrderTotalDuration(
+    orderItemsPayload: OrderItemPayloadDto[],
+  ): Promise<number> {
+    // Step 1: Retrieve all expanded order items for the given order ID
+    const expandedOrderItems = await this.expandOrderItem(orderItemsPayload); // Expand the order items to get service details, including duration
+    if (!expandedOrderItems || expandedOrderItems.length === 0) {
+      throw new NotFoundException('Order items not found.');
+    }
+    // Step 2: Calculate the total duration by summing up the service durations
+    let totalDuration = 0;
+    // Loop through each expanded order item
+    for (const expandedOrderItem of expandedOrderItems) {
+      // Fetch the service duration for each expanded order item
+      const serviceDuration = expandedOrderItem.service.timeTaken; // Assuming 'duration' is a property of the service
+      // Sum the service duration, considering the quantity for each order item
+      totalDuration += serviceDuration * expandedOrderItem.quantity;
+    }
+    return totalDuration; // The total duration in minutes
+  }
+
+  async getEndTime(startTime: Date, orderId: number): Promise<Date> {
+    // Step 1: Get the total duration using getOrderFulfillmentDuration
+    const totalDuration = await this.getOrderFulfillmentDuration(orderId);
+    const endTime = new Date(startTime.getTime() + totalDuration * 60000); 
+    // Step 2: Return the calculated end time
+    return endTime;
   }
   
+  async getOrderFulfillmentDuration(orderId: number): Promise<number> {
+    // Step 1: Get all order items associated with the orderId
+    const orderItems = await this.orderItemService.getAllOrderItemsByOrderId(orderId);
+  
+    // Step 2: Calculate the total duration by iterating over order items and fetching service details
+    let totalDuration = 0;
+  
+    for (const item of orderItems) {
+      try {
+        // Step 3: Fetch the service details for the item using getServiceByServiceAndOutletIdOrThrow
+        const service = await this.serviceExternalService.getServiceByIdOrThrow(item.serviceId)
+        totalDuration += service.timeTaken * item.quantity;
+      } catch (error) {
+        // Handle error, maybe log it, and decide if you want to continue or throw
+        console.error(`Error fetching service for serviceId: ${item.serviceId}`);
+        // Continue to the next item if error occurs
+      }
+    }
+  
+    // Step 5: Return the total duration in minutes
+    return totalDuration;
+  }
+
+
 }
