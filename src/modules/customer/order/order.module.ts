@@ -13,6 +13,7 @@ import { ServiceModule } from '@modules/client/services/service.module';
 import { AppointmentRepository } from './repositories/appointment.repository';
 import { AppointmentService } from './services/appointment.service';
 import { AppointmentEntity } from './entities/appointment.entity';
+import { AppointmentController } from './controllers/appoitment.controller';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { AppointmentEntity } from './entities/appointment.entity';
     OutletModule,
     ServiceModule,
   ],
-  controllers: [OrderController],
+  controllers: [OrderController,AppointmentController],
   providers: [
     OrderService,
     OrderRepository,
