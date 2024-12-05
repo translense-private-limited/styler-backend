@@ -204,7 +204,8 @@ export class OrderService {
     startTime: Date,
     providedEndTime:Date,
   ): Promise<AppointmentEntity> {
-    //converting providedEndTime from string to Date
+    //converting providedEndTime from string to Date type
+
     const providedTime = new Date(providedEndTime)
     const calculatedEndTime = await this.calculateEndTime(orderItemsPayload, startTime);
 
