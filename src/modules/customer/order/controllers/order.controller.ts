@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateOrderDto } from '../dtos/create-order.dto';
 import { OrderService } from '../services/order.service';
@@ -17,5 +17,12 @@ export class OrderController {
     @CustomerDecorator() customerDecoratorDto: CustomerDecoratorDto,
   ): Promise<OrderResponseDto> {
     return this.orderService.createOrder(createOrderDto, customerDecoratorDto);
+  }
+
+  @Get('order/:orderId')
+  async getOrderDetailsByOrderId(
+    @Param('orderId') orderId:number
+  ){
+    
   }
 }

@@ -297,5 +297,19 @@ export class OrderService {
     return totalDuration;
   }
 
+  async getOrderDetailsByOrderIdOrThrow(orderId: number): Promise<OrderResponseDto> {
+    const order = await this.getOrderByIdOrThrow(orderId);
+    const appointment: AppointmentEntity = await this.appointmentService.getAppointmentByOrderIdOrThrow(orderId);
+    const orderItems = await this.orderItemService.getAllOrderItemsByOrderId(orderId);
+  
+    return this.formatOrderResponse(order, orderItems, appointment);
+  }
+
+  async getOrderByIdOrThrow(orderId:number):Promise<OrderEntity>{
+    return await this.orderRepository.getRepository().findOne({
+      where:{orderId:orderId}
+    })
+  }
+
 
 }

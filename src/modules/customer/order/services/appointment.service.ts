@@ -40,6 +40,12 @@ export class AppointmentService {
     return appointment;
   }
 
+  async getAppointmentByOrderIdOrThrow(orderId:number){
+    return this.appointmentRepository.getRepository().findOne({
+      where:{orderId:orderId}
+    })
+  }
+
   /**
    * Creates a new appointment.
    * @param createAppointmentDto - The data to create the appointment.
