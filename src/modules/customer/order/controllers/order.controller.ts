@@ -5,6 +5,7 @@ import { OrderService } from '../services/order.service';
 import { CustomerDecorator } from '@src/utils/decorators/customer.decorator';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 import { OrderResponseDto } from '../dtos/order-response.dto';
+import { OrderSummaryDto } from '../dtos/order-summary.dto';
 
 @ApiTags('Customer/Orders')
 @Controller('customer')
@@ -20,9 +21,9 @@ export class OrderController {
   }
 
   @Get('order/:orderId')
-  async getOrderDetailsByOrderId(
+  async getOrderSummaryByOrderId(
     @Param('orderId') orderId:number
-  ){
-    
+  ):Promise<OrderSummaryDto>{
+    return this.orderService.getOrderSummaryByOrderIdOrThrow(orderId)
   }
 }
