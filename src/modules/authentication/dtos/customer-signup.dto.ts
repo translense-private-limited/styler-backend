@@ -4,6 +4,7 @@ import {
   IsString,
   IsNumberString,
   Length,
+  MinLength,
 } from 'class-validator';
 
 export class CustomerSignupDto {
@@ -13,6 +14,7 @@ export class CustomerSignupDto {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(6, { message: 'Password must be at least 6 characters long.' })
   password: string;
 
   @IsNumberString()

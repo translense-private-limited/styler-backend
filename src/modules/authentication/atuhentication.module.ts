@@ -18,10 +18,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OtpEntity } from './entities/otp.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
 import { OtpExternalService } from './services/otp-external.service';
+import { AdminAuthenticationService } from './services/admin-auth.service';
+import { AdminAuthenticationController } from './controllers/admin-authentication.controller';
+import { AdminModule } from '@modules/admin/admin.module';
 
 @Module({
   imports: [
     ClientModule,
+    AdminModule,
     EncryptionModule,
     CustomerModule,
     TypeOrmModule.forFeature([OtpEntity], getMysqlDataSource()),
@@ -33,6 +37,7 @@ import { OtpExternalService } from './services/otp-external.service';
     OtpService,
     OtpRepository,
     OtpExternalService,
+    AdminAuthenticationService,
   ],
   exports: [SellerAuthService, JwtService, OtpExternalService],
 
@@ -40,6 +45,7 @@ import { OtpExternalService } from './services/otp-external.service';
     ClientAuthController,
     CustomerAuthenticationController,
     OtpController,
+    AdminAuthenticationController,
   ],
 })
 export class AuthenticationModule {}
