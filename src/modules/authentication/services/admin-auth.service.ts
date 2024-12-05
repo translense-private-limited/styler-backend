@@ -12,3 +12,6 @@
 //     return 'admin-token';
 //   }
 // }
+export class AdminAuthenticationService{
+    constructor(){}
+}

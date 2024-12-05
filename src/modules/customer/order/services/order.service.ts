@@ -200,6 +200,8 @@ export class OrderService {
     startTime: Date,
     providedEndTime:Date,
   ): Promise<AppointmentEntity> {
+    //converting providedEndTime from string to Date
+    const providedTime = new Date(providedEndTime)
     const calculatedEndTime = await this.calculateEndTime(orderItemsPayload, startTime);
 
     const createAppointmentDto = new CreateAppointmentDto();
@@ -207,7 +209,7 @@ export class OrderService {
     createAppointmentDto.orderId = order.orderId;
     createAppointmentDto.outletId = order.outletId;
     createAppointmentDto.startTime = startTime;
-    if (this.isEndTimeMatching(providedEndTime, calculatedEndTime)) {
+    if (this.isEndTimeMatching(providedTime, calculatedEndTime)) {
       createAppointmentDto.endTime = calculatedEndTime;
     } else {
       console.warn(
