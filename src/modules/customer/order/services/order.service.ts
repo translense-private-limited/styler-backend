@@ -20,6 +20,9 @@ import { OrderResponseDto } from '../dtos/order-response.dto';
 import { AppointmentEntity } from '../entities/appointment.entity';
 import { AppointmentService } from './appointment.service';
 import { OrderItemService } from './order-item.service';
+import { OrderSummaryDto } from '../dtos/order-summary.dto';
+import { OutletExternalService } from '@modules/client/outlet/services/outlet-external.service';
+import { OrderItemSummaryDto } from '../dtos/order-item-summary.dto';
 
 @Injectable()
 export class OrderService {
@@ -27,6 +30,7 @@ export class OrderService {
     private readonly orderRepository: OrderRepository,
     private readonly serviceExternalService: ServiceExternalService,
     private readonly orderItemService:OrderItemService,
+    private readonly outletExternalService:OutletExternalService,
     @Inject(forwardRef(() => AppointmentService))
     private readonly appointmentService: AppointmentService,
   ) {}
@@ -200,6 +204,8 @@ export class OrderService {
     startTime: Date,
     providedEndTime:Date,
   ): Promise<AppointmentEntity> {
+    //converting providedEndTime from string to Date
+    const providedTime = new Date(providedEndTime)
     const calculatedEndTime = await this.calculateEndTime(orderItemsPayload, startTime);
 
     const createAppointmentDto = new CreateAppointmentDto();
@@ -207,7 +213,7 @@ export class OrderService {
     createAppointmentDto.orderId = order.orderId;
     createAppointmentDto.outletId = order.outletId;
     createAppointmentDto.startTime = startTime;
-    if (this.isEndTimeMatching(providedEndTime, calculatedEndTime)) {
+    if (this.isEndTimeMatching(providedTime, calculatedEndTime)) {
       createAppointmentDto.endTime = calculatedEndTime;
     } else {
       console.warn(
@@ -295,5 +301,70 @@ export class OrderService {
     return totalDuration;
   }
 
-
-}
+  // summarises the order details
+  async getOrderSummaryByOrderIdOrThrow(orderId: number,customerId:number): Promise<OrderSummaryDto> {
+    // Fetch core details: order and outlet
+    const order = await this.getOrderByOrderAndCustomerIdOrThrow(orderId,customerId);
+    const outlet = await this.outletExternalService.getOutletById(order.outletId);
+    
+    // Fetch order items with necessary details (avoid circular reference by fetching services separately)
+    const orderItems = await this.getOrderItemsWithRequiredDetails(orderId);
+  
+    // Calculate item total
+    const itemTotal = this.calculateItemTotal(orderItems);
+  
+    // Return constructed response with necessary details
+    return this.constructOrderSummaryResponse(order, outlet.name, orderItems, itemTotal);
+  }    
+  
+  //fetches the order details by orderId
+  async getOrderByOrderAndCustomerIdOrThrow(orderId: number,customerId): Promise<OrderEntity> {
+    console.log("hello I'm getOrderByIdOrThrow method")
+    const order = await this.orderRepository.getRepository().findOne({
+      where: { orderId: orderId, customerId:customerId }
+    });
+    if (!order) {
+      throw new Error(`Order with ID ${orderId} not found.`);
+    }
+    return order;
+  }
+  
+  
+  private async getOrderItemsWithRequiredDetails(orderId: number): Promise<OrderItemSummaryDto[]> {
+    const orderItems = await this.orderItemService.getAllOrderItemsByOrderId(orderId);
+  
+    // Manually map orderItems to DTOs
+    return Promise.all(
+      orderItems.map(async (item) => {
+        const service = await this.serviceExternalService.getServiceByIdOrThrow(item.serviceId);
+        return {
+          name: service.serviceName,
+          quantity: item.quantity,
+          unitPrice: service.price,
+          totalPrice: service.price * item.quantity,
+        };
+      })
+    );
+  }
+  
+  private calculateItemTotal(items: { totalPrice: number }[]): number {
+    return items.reduce((sum, item) => sum + item.totalPrice, 0);
+  }
+  
+  private constructOrderSummaryResponse(
+    order: OrderEntity,
+    outletName: string,
+    items: OrderItemSummaryDto[],
+    itemTotal: number
+  ): OrderSummaryDto {
+    return {
+      orderId: order.orderId.toString(),
+      outletName,
+      orderDate: order.createdAt.toISOString().split('T')[0],
+      items,
+      itemTotal,
+      grandTotal: itemTotal,
+    };
+  }  
+  
+}  
