@@ -302,9 +302,9 @@ export class OrderService {
   }
 
   // summarises the order details
-  async getOrderSummaryByOrderIdOrThrow(orderId: number): Promise<OrderSummaryDto> {
+  async getOrderSummaryByOrderIdOrThrow(orderId: number,customerId:number): Promise<OrderSummaryDto> {
     // Fetch core details: order and outlet
-    const order = await this.getOrderByIdOrThrow(orderId);
+    const order = await this.getOrderByOrderAndCustomerIdOrThrow(orderId,customerId);
     const outlet = await this.outletExternalService.getOutletById(order.outletId);
     
     // Fetch order items with necessary details (avoid circular reference by fetching services separately)
@@ -318,10 +318,10 @@ export class OrderService {
   }    
   
   //fetches the order details by orderId
-  async getOrderByIdOrThrow(orderId: number): Promise<OrderEntity> {
+  async getOrderByOrderAndCustomerIdOrThrow(orderId: number,customerId): Promise<OrderEntity> {
     console.log("hello I'm getOrderByIdOrThrow method")
     const order = await this.orderRepository.getRepository().findOne({
-      where: { orderId: orderId }
+      where: { orderId: orderId, customerId:customerId }
     });
     if (!order) {
       throw new Error(`Order with ID ${orderId} not found.`);
@@ -353,13 +353,13 @@ export class OrderService {
   
   private constructOrderSummaryResponse(
     order: OrderEntity,
-    salonName: string,
+    outletName: string,
     items: OrderItemSummaryDto[],
     itemTotal: number
   ): OrderSummaryDto {
     return {
       orderId: order.orderId.toString(),
-      salonName,
+      outletName,
       orderDate: order.createdAt.toISOString().split('T')[0],
       items,
       itemTotal,

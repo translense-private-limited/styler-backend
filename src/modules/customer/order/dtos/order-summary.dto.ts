@@ -10,7 +10,7 @@ import { IsNotEmpty } from "class-validator";
   
     @ApiProperty()
     @IsNotEmpty()
-    salonName: string;
+    outletName: string;
   
     @ApiProperty()
     @IsNotEmpty()

@@ -6,6 +6,7 @@ import { CustomerDecorator } from '@src/utils/decorators/customer.decorator';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 import { OrderResponseDto } from '../dtos/order-response.dto';
 import { OrderSummaryDto } from '../dtos/order-summary.dto';
+import { CustomerSignupDto } from '@modules/authentication/dtos/customer-signup.dto';
 
 @ApiTags('Customer/Orders')
 @Controller('customer')
@@ -22,8 +23,9 @@ export class OrderController {
 
   @Get('order/:orderId')
   async getOrderSummaryByOrderId(
-    @Param('orderId') orderId:number
+    @Param('orderId') orderId:number,
+    @CustomerDecorator() customerDecoratorDto:CustomerDecoratorDto
   ):Promise<OrderSummaryDto>{
-    return this.orderService.getOrderSummaryByOrderIdOrThrow(orderId)
+    return this.orderService.getOrderSummaryByOrderIdOrThrow(orderId,customerDecoratorDto.customerId)
   }
 }
