@@ -30,6 +30,20 @@ export class SeedRoleData {
           scope: UserTypeEnum.CLIENT,
           outletId: null,
         },
+        {
+          id: 1,
+          name: 'admin',
+          isSystemDefined: true,
+          scope: UserTypeEnum.ADMIN,
+          outletId: null,
+        },
+        {
+          id: 2,
+          name: 'super',
+          isSystemDefined: true,
+          scope: UserTypeEnum.ADMIN,
+          outletId: null,
+        },
       ];
 
       await this.roleRepository.getRepository().save(roles);

@@ -19,6 +19,10 @@ export class AdminDto implements AdminInterface {
   @IsNumber({}, { message: 'Contact number must be a number' })
   contactNumber: number;
 
+  @IsNotEmpty({ message: 'role should not be empty' })
+  @IsNumber()
+  roleId: number;
+  
   @IsString()
   @MinLength(6, { message: 'Password must be at least 6 characters long' })
   password: string;

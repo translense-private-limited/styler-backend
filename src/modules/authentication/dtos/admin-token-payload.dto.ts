@@ -11,4 +11,7 @@ export class AdminTokenPayloadDto implements AdminTokenPayloadInterface {
 
   @IsNumber()
   contactNumber: number;
+
+  @IsNumber()
+  roleId:number;
 }
