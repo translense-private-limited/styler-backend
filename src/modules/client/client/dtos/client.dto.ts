@@ -29,9 +29,9 @@ export class CreateClientDto implements ClientInterface {
   @Matches(/^\d+$/, { message: 'Contact number must contain only digits' })
   contactNumber: string;
 
-  // @IsNotEmpty({ message: 'role should not be empty' })
-  // @IsNumber()
-  // roleId: number;
+  @IsNotEmpty({ message: 'role should not be empty' })
+  @IsNumber()
+  roleId: number;
 
   @IsEnum(GenderEnum)
   @IsNotEmpty({ message: 'Gender should not be empty' })

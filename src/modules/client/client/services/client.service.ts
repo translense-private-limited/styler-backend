@@ -95,37 +95,37 @@ export class ClientService {
     }
   }
 
-  // async createTeamMember(
-  //   createClientDto: CreateClientDto,
-  //   clientIdDto: ClientIdDto,
-  // ): Promise<TeamMember> {
-  //   await this.checkSellerUniqueness(createClientDto);
+  async createTeamMember(
+    createClientDto: CreateClientDto,
+    clientIdDto: ClientIdDto,
+  ): Promise<TeamMember> {
+    await this.checkSellerUniqueness(createClientDto);
 
-  //   if (!clientIdDto.outletIds.includes(createClientDto.outletId)) {
-  //     throw new UnauthorizedException('Outlet permission denied.');
-  //   }
+    if (!clientIdDto.outletIds.includes(createClientDto.outletId)) {
+      throw new UnauthorizedException('Outlet permission denied.');
+    }
 
-  //   const role = await this.roleClientService.getRoleByIdOrThrow(
-  //     createClientDto.roleId,
-  //   );
-  //   if (!role) {
-  //     throw new HttpException('Role not found.', HttpStatus.BAD_REQUEST);
-  //   }
+    const role = await this.roleClientService.getRoleByIdOrThrow(
+      createClientDto.roleId,
+    );
+    if (!role) {
+      throw new HttpException('Role not found.', HttpStatus.BAD_REQUEST);
+    }
 
-  //   // Set and encrypt password
-  //   createClientDto.password =
-  //     createClientDto.password || createClientDto.name || 'password';
-  //   const plainPassword = createClientDto.password;
-  //   const encryptedPassword = await this.getEncryptedPassword(createClientDto);
-  //   createClientDto.password = encryptedPassword;
+    // Set and encrypt password
+    createClientDto.password =
+      createClientDto.password || createClientDto.name || 'password';
+    const plainPassword = createClientDto.password;
+    const encryptedPassword = await this.getEncryptedPassword(createClientDto);
+    createClientDto.password = encryptedPassword;
 
-  //   // Save client and return response with original password
-  //   const client = await this.clientRepository
-  //     .getRepository()
-  //     .save(createClientDto);
-  //   delete client.roleId;
-  //   return { ...client, password: plainPassword, role: role };
-  // }
+    // Save client and return response with original password
+    const client = await this.clientRepository
+      .getRepository()
+      .save(createClientDto);
+    delete client.roleId;
+    return { ...client, password: plainPassword, role: role };
+  }
 
   async getSellerByEmail(
     sellerLoginDto: SellerLoginDto,
@@ -157,36 +157,36 @@ export class ClientService {
     return this.getClientByIdOrThrow(clientId);
   }
 
-  async createClient(clientDto: CreateClientDto): Promise<ClientEntity> {
-    // Check if a client with the provided email already exists
-    const getClientWithProvidedEmail = await this.getClientByEmailOrThrow(clientDto.email);
+  // async createClient(clientDto: CreateClientDto): Promise<ClientEntity> {
+  //   // Check if a client with the provided email already exists
+  //   const getClientWithProvidedEmail = await this.getClientByEmailOrThrow(clientDto.email);
   
-    // Check if a client with the provided contact number already exists
-    const getClientWithContactNumber = await this.getClientByContactNumber(clientDto.contactNumber);
+  //   // Check if a client with the provided contact number already exists
+  //   const getClientWithContactNumber = await this.getClientByContactNumber(clientDto.contactNumber);
   
-    // Throw an exception if either the email or contact number already exists
-    if (getClientWithContactNumber || getClientWithProvidedEmail) {
-      throw new BadRequestException('User already exists with the provided details');
-    }
+  //   // Throw an exception if either the email or contact number already exists
+  //   if (getClientWithContactNumber || getClientWithProvidedEmail) {
+  //     throw new BadRequestException('User already exists with the provided details');
+  //   }
   
-    // Encrypt the password if it is provided, or use a default encrypted password (e.g., encrypted name)
-    const encryptedPassword = clientDto.password 
-      ? await this.bcryptEncryptionService.encrypt(clientDto.password)
-      : await this.bcryptEncryptionService.encrypt(clientDto.name);
+  //   // Encrypt the password if it is provided, or use a default encrypted password (e.g., encrypted name)
+  //   const encryptedPassword = clientDto.password 
+  //     ? await this.bcryptEncryptionService.encrypt(clientDto.password)
+  //     : await this.bcryptEncryptionService.encrypt(clientDto.name);
   
-    // Retrieve the default role for clients
-    const role = await this.roleExternalService.getRoleDetails(RoleEnum.CLIENT);
-    const roleId = role.id;
+  //   // Retrieve the default role for clients
+  //   const role = await this.roleExternalService.getRoleDetails(RoleEnum.CLIENT);
+  //   const roleId = role.id;
   
-    // Prepare the client data to be saved
-    const clientDataToSave = {
-      ...clientDto,
-      password: encryptedPassword,
-      roleId,
-    };
+  //   // Prepare the client data to be saved
+  //   const clientDataToSave = {
+  //     ...clientDto,
+  //     password: encryptedPassword,
+  //     roleId,
+  //   };
   
-    // Save the client data in the database
-    return this.clientRepository.getRepository().save(clientDataToSave);
-  }
+  //   // Save the client data in the database
+  //   return this.clientRepository.getRepository().save(clientDataToSave);
+  // }
   
 }
