@@ -11,6 +11,10 @@ export class CreateOutletDto {
   @IsString()
   name: string; // Required field
 
+  @IsOptional()
+  @IsString()
+  description?: string; 
+
   @IsNotEmpty()
   @IsString()
   address: string; // Required field
@@ -35,7 +39,4 @@ export class CreateOutletDto {
   @IsString()
   website?: string; // Optional field
 
-  @IsOptional()
-  @IsString()
-  description?: string; // Optional field
 }
