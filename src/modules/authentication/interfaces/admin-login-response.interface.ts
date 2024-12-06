@@ -1,6 +1,6 @@
-import { AdminDto } from "@modules/admin/dtos/admin.dto";
+import { AdminWithRoleDtoInterface } from './admin-with-role.interface';
 
 export interface AdminLoginResponseInterface {
-    admin: Omit<AdminDto, 'password'>;
-    token: string;
-  }
+  admin: AdminWithRoleDtoInterface;
+  token: string;
+}

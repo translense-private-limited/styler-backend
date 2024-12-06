@@ -333,7 +333,7 @@
 //   }
 // }
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { RoleEntity } from '../entities/role.entity';
 import { CreateRoleDto } from '../dtos/create-role.dto';
 import { RoleRepository } from '../repositories/role.repository';
@@ -350,5 +350,17 @@ export class RoleService {
   // Fetch all roles
   async getAllRoles(): Promise<RoleEntity[]> {
     return this.rolesRepository.getRepository().find();
+  }
+
+  async getRoleByIdOrThrow(roleId: number): Promise<RoleEntity> {
+    const role = await this.rolesRepository.getRepository().findOne({
+      where: {
+        id: roleId,
+      },
+    });
+    if (!role) {
+      throw new NotFoundException('Invalid role');
+    }
+    return role;
   }
 }
