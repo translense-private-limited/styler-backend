@@ -21,9 +21,8 @@ import { TeamMemberService } from './services/team-member.service';
     ClientRepository,
     ClientExternalService,
     TeamMemberService,
-    AuthorizationModule
   ],
-  controllers: [TeamController],
+  controllers: [TeamController,],
   exports: [ClientExternalService,ClientRepository],
 })
 export class ClientModule {}

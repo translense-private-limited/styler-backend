@@ -14,6 +14,8 @@ import { ClientEntity } from '../entities/client.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
 import { TeamMember } from '../dtos/team-member.dto';
+import { RoleExternalService } from '@modules/authorization/services/role-external.service';
+
 
 @Injectable()
 export class ClientService {
@@ -21,6 +23,7 @@ export class ClientService {
     private clientRepository: ClientRepository,
     private roleClientService: RoleClientService,
     private bcryptEncryptionService: BcryptEncryptionService,
+    private roleExternalService:RoleExternalService
     
   ) {}
 
@@ -157,36 +160,45 @@ export class ClientService {
     return this.getClientByIdOrThrow(clientId);
   }
 
-  // async createClient(clientDto: CreateClientDto): Promise<ClientEntity> {
-  //   // Check if a client with the provided email already exists
-  //   const getClientWithProvidedEmail = await this.getClientByEmailOrThrow(clientDto.email);
+  async createClient(clientDto: CreateClientDto): Promise<ClientEntity> {
+    // Check if a client with the provided email already exists
+    const getClientWithProvidedEmail = await this.getClientByEmailOrThrow(clientDto.email);
   
-  //   // Check if a client with the provided contact number already exists
-  //   const getClientWithContactNumber = await this.getClientByContactNumber(clientDto.contactNumber);
+    // Check if a client with the provided contact number already exists
+    const getClientWithContactNumber = await this.getClientByContactNumber(clientDto.contactNumber);
   
-  //   // Throw an exception if either the email or contact number already exists
-  //   if (getClientWithContactNumber || getClientWithProvidedEmail) {
-  //     throw new BadRequestException('User already exists with the provided details');
-  //   }
+    // Throw an exception if either the email or contact number already exists
+    if (getClientWithContactNumber || getClientWithProvidedEmail) {
+      throw new BadRequestException('User already exists with the provided details');
+    }
   
-  //   // Encrypt the password if it is provided, or use a default encrypted password (e.g., encrypted name)
-  //   const encryptedPassword = clientDto.password 
-  //     ? await this.bcryptEncryptionService.encrypt(clientDto.password)
-  //     : await this.bcryptEncryptionService.encrypt(clientDto.name);
+    // Encrypt the password if it is provided, or use a default encrypted password (e.g., encrypted name)
+    const encryptedPassword = clientDto.password 
+      ? await this.bcryptEncryptionService.encrypt(clientDto.password)
+      : await this.bcryptEncryptionService.encrypt(clientDto.name);
   
-  //   // Retrieve the default role for clients
-  //   const role = await this.roleExternalService.getRoleDetails(RoleEnum.CLIENT);
-  //   const roleId = role.id;
+    // Retrieve the default role for clients
+    const role = await this.roleExternalService.getRoleDetails(RoleEnum.CLIENT);
+    const roleId = role.id;
   
-  //   // Prepare the client data to be saved
-  //   const clientDataToSave = {
-  //     ...clientDto,
-  //     password: encryptedPassword,
-  //     roleId,
-  //   };
+    // Prepare the client data to be saved
+    const clientDataToSave = {
+      ...clientDto,
+      password: encryptedPassword,
+      roleId,
+    };
   
-  //   // Save the client data in the database
-  //   return this.clientRepository.getRepository().save(clientDataToSave);
-  // }
+    // Save the client data in the database
+    return this.clientRepository.getRepository().save(clientDataToSave);
+  }
+
+  async getClientByEmailOrThrow(email: string): Promise<ClientEntity | null> {
+    return this.clientRepository.getRepository().findOneBy({ email });
+  }
+
+  async getClientByContactNumber(contactNumber: string): Promise<ClientEntity | null> {
+    return this.clientRepository.getRepository().findOneBy({ contactNumber });
+  }
+     
   
 }
