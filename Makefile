@@ -29,6 +29,16 @@ dev:
 	docker-compose -f stack.yaml up -d
 	npm run start:dev
 
+# Start all frontend applications
+start-frontend:
+	@lsof -t -i:5000 -i:5001 -i:5002 -i:5003 | xargs -r kill -9
+	@echo "Starting Styler Customer App..."
+	@cd ../styler-customer && npm install && npm run dev &
+	@echo "Starting Styler Web Client..."
+	@cd ../styler-client && npm install && npm run dev &
+	@echo "Starting Styler Admin App..."
+	@cd ../styler-admin && npm install && npm run dev &
+
 
 
 
