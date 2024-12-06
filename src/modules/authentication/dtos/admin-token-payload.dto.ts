@@ -1,7 +1,7 @@
 import { IsString, IsEmail, IsNumber, IsNotEmpty } from 'class-validator';
 import { AdminTokenPayloadInterface } from '../interfaces/admin-token-payload.interface';
 
-export class CustomerTokenPayloadDto implements AdminTokenPayloadInterface {
+export class AdminTokenPayloadDto implements AdminTokenPayloadInterface {
   @IsString()
   @IsNotEmpty()
   name: string;

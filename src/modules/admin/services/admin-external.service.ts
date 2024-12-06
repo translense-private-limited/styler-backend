@@ -7,16 +7,12 @@ import { AdminService } from "./admin.service";
 export class AdminExternalService{
     constructor(private readonly adminService:AdminService){}
 
-     async getAdminByEmail(email: string): Promise<AdminEntity> {
-        return await this.adminService.getAdminByEmailId(email);
+     async getAdminByEmailIdOrThrow(email: string): Promise<AdminEntity> {
+        return await this.adminService.getAdminByEmailIdOrThrow(email);
     }
 
     async getAdminByContactNumber(contactNumber:number):Promise<AdminEntity>{
         return await this.adminService.getAdminByContactNumber(contactNumber);
-    }
-
-    async getAdminByUsername(username:string):Promise<AdminEntity>{
-        return await this.adminService.getAdminByEmailOrContactNumber(username);
     }
 
     async save(adminDto:AdminDto):Promise<AdminEntity>{

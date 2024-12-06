@@ -11,7 +11,7 @@ export class AdminEntity extends BaseEntity implements AdminInterface {
   name: string;
 
   @Index('IX_admins_contactNumber', ['contactNumber']) // Index for contact number
-  @Column({ type: 'varchar',length:15, unique: true })
+  @Column({ type: 'varchar',unique: true })
   contactNumber: number;
 
   @Index('IX_admins_email', ['email']) // Index for faster lookups on email

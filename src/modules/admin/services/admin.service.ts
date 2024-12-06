@@ -1,8 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { AdminEntity } from "../entities/admin.entity";
 import { AdminRepository } from "../Repositories/admin.repository";
 import { AdminDto } from "../dtos/admin.dto";
 import { BcryptEncryptionService } from "@modules/encryption/services/bcrypt-encryption.service";
+import { isContactNumber, isEmail } from "@src/utils/validators/email-contact.validator";
+import { throwIfNotFound } from "@src/utils/exceptions/common.exception";
 
 @Injectable()
 export class AdminService{
@@ -12,7 +14,7 @@ export class AdminService{
     ){}
 
     async createAdmin(adminDto: AdminDto): Promise<AdminEntity> {
-        const isAdminExistWithProvidedEmail = await this.getAdminByEmailId(
+        const isAdminExistWithProvidedEmail = await this.getAdminByEmailIdOrThrow(
           adminDto.email,
         );
         const isAdminExistWithContactNumber =
@@ -31,15 +33,14 @@ export class AdminService{
         return this.adminRepository.getRepository().save(adminDto);
     }
 
-    async getAdminByEmailId(email:string):Promise<AdminEntity>{
+    async getAdminByEmailIdOrThrow(email:string):Promise<AdminEntity>{
         const admin = this.adminRepository
         .getRepository()
         .findOne({
             where:{ email }
         })
-        if(!admin){
-            throw new NotFoundException('No user exists with the provided email');
-        }
+        // Use the helper function to handle the NotFoundException
+        throwIfNotFound(admin, `No user exists with the provided email`);
         return admin;
     }
 
@@ -53,43 +54,25 @@ export class AdminService{
         return admin;
     }
 
-    async getAdminByEmailOrContactNumber(
-        username: string,
-      ): Promise<AdminEntity | null> {
-        // If it's an email, query by email, if it's a contact number, query by contactNumber
-        if (this.isEmail(username)) {
-          return this.adminRepository.getRepository().findOne({
-            where: { email: username },
-          });
-        } else if (this.isContactNumber(username)) {
-          return this.adminRepository.getRepository().findOne({
-            where: { contactNumber: +username },
-          });
-        } else {
-          // If it's neither a valid email nor a contact number
-          throw new Error('Invalid username format');
-        }
-    }
-
-    private isEmail(username: string): boolean {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailPattern.test(username);
-    }
-
-    private isContactNumber(username: string): boolean {
-        const contactNumberPattern = /^\d{10}$/;
-        return contactNumberPattern.test(username);
+    async getAdminByEmailOrContactNumber(username: string): Promise<AdminEntity | null> {
+      const repository = this.adminRepository.getRepository();
+  
+      if (isEmail(username)) {
+          return repository.findOne({ where: { email: username } });
+      }
+  
+      if (isContactNumber(username)) {
+          return repository.findOne({ where: { contactNumber: +username } });
+      }
+  
+      throw new Error('Invalid username format');
     }
 
     async updatePassword(username: string, password: string) {
         const admin = await this.getAdminByEmailOrContactNumber(username);
     
-        // Throw an error if the admin does not exist
-        if (!admin) {
-          throw new NotFoundException(
-            `No registered customer found with the provided username: ${username}`,
-          );
-        }
+        /// Use the helper function to handle the NotFoundException
+        throwIfNotFound(admin, `No user exists with the provided ${username}`);
     
         const encryptedPassword =
           await this.bcryptEncryptionService.encrypt(password);

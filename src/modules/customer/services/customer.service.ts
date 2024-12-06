@@ -1,12 +1,13 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { CustomerEntity } from '../entities/customer.entity';
 import { CustomerRepository } from '../repositories/customer.repository';
 import { CustomerDto } from '../dtos/customer.dto';
 import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
+import { isContactNumber, isEmail } from '@src/utils/validators/email-contact.validator';
+import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 
 @Injectable()
 export class CustomerService {
@@ -22,9 +23,8 @@ export class CustomerService {
         id: customerId,
       },
     });
-    if (!customer) {
-      throw new NotFoundException('No User exists with provided id');
-    }
+    // Use the helper function to handle the NotFoundException
+    throwIfNotFound(customer, `No user exists with the provided id`);
     return customer;
   }
 
@@ -36,9 +36,8 @@ export class CustomerService {
     const customer = await this.customerRepository
       .getRepository()
       .findOne({ where: { email } });
-    if (!customer) {
-      throw new NotFoundException('No user exists with provide email');
-    }
+    // Use the helper function to handle the NotFoundException
+    throwIfNotFound(customer, `No user exists with the provided email`);
     return customer;
   }
 
@@ -80,45 +79,25 @@ export class CustomerService {
     return this.customerRepository.getRepository().save(customerDto);
   }
 
-  // Helper function to check if the string is an email
-  private isEmail(username: string): boolean {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(username);
-  }
+  async getCustomerByEmailOrContactNumber(username: string): Promise<CustomerEntity | null> {
+    const repository = this.customerRepository.getRepository();
 
-  // Helper function to check if the string is a valid contact number
-  private isContactNumber(username: string): boolean {
-    const contactNumberPattern = /^\d{10}$/;
-    return contactNumberPattern.test(username);
-  }
-
-  async getCustomerByEmailOrContactNumber(
-    username: string,
-  ): Promise<CustomerEntity | null> {
-    // If it's an email, query by email, if it's a contact number, query by contactNumber
-    if (this.isEmail(username)) {
-      return this.customerRepository.getRepository().findOne({
-        where: { email: username },
-      });
-    } else if (this.isContactNumber(username)) {
-      return this.customerRepository.getRepository().findOne({
-        where: { contactNumber: +username },
-      });
-    } else {
-      // If it's neither a valid email nor a contact number
-      throw new Error('Invalid username format');
+    if (isEmail(username)) {
+        return repository.findOne({ where: { email: username } });
     }
+
+    if (isContactNumber(username)) {
+        return repository.findOne({ where: { contactNumber: +username } });
+    }
+
+    throw new Error('Invalid username format');
   }
 
   async updatePassword(username: string, password: string) {
     const customer = await this.getCustomerByEmailOrContactNumber(username);
 
-    // Throw an error if the customer does not exist
-    if (!customer) {
-      throw new NotFoundException(
-        `No registered customer found with the provided username: ${username}`,
-      );
-    }
+    // Use the helper function to handle the NotFoundException
+    throwIfNotFound(customer, `No user exists with the provided ${username}`);
 
     const encryptedPassword =
       await this.bcryptEncryptionService.encrypt(password);

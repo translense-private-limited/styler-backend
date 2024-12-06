@@ -4,13 +4,13 @@
 import { AdminExternalService } from "@modules/admin/services/admin-external.service";
 import { BcryptEncryptionService } from "@modules/encryption/services/bcrypt-encryption.service";
 import { JwtService } from "./jwt.service";
-import { OtpService } from "./otp.service";
 import { AdminSignupDto } from "../dtos/admin-signup.dto";
 import { AdminLoginResponseInterface } from "../interfaces/admin-login-response.interface";
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { AdminDto } from "@modules/admin/dtos/admin.dto";
 import { AdminTokenPayloadInterface } from "../interfaces/admin-token-payload.interface";
 import { LoginDto } from "../dtos/login.dto";
+import { throwIfNotFound } from "@src/utils/exceptions/common.exception";
 
 // @Injectable()
 // export class AdminAuthService implements AuthServiceInterface {
@@ -29,34 +29,34 @@ export class AdminAuthenticationService{
         private readonly adminExternalService:AdminExternalService,
         private readonly bcryptEncryptionService:BcryptEncryptionService,
         private jwtService:JwtService,
-        private otpService:OtpService
     ){}
 
     async registerAdmin(adminSignupDto:AdminSignupDto):Promise<AdminLoginResponseInterface>{
-        console.log(this.adminExternalService)
         const adminByContactNumber = 
             await this.adminExternalService.getAdminByContactNumber(
                 adminSignupDto.contactNumber,
             );
 
-        const adminByEmail = await this.adminExternalService.getAdminByEmail(adminSignupDto.email);
+        const adminByEmail = await this.adminExternalService.getAdminByEmailIdOrThrow(adminSignupDto.email);
 
-        if(adminByContactNumber|| adminByEmail){
+        if (adminByContactNumber && adminByEmail) {
             throw new ConflictException(
-                `Admin already existed with the provided email or contact number, please choose unique details`
-            )
-        }
+                `Admin already exists with the provided email and contact number. Please choose unique details.`
+            );
+        } else if (adminByContactNumber) {
+            throw new ConflictException(
+                `Admin already exists with the provided contact number. Please choose a unique contact number.`
+            );
+        } else if (adminByEmail) {
+            throw new ConflictException(
+                `Admin already exists with the provided email. Please choose a unique email.`
+            );
+        }        
         // encrypt the password and create the admin
         const admin = await this.adminExternalService.save(adminSignupDto);
 
         const tokenPayload = await this.constructJwtPayload(admin);
         const token = await this.jwtService.generateToken(tokenPayload);
-
-        //delete data from the otpEntity
-        await this.otpService.deleteByRecipient(
-            adminSignupDto.contactNumber.toString(),
-        )
-        await this.otpService.deleteByRecipient(adminSignupDto.email);
 
         return{
             token,
@@ -82,9 +82,8 @@ export class AdminAuthenticationService{
 
         const admin = await this.adminExternalService.getAdminByEmailOrContactNumber(username);
 
-        if(!admin){
-            throw new NotFoundException(`no user found with the provided credentials`)
-        }
+        // Use the helper function to handle the NotFoundException
+        throwIfNotFound(admin, `No user exists with the provide credentials`);
         const isValid = await this.bcryptEncryptionService.validate(password,admin.password);
         if(!isValid){
             throw new UnauthorizedException(`Invalid Credentials`)
