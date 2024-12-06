@@ -60,7 +60,7 @@ export class AdminService{
           .getRepository()
           .findOne({ where: { contactNumber }
          });
-        throwIfNotFound(admin, `No user exists with the provided contactNumber`);
+        // throwIfNotFound(admin, `No user exists with the provided contactNumber`);
         return admin;
     }
 

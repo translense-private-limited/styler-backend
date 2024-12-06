@@ -18,6 +18,7 @@ import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { RoleExternalService } from '@modules/authorization/services/role-external.service';
 import { AdminEntity } from '@modules/admin/entities/admin.entity';
 import { RoleEntity } from '@modules/authorization/entities/role.entity';
+import { RoleEnum } from '@src/utils/enums/role.enums';
 
 // @Injectable()
 // export class AdminAuthService implements AuthServiceInterface {
@@ -42,6 +43,7 @@ export class AdminAuthenticationService {
   async registerAdmin(
     adminSignupDto: AdminSignupDto,
   ): Promise<AdminLoginResponseInterface> {
+    console.log("first-register admin")
     const getAdminByContactNumber =
       await this.adminExternalService.getAdminByContactNumber(
         adminSignupDto.contactNumber,
@@ -80,7 +82,7 @@ export class AdminAuthenticationService {
   async constructJwtPayload(
     admin: AdminDto,
   ): Promise<AdminTokenPayloadInterface> {
-    const role = await this.roleExternalService.getRoleDetails(admin.name);
+    const role = await this.roleExternalService.getRoleDetails(RoleEnum.ADMIN);
     const tokenPayload: AdminTokenPayloadInterface = {
       name: admin.name,
       email: admin.email,
