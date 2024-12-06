@@ -11,6 +11,7 @@ import { AdminDto } from "@modules/admin/dtos/admin.dto";
 import { AdminTokenPayloadInterface } from "../interfaces/admin-token-payload.interface";
 import { LoginDto } from "../dtos/login.dto";
 import { throwIfNotFound } from "@src/utils/exceptions/common.exception";
+import { RoleExternalService } from "@modules/authorization/services/role-external.service";
 
 // @Injectable()
 // export class AdminAuthService implements AuthServiceInterface {
@@ -29,25 +30,26 @@ export class AdminAuthenticationService{
         private readonly adminExternalService:AdminExternalService,
         private readonly bcryptEncryptionService:BcryptEncryptionService,
         private jwtService:JwtService,
+        private readonly roleExternalService:RoleExternalService
     ){}
 
     async registerAdmin(adminSignupDto:AdminSignupDto):Promise<AdminLoginResponseInterface>{
-        const adminByContactNumber = 
+        const getAdminByContactNumber = 
             await this.adminExternalService.getAdminByContactNumber(
                 adminSignupDto.contactNumber,
             );
 
-        const adminByEmail = await this.adminExternalService.getAdminByEmailIdOrThrow(adminSignupDto.email);
+        const getAdminByEmail = await this.adminExternalService.getAdminByEmailIdOrThrow(adminSignupDto.email);
 
-        if (adminByContactNumber && adminByEmail) {
+        if (getAdminByContactNumber && getAdminByEmail) {
             throw new ConflictException(
                 `Admin already exists with the provided email and contact number. Please choose unique details.`
             );
-        } else if (adminByContactNumber) {
+        } else if (getAdminByContactNumber) {
             throw new ConflictException(
                 `Admin already exists with the provided contact number. Please choose a unique contact number.`
             );
-        } else if (adminByEmail) {
+        } else if (getAdminByEmail) {
             throw new ConflictException(
                 `Admin already exists with the provided email. Please choose a unique email.`
             );
@@ -67,15 +69,17 @@ export class AdminAuthenticationService{
     async constructJwtPayload(
         admin: AdminDto,
       ): Promise<AdminTokenPayloadInterface> {
+        const role = await this.roleExternalService.getRoleDetails(admin.name);
         const tokenPayload: AdminTokenPayloadInterface = {
           name: admin.name,
           email: admin.email,
           contactNumber: admin.contactNumber,
+          roleId:role.id,
         };
         return tokenPayload;
       }
 
-    async adminLogin(
+    public async adminLogin(
         loginDto:LoginDto
     ):Promise<AdminLoginResponseInterface>{
         const { username,password } = loginDto;

@@ -8,13 +8,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminEntity } from './entities/admin.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
 import { EncryptionModule } from '@modules/encryption/encryption.module';
+import { AuthorizationModule } from '@modules/authorization/authorization.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AdminEntity],getMysqlDataSource()), // Register AdminEntity here
     CategoryModule,
     forwardRef(() => SeedModule), // Use forwardRef to avoid circular dependency
-    EncryptionModule
+    EncryptionModule,
+    AuthorizationModule
   ],
   controllers:[],
   providers:[AdminService,AdminExternalService,AdminRepository],

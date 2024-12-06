@@ -21,6 +21,7 @@ import { OtpExternalService } from './services/otp-external.service';
 import { AdminAuthenticationService } from './services/admin-auth.service';
 import { AdminAuthenticationController } from './controllers/admin-authentication.controller';
 import { AdminModule } from '@modules/admin/admin.module';
+import { AuthorizationModule } from '@modules/authorization/authorization.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AdminModule } from '@modules/admin/admin.module';
     EncryptionModule,
     CustomerModule,
     TypeOrmModule.forFeature([OtpEntity], getMysqlDataSource()),
+    AuthorizationModule,
   ],
   providers: [
     SellerAuthService,

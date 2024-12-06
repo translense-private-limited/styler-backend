@@ -5,32 +5,41 @@ import { AdminDto } from "../dtos/admin.dto";
 import { BcryptEncryptionService } from "@modules/encryption/services/bcrypt-encryption.service";
 import { isContactNumber, isEmail } from "@src/utils/validators/email-contact.validator";
 import { throwIfNotFound } from "@src/utils/exceptions/common.exception";
+import { RoleExternalService } from "@modules/authorization/services/role-external.service";
+import { RoleEnum } from "@src/utils/enums/role.enums";
 
 @Injectable()
 export class AdminService{
     constructor(
         private readonly adminRepository:AdminRepository,
-        private readonly bcryptEncryptionService:BcryptEncryptionService
+        private readonly bcryptEncryptionService:BcryptEncryptionService,
+        private readonly roleExternalService:RoleExternalService
     ){}
 
     async createAdmin(adminDto: AdminDto): Promise<AdminEntity> {
-        const isAdminExistWithProvidedEmail = await this.getAdminByEmailIdOrThrow(
+        const getAdminWithProvidedEmail = await this.getAdminByEmailIdOrThrow(
           adminDto.email,
         );
-        const isAdminExistWithContactNumber =
+        const getAdminWithContactNumber =
           await this.getAdminByContactNumber(adminDto.contactNumber);
     
-        if (isAdminExistWithContactNumber || isAdminExistWithProvidedEmail) {
+        if (getAdminWithContactNumber || getAdminWithProvidedEmail) {
           throw new BadRequestException(`User already exits with provided details`);
         }
     
         const encryptedPassword = await this.bcryptEncryptionService.encrypt(
           adminDto.password,
         );
+
+         const role = await this.roleExternalService.getRoleDetails(RoleEnum.ADMIN);
+         const roleId = role.id;
     
-        adminDto.password = encryptedPassword;
-    
-        return this.adminRepository.getRepository().save(adminDto);
+         const adminDataToSave = {
+          ...adminDto,
+          password: encryptedPassword,
+          roleId 
+        };    
+        return this.adminRepository.getRepository().save(adminDataToSave);
     }
 
     async getAdminByEmailIdOrThrow(email:string):Promise<AdminEntity>{
@@ -51,6 +60,7 @@ export class AdminService{
           .getRepository()
           .findOne({ where: { contactNumber }
          });
+        throwIfNotFound(admin, `No user exists with the provided contactNumber`);
         return admin;
     }
 

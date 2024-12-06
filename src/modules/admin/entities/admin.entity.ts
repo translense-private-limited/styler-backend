@@ -13,6 +13,7 @@ export class AdminEntity extends BaseEntity implements AdminInterface {
   @Index('IX_admins_contactNumber', ['contactNumber']) // Index for contact number
   @Column({ type: 'varchar',unique: true })
   contactNumber: number;
+  
   @Column()
   roleId: number;
   

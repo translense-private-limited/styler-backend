@@ -26,7 +26,7 @@ export class AdminAuthenticationController{
         description: 'Admin Login',
         schema: {
           example: {
-            username: 'admin@translense.com',
+            username: 'Admin@translense.com',
             password: 'password',
           },
         },

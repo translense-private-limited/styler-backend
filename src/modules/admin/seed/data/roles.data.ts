@@ -18,28 +18,28 @@ export class SeedRoleData {
       const roles = [
         {
           id: 21,
-          name: 'owner',
+          name: 'OWNER',
           isSystemDefined: true,
           scope: UserTypeEnum.CLIENT,
           outletId: null,
         },
         {
           id: 22,
-          name: 'manager',
+          name: 'MANAGER',
           isSystemDefined: true,
           scope: UserTypeEnum.CLIENT,
           outletId: null,
         },
         {
           id: 1,
-          name: 'admin',
+          name: 'SUPER',
           isSystemDefined: true,
           scope: UserTypeEnum.ADMIN,
           outletId: null,
         },
         {
           id: 2,
-          name: 'super',
+          name: 'ADMIN',
           isSystemDefined: true,
           scope: UserTypeEnum.ADMIN,
           outletId: null,
