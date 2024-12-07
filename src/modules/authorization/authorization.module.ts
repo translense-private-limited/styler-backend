@@ -11,7 +11,6 @@ import { RoleService } from './services/role.service';
 import { RoleRepository } from './repositories/role.repository';
 import { RoleClientController } from './controllers/role-client.controller';
 import { RoleClientService } from './services/role-client.service';
-import { RoleExternalService } from './services/role-external.service';
 
 @Module({
   imports: [
@@ -21,7 +20,7 @@ import { RoleExternalService } from './services/role-external.service';
     ),
   ],
   controllers: [ResourceController, roleController,RoleClientController],
-  providers: [ResourceService, ResourceRepository, RoleService, RoleRepository,RoleClientService,RoleExternalService],
-  exports:[RoleClientService,RoleRepository,RoleExternalService]
+  providers: [ResourceService, ResourceRepository, RoleService, RoleRepository,RoleClientService],
+  exports:[RoleClientService,RoleRepository]
 })
 export class AuthorizationModule {}
