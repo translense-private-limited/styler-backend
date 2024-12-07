@@ -22,6 +22,8 @@ import { AdminAuthenticationService } from './services/admin-auth.service';
 import { AdminAuthenticationController } from './controllers/admin-authentication.controller';
 import { AdminModule } from '@modules/admin/admin.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
+import { AdminClientController } from './controllers/admin-client.controller';
+import { AdminClientService } from './services/admin-client.service';
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { AuthorizationModule } from '@modules/authorization/authorization.module
     OtpRepository,
     OtpExternalService,
     AdminAuthenticationService,
+    AdminClientService
   ],
   exports: [SellerAuthService, JwtService, OtpExternalService],
 
@@ -48,6 +51,7 @@ import { AuthorizationModule } from '@modules/authorization/authorization.module
     CustomerAuthenticationController,
     OtpController,
     AdminAuthenticationController,
+    AdminClientController
   ],
 })
 export class AuthenticationModule {}
