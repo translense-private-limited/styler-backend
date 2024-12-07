@@ -1,12 +1,20 @@
 import { LoginDto } from '@modules/authentication/dtos/login.dto';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { ClientEntity } from '../entities/client.entity';
-import { CreateClientDto } from '../dtos/client.dto';
+import { ClientRepository } from '../repository/client.repository';
+import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
+import { RoleExternalService } from '@modules/authorization/services/role-external.service';
+import { RoleEnum } from '@src/utils/enums/role.enums';
+import { RegisterClientDto } from '../dtos/register-client.dto';
 
 @Injectable()
 export class ClientExternalService {
-  constructor(private clientService: ClientService) {}
+  constructor(private clientService: ClientService,
+    private readonly clientRepository:ClientRepository,
+    private readonly bcryptEncryptionService:BcryptEncryptionService,
+    private readonly roleExternalService:RoleExternalService
+  ) {}
 
   async getSellers(loginDto: LoginDto): Promise<ClientEntity> {
     return await this.clientService.getSellerByEmail(loginDto);
@@ -17,9 +25,36 @@ export class ClientExternalService {
     return client;
   }
 
-  async createClient(data: CreateClientDto): Promise<ClientEntity> {
-    
-    return 
+  async createClient(clientDto: RegisterClientDto): Promise<ClientEntity> {
+    // Check if a client with the provided email already exists
+    const getClientWithProvidedEmail = await this.clientService.getClientByEmailOrThrow(clientDto.email);
+  
+    // Check if a client with the provided contact number already exists
+    const getClientWithContactNumber = await this.clientService.getClientByContactNumber(clientDto.contactNumber);
+  
+    // Throw an exception if either the email or contact number already exists
+    if (getClientWithContactNumber || getClientWithProvidedEmail) {
+      throw new BadRequestException('User already exists with the provided details');
+    }
+  
+    // Encrypt the password if it is provided, or use a default encrypted password (e.g., encrypted name)
+    const encryptedPassword = clientDto.password 
+      ? await this.bcryptEncryptionService.encrypt(clientDto.password)
+      : await this.bcryptEncryptionService.encrypt(clientDto.name);
+  
+    // Retrieve the default role for clients
+    const role = await this.roleExternalService.getRoleDetails(RoleEnum.OWNER);
+    const roleId = role.id;
+  
+    // Prepare the client data to be saved
+    const clientDataToSave = {
+      ...clientDto,
+      password: encryptedPassword,
+      roleId,
+    };
+  
+    // Save the client data in the database
+    return this.clientRepository.getRepository().save(clientDataToSave);
   }
   
 }

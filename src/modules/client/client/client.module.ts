@@ -9,6 +9,7 @@ import { EncryptionModule } from '@modules/encryption/encryption.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 import { TeamController } from './controllers/team.controller';
 import { TeamMemberService } from './services/team-member.service';
+// import { AdminModule } from '@modules/admin/admin.module';
 
 @Module({
   imports: [

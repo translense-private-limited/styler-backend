@@ -20,7 +20,7 @@ import { AdminModule } from '../admin.module';
 @Module({
   imports: [
     ClientModule,
-    OutletModule, 
+    forwardRef(()=>OutletModule), 
     AuthorizationModule,  
     TypeOrmModule.forFeature([ClientEntity, OutletEntity, RoleEntity], getMysqlDataSource()),
     DatabaseModule,

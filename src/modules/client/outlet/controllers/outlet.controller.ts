@@ -28,6 +28,6 @@ export class OutletController {
   async getOutletById(
     @Param('outletId') outletId: string,
   ): Promise<OutletEntity> {
-    return this.outletService.getOutletById(parseInt(outletId));
+    return this.outletService.getOutletByIdOrThrow(parseInt(outletId));
   }
 }
