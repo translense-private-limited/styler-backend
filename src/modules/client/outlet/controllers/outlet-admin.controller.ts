@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Delete, Get, Param, Patch, Post, } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { OutletService } from "../services/outlet.service";
 import { CreateOutletWithClientDto } from "../dtos/outlet-client.dto";
 import { DeleteOutletDto } from "../dtos/delete-outlet.dto";
@@ -17,6 +17,9 @@ export class OutletAdminController{
         private readonly outletAdminService:OutletAdminService
     ){}
 
+    @ApiOperation({ 
+        summary: 'creates new outlet'
+    })
     @Post('outlet')
     async createOutletWithClient(
       @Body() createOutletWithClientDto: CreateOutletWithClientDto,
@@ -24,11 +27,17 @@ export class OutletAdminController{
       return await this.outletAdminService.createOutletWithClient(createOutletWithClientDto);
     }
 
+    @ApiOperation({ 
+        summary: 'list out all the existing outlets'
+    })
     @Get('outlets')
     async getAllOutlets(){
         return this.outletAdminService.getAllOutlets();
     }
 
+    @ApiOperation({ 
+        summary: 'updates the outlet details'
+    })
     @Patch('outlet/:outletId')
     async updateOutlet(
         @Param('outletId') outletId:number,
@@ -38,6 +47,9 @@ export class OutletAdminController{
         return await this.outletAdminService.updateOutletByIdOrThrow(outletId,updateOutletDto)
     }
 
+    @ApiOperation({ 
+        summary: 'To update the outlet status like LIVE,UNDER_CONSTRUCTION...'
+    })
     @Patch('status/outlet/:outletId')
     async updateOutletStatus(
         @Param('outletId') outletId: number, 
@@ -47,7 +59,9 @@ export class OutletAdminController{
         return outlet;
     }
 
-
+    @ApiOperation({ 
+        summary: 'deletes the existing outlets and clients associated with it'
+    })
     @Delete('outlet/:outletId')
     async deleteOutlet(
         @Param('outletId') outletId:number,
@@ -56,6 +70,9 @@ export class OutletAdminController{
         return await this.outletAdminService.deleteOutletByIdOrThrow(outletId,deleteOutletDto)
     }
 
+    @ApiOperation({ 
+        summary: 'adds new client to the existing outlet'
+    })
     @Post('add-client/outlet/:outletId')
     async addClientToAnExistingOutlet(
         @Param('outletId') outletId:number, 

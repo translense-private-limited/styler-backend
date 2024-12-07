@@ -7,6 +7,8 @@ import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-enc
 import { RoleExternalService } from '@modules/authorization/services/role-external.service';
 import { RoleEnum } from '@src/utils/enums/role.enums';
 import { RegisterClientDto } from '../dtos/register-client.dto';
+import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { ResetClientPasswordDto } from '@modules/authentication/dtos/admin-reset-client-password.dto';
 
 @Injectable()
 export class ClientExternalService {
@@ -57,4 +59,21 @@ export class ClientExternalService {
     return this.clientRepository.getRepository().save(clientDataToSave);
   }
   
+  async resetClientPassword(clientId: number, resetPasswordDto: ResetClientPasswordDto):Promise<String> {
+    const { password } = resetPasswordDto;
+
+    const encryptedPassword = await this.bcryptEncryptionService.encrypt(password);
+
+    const client = await this.getClientById(clientId)
+
+    throwIfNotFound(client,'client not found')
+
+    client.password = encryptedPassword;
+
+    // Save the updated client data
+    await this.clientRepository.getRepository().save(client);
+
+    return 'Password successfully reset';
+  }
 }
+
