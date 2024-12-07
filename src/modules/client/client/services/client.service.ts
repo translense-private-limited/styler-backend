@@ -13,8 +13,8 @@ import { SellerLoginDto } from '@modules/authentication/dtos/seller-login.dto';
 import { ClientEntity } from '../entities/client.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
-
 import { TeamMember } from '../dtos/team-member.dto';
+
 
 @Injectable()
 export class ClientService {
@@ -22,6 +22,7 @@ export class ClientService {
     private clientRepository: ClientRepository,
     private roleClientService: RoleClientService,
     private bcryptEncryptionService: BcryptEncryptionService,
+    
   ) {}
 
   async getTeamMemberById(
@@ -156,4 +157,15 @@ export class ClientService {
   async getClientById(clientId: number): Promise<ClientEntity> {
     return this.getClientByIdOrThrow(clientId);
   }
+
+
+  async getClientByEmailOrThrow(email: string): Promise<ClientEntity | null> {
+    return this.clientRepository.getRepository().findOneBy({ email });
+  }
+
+  async getClientByContactNumber(contactNumber: string): Promise<ClientEntity | null> {
+    return this.clientRepository.getRepository().findOneBy({ contactNumber });
+  }
+     
+  
 }

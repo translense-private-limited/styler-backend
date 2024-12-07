@@ -33,7 +33,7 @@ export class OutletCustomerController {
   async getOutletById(
     @Param('outletId',ParseIntPipe) outletId:number
   ){
-    return this.outletService.getOutletById(outletId)
+    return this.outletService.getOutletByIdOrThrow(outletId)
   }
 
   @Get('outlet/:outletId/services')

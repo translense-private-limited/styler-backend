@@ -9,6 +9,7 @@ import { EncryptionModule } from '@modules/encryption/encryption.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 import { TeamController } from './controllers/team.controller';
 import { TeamMemberService } from './services/team-member.service';
+// import { AdminModule } from '@modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { TeamMemberService } from './services/team-member.service';
     ClientExternalService,
     TeamMemberService,
   ],
-  controllers: [TeamController],
+  controllers: [TeamController,],
   exports: [ClientExternalService,ClientRepository],
 })
 export class ClientModule {}

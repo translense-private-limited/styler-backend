@@ -7,6 +7,7 @@ import { ClientModule } from '@modules/client/client/client.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getMysqlDataSource } from '@modules/database/data-source';
 import { ClientOutletMappingEntity } from './entities/client-outlet-mapping.entity';
+import { ClientOutletMappingExternalService } from './services/client-outlet-mapping-external.service';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { ClientOutletMappingEntity } from './entities/client-outlet-mapping.enti
     forwardRef(() => OutletModule),
     forwardRef(() => ClientModule),
   ],
-  providers: [ClientOutletMappingService, ClientOutletMappingRepository],
+  providers: [ClientOutletMappingService, ClientOutletMappingRepository,ClientOutletMappingExternalService],
   controllers: [ClientOutletMappingController],
+  exports:[ClientOutletMappingExternalService,ClientOutletMappingRepository]
 })
 export class ClientOutletMappingModule {}

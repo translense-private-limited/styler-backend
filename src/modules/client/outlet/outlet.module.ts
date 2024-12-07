@@ -11,9 +11,13 @@ import { OutletCustomerService } from './services/outlet-customer.service';
 import { ServiceModule } from '../services/service.module';
 import { OutletAdminController } from './controllers/outlet-admin.controller';
 import { OutletAdminService } from './services/outlet-admin.service';
+import { ClientModule as ClientUserModule } from '../client/client.module';
+// import { AdminModule } from '@modules/admin/admin.module';
+import { ClientOutletMappingModule } from '@modules/admin/client-outlet-mapping/client-outlet-mapping.module';
+import { AuthorizationModule } from '@modules/authorization/authorization.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OutletEntity], getMysqlDataSource()),ServiceModule],
+  imports: [TypeOrmModule.forFeature([OutletEntity], getMysqlDataSource()),ServiceModule,ClientUserModule,ClientOutletMappingModule,AuthorizationModule],
   providers: [
     OutletService,
     OutletRepository,

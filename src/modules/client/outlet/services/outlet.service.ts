@@ -3,6 +3,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { OutletRepository } from '../repositories/outlet.repository';
 import { CreateOutletDto } from '../dtos/outlet.dto';
 import { OutletEntity } from '../entities/outlet.entity';
+import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { DeleteOutletDto } from '../dtos/delete-outlet.dto';
 
 @Injectable()
 export class OutletService {
@@ -31,7 +33,21 @@ export class OutletService {
     return outlet;
   }
 
-  async getOutletById(outletId: number): Promise<OutletEntity> {
-    return this.getOutletByIdOrThrow(outletId);
+  async deleteOutletByIdOrThrow(outletId: number,deleteOutletDto:DeleteOutletDto): Promise<string> {
+
+    if (!deleteOutletDto.confirmation) {
+      throw new Error('Confirmation is required to delete the outlet.');
+    }
+
+    const outlet = await this.outletRepository.getRepository().findOne({
+      where: { id: outletId },
+    });
+    throwIfNotFound(outlet,`Outlet with ID ${outletId} not found`)
+
+    await this.outletRepository.getRepository().remove(outlet);
+
+    return "outlet deleted successfully";
   }
+
 }
+

@@ -12,7 +12,7 @@ export class OutletExternalService {
   ) {}
 
   async getOutletById(outletId: number): Promise<OutletEntity> {
-    const outlet = await this.outletService.getOutletById(outletId);
+    const outlet = await this.outletService.getOutletByIdOrThrow(outletId);
     return outlet;
   }
 
