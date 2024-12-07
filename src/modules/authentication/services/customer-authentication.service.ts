@@ -7,7 +7,6 @@ import { CustomerExternalService } from '../../customer/services/customer-extern
 import {
   ConflictException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDto } from '../dtos/login.dto';
@@ -15,6 +14,7 @@ import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-enc
 import { CustomerDto } from '@modules/customer/dtos/customer.dto';
 import { CustomerTokenPayloadInterface } from '../interfaces/customer-token-payload.interface';
 import { JwtService } from './jwt.service';
+import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 
 @Injectable()
 export class CustomerAuthenticationService {
@@ -87,9 +87,8 @@ export class CustomerAuthenticationService {
         username,
       );
 
-    if (!customer) {
-      throw new NotFoundException('No user found with provided credentials');
-    }
+    // Use the helper function to handle the NotFoundException
+    throwIfNotFound(customer, `No user exists with the provided credentials`);
     const isValid = await this.bcryptEncryptionService.validate(
       password,
       customer.password,

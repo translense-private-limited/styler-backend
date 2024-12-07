@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { SeedController } from './controllers/seed.controller';
 import { SeedService } from './services/seed.service';
 import { ClientModule } from '@modules/client/client/client.module';  // Import ClientModule
@@ -14,6 +14,8 @@ import { SeedCategoryData } from './data/category.data';
 import { SeedOutletData } from './data/outlets.data';
 import { SeedRoleData } from './data/roles.data';
 import { SeedClientData } from './data/client.data';
+import { SeedAdminData } from './data/admin.data';
+import { AdminModule } from '../admin.module';
 
 @Module({
   imports: [
@@ -22,9 +24,10 @@ import { SeedClientData } from './data/client.data';
     AuthorizationModule,  
     TypeOrmModule.forFeature([ClientEntity, OutletEntity, RoleEntity], getMysqlDataSource()),
     DatabaseModule,
+    forwardRef(() => AdminModule), // Use forwardRef to avoid circular dependency
     // Register entities
   ],
   controllers: [SeedController],
-  providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData],  // Provide SeedService
+  providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData,SeedAdminData],  // Provide SeedService
 })
 export class SeedModule {}
