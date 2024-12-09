@@ -8,9 +8,11 @@ import { AppConfigInterface } from './modules/configs/env/app.config';
 import { EnvNamespaceEnum } from './modules/configs/env/enums/env-namespace.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { createWinstonLoggerService } from './utils/logger/winston-logger';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: createWinstonLoggerService(),
   });
   const envService = app.get(EnvService);
@@ -34,6 +36,8 @@ async function bootstrap() {
       transform: true, //automatically transform to type specified by validator
     }),
   );
+
+  app.useStaticAssets(join(process.cwd(),'public'))  
 
   await app.listen(port);
 
