@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin UI - Swagger API Viewer</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+      .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #007bff;
+        margin-bottom: 20px;
+      }
+      p {
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+      }
+      .button {
+        display: inline-block;
+        margin: 10px;
+        padding: 15px 30px;
+        font-size: 16px;
+        text-decoration: none;
+        color: #fff;
+        background-color: #007bff;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .button:hover {
+        background-color: #0056b3;
+      }
+      .button:active {
+        background-color: #003d80;
+      }
+      .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+      .link-list {
+        margin-top: 30px;
+        list-style: none;
+        padding: 0;
+      }
+      .link-list li {
+        margin: 10px 0;
+        font-size: 1.1rem;
+      }
+      .link-list a {
+        color: #007bff;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+      .link-list a:hover {
+        color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Admin UI - View Swagger API Resources</h1>
+      <p>
+        Click the buttons below to open the Swagger API documentation in a new
+        tab:
+      </p>
+
+      <div class="button-group">
+        <a
+          href="http://localhost:4000/swagger/admin"
+          class="button"
+          target="_blank"
+          >Admin API</a
+        >
+        <a
+          href="http://localhost:4000/swagger/client"
+          class="button"
+          target="_blank"
+          >Client API</a
+        >
+        <a
+          href="http://localhost:4000/swagger/customer"
+          class="button"
+          target="_blank"
+          >Customer API</a
+        >
+      </div>
+
+      <p>Frontend Applications:</p>
+      <ul class="link-list">
+        <li>
+          <a href="http://localhost:5001" target="_blank">Admin Application</a>
+        </li>
+        <li>
+          <a href="http://localhost:5002" target="_blank">Client Application</a>
+        </li>
+        <li>
+          <a href="http://localhost:5003" target="_blank"
+            >Customer Application</a
+          >
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>
