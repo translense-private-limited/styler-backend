@@ -16,6 +16,7 @@ import { SeedRoleData } from './data/roles.data';
 import { SeedClientData } from './data/client.data';
 import { SeedAdminData } from './data/admin.data';
 import { AdminModule } from '../admin/admin.module';
+import { CategoryModule } from '@modules/admin/category/category.module';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { AdminModule } from '../admin/admin.module';
     TypeOrmModule.forFeature([ClientEntity, OutletEntity, RoleEntity], getMysqlDataSource()),
     DatabaseModule,
     forwardRef(() => AdminModule), // Use forwardRef to avoid circular dependency
-    // Register entities
+    CategoryModule,
   ],
   controllers: [SeedController],
   providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData,SeedAdminData],  // Provide SeedService
