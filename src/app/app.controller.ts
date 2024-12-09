@@ -4,10 +4,12 @@ import {
   Get,
   HttpStatus,
   Logger,
+  Res,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 
 import { Public } from '@src/utils/decorators/public.decorator';
+import { Response } from 'express';
 
 @Controller()
 @Public()
@@ -22,6 +24,11 @@ export class AppController {
       message: 'Service is up and running....',
       timestamp: new Date().toISOString(),
     };
+  }
+
+  @Get('/')
+  root(@Res() res: Response) {
+    return this.appService.renderIndex(res); 
   }
 
   @Get('/pagination')
