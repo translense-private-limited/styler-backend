@@ -14,6 +14,6 @@ export class AdminClientController {
     @Param('clientId') clientId: number,
     @Body() resetPasswordDto: ResetClientPasswordDto
   ):Promise<String> {
-    return await this.adminClientService.reserClientPassword(clientId, resetPasswordDto);
+    return await this.adminClientService.resetClientPassword(clientId, resetPasswordDto);
   }
 }
