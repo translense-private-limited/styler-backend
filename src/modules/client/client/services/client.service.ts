@@ -14,6 +14,8 @@ import { ClientEntity } from '../entities/client.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
 import { TeamMember } from '../dtos/team-member.dto';
+import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { ResetClientPasswordDto } from '@modules/authentication/dtos/admin-reset-client-password.dto';
 
 
 @Injectable()
@@ -165,6 +167,23 @@ export class ClientService {
 
   async getClientByContactNumber(contactNumber: string): Promise<ClientEntity | null> {
     return this.clientRepository.getRepository().findOneBy({ contactNumber });
+  }
+
+  async resetClientPassword(clientId: number, resetPasswordDto: ResetClientPasswordDto):Promise<String> {
+    const { password } = resetPasswordDto;
+
+    const encryptedPassword = await this.bcryptEncryptionService.encrypt(password);
+
+    const client = await this.getClientById(clientId)
+
+    throwIfNotFound(client,'client not found')
+
+    client.password = encryptedPassword;
+
+    // Save the updated client data
+    await this.clientRepository.getRepository().save(client);
+
+    return 'Password successfully reset';
   }
      
   
