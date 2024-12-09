@@ -6,7 +6,7 @@ import { ResetClientPasswordDto } from "../dtos/admin-reset-client-password.dto"
 export class AdminClientService{
     constructor(private readonly clientExternalService:ClientExternalService){}
 
-    async reserClientPassword(clientId,resetClientPasswordDto:ResetClientPasswordDto):Promise<String>{
+    async resetClientPassword(clientId,resetClientPasswordDto:ResetClientPasswordDto):Promise<String>{
         return this.clientExternalService.resetClientPassword(clientId,resetClientPasswordDto)
     }
 }
