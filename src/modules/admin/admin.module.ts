@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CategoryModule } from './category/category.module';
-import { SeedModule } from './seed/seed.module';
+import { SeedModule } from '../seed/seed.module';
 import { AdminService } from './services/admin.service';
 import { AdminExternalService } from './services/admin-external.service';
 import { AdminRepository } from './Repositories/admin.repository';

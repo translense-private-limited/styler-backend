@@ -15,7 +15,7 @@ import { SeedOutletData } from './data/outlets.data';
 import { SeedRoleData } from './data/roles.data';
 import { SeedClientData } from './data/client.data';
 import { SeedAdminData } from './data/admin.data';
-import { AdminModule } from '../admin.module';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [

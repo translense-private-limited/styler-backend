@@ -27,7 +27,7 @@ import * as mongoose from 'mongoose';
 import { ImageController } from './image.controller';
 import { ImageService } from './image.service';
 import { CustomerModule } from '@modules/customer/customer.module';
-import { SeedModule } from '@modules/admin/seed/seed.module';
+import { SeedModule } from '@modules/seed/seed.module';
 
 @Module({
   imports: [

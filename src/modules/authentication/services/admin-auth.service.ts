@@ -118,7 +118,6 @@ export class AdminAuthenticationService {
 
     const admin =
       await this.adminExternalService.getAdminByEmailOrContactNumber(username);
-      console.log("Hello",admin);
     // Use the helper function to handle the NotFoundException
     throwIfNotFound(admin, `No user exists with the provide credentials`);
     const isValid = await this.bcryptEncryptionService.validate(
