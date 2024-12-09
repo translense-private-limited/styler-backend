@@ -23,7 +23,9 @@ export class OrderResponseDto
   @IsOptional()
   paymentId?: string;
 
+  @IsNotEmpty()
   startTime: Date;
 
+  @IsNotEmpty()
   endTime: Date;
 }
