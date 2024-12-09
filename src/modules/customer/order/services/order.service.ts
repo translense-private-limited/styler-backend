@@ -189,13 +189,17 @@ export class OrderService {
 
   private async createAppointment(
     order: OrderEntity,
+    orderItemsPayload: OrderItemPayloadDto[],
     startTime: Date,
   ): Promise<AppointmentEntity> {
+    const endTime = await this.calculateEndTime(orderItemsPayload, startTime);
+
     const createAppointmentDto = new CreateAppointmentDto();
     createAppointmentDto.customerId = order.customerId;
     createAppointmentDto.orderId = order.orderId;
     createAppointmentDto.outletId = order.outletId;
     createAppointmentDto.startTime = startTime;
+    createAppointmentDto.endTime = endTime;
 
     const appointment =
       await this.appointmentService.createAppointment(createAppointmentDto);
@@ -210,44 +214,51 @@ export class OrderService {
     return transactionManager.save(OrderItemEntity, orderItemInstances); // Save all order items in the transaction
   }
 
-  //This method formats the response after the creation of an order, including its associated order items
-  // private async postOrderResponse(
-  //   order: OrderEntity,
-  //   orderItemInstances: OrderItemEntity[],
-  // ): Promise<CreateOrderDto> {
-  //   const orderedItems = orderItemInstances.map((item) => ({
-  //     serviceId: item.serviceId,
-  //     quantity: item.quantity,
-  //     notes: item.notes,
-  //   }));
-  //   return {
-  //     orderItems: orderedItems,
-  //     outletId: order.outletId,
-  //     paymentId: order.paymentId,
-  //   };
-  // }
+  private async calculateEndTime(
+    orderItemsPayload: OrderItemPayloadDto[],
+    startTime: Date,
+  ): Promise<Date> {
+    const startTimeAsDate =
+      typeof startTime === 'string' ? new Date(startTime) : startTime;
+    const totalDuration =
+      await this.calculateOrderTotalDuration(orderItemsPayload);
+    const endTime = new Date(startTimeAsDate.getTime() + totalDuration * 60000); // Convert minutes to milliseconds
+    return endTime;
+  }
 
-  /**
-   * Calculates the total time required to fulfill an order.
-   * This is determined by summing up the service durations of all order items associated with the given order ID.
-   *
-   * @param orderId - The ID of the order for which the fulfillment duration is calculated.
-   * @returns The total fulfillment duration in minutes.
-   *
-   * @example
-   * const duration = await this.calculateOrderFullfillmentDuration(123);
-   * console.log(`Order 123 will take ${duration} minutes to fulfill.`);
-   *
-   * @throws {NotFoundException} If the order or order items are not found.
-   */
-  async calculateOrderFullfillmentDuration(orderId: number): Promise<number> {
-    // check order exist or not
-    // Step 1: Retrieve all order items for the given order ID
-
+  async calculateOrderTotalDuration(
+    orderItemsPayload: OrderItemPayloadDto[],
+  ): Promise<number> {
+    // Step 1: Retrieve all expanded order items for the given order ID
+    const expandedOrderItems = await this.expandOrderItem(orderItemsPayload); // Expand the order items to get service details, including duration
+    if (!expandedOrderItems || expandedOrderItems.length === 0) {
+      throw new NotFoundException('Order items not found.');
+    }
     // Step 2: Calculate the total duration by summing up the service durations
+    let totalDuration = 0;
+    // Loop through each expanded order item
+    for (const expandedOrderItem of expandedOrderItems) {
+      // Fetch the service duration for each expanded order item
+      const serviceDuration = expandedOrderItem.service.timeTaken; // Assuming 'duration' is a property of the service
+      // Sum the service duration, considering the quantity for each order item
+      totalDuration += serviceDuration * expandedOrderItem.quantity;
+    }
+    return totalDuration; // The total duration in minutes
+  }
 
-    // Step 3: Return the total duration in minutes
-    return 100;
+  async getEndTime(startTime: Date, orderId: number): Promise<Date> {
+    // utilise the getOrderFullmentDuration
+    // return the end time
+  }
+
+  // returns in minutes
+  async getOrderFullmentDuration(orderId: number): promise<number> {
+    // get all order items aassosiated wtih it
+    // create method in order iems service to return order item based on order id.
+    // form order items recieved get all the service id and corresponding quantity
+    // pull the service details using service SErvice
+    // use quantity adn duration to figure otu real time .
+    // return time in min
   }
 
   async calculateOrderTotalDuration(orderItemsPayload:OrderItemPayloadDto[]): Promise<number> {
