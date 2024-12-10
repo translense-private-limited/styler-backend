@@ -193,13 +193,13 @@ export class ClientService {
   async createClient(clientDto: RegisterClientDto): Promise<ClientEntity> {
     // Check if a client with the provided email already exists
     const getClientWithProvidedEmail = await this.getClientByEmailOrThrow(clientDto.email);
-  
+    if(getClientWithProvidedEmail){
+      throw new Error ('client with given email already exists')
+    }
     // Check if a client with the provided contact number already exists
     const getClientWithContactNumber = await this.getClientByContactNumber(clientDto.contactNumber);
-  
-    // Throw an exception if either the email or contact number already exists
-    if (getClientWithContactNumber || getClientWithProvidedEmail) {
-      throw new BadRequestException('User already exists with the provided details');
+    if(getClientWithContactNumber){
+      throw new Error('client with given contact number already exists')
     }
   
     // Encrypt the password if it is provided, or use a default encrypted password (e.g., encrypted name)
