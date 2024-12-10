@@ -135,19 +135,35 @@ export class OutletAdminService{
         const outlet = await this.outletService.getOutletByIdOrThrow(outletId)
         throwIfNotFound(outlet,`Outlet with ID ${outletId} not found`);
 
-        const existedOutletWithEmail = await this.checkIfOutletExistsWithEmail(updateData.email,outletId);
-
-        if(existedOutletWithEmail){
-          throw new Error('An outlet already existed with the provided email')
+        if (Object.keys(updateData).length === 0) {
+          return outlet;
         }
-        const existedOutletWithContactNumber = await this.checkIfOutletExistsWithContactNumber(updateData.phoneNumber,outletId);
-        if(existedOutletWithContactNumber){
-          throw new Error('An outlet already existed with the provided contact number');
+
+        const conflictingFields = await this.checkForConflicts(updateData, outletId);
+        if (conflictingFields) {
+        throw new Error(`An outlet already exists with the provided ${conflictingFields}`);
         }
 
         // Merge the updateData with the existing outlet entity
         const updatedOutlet = Object.assign(outlet, updateData);
         return this.outletRepository.getRepository().save(updatedOutlet);
+    }
+    private async checkForConflicts(updateData: Partial<OutletEntity>, outletId: number): Promise<string | null> {
+      if (updateData.email) {
+          const existedOutletWithEmail = await this.checkIfOutletExistsWithEmail(updateData.email, outletId);
+          if (existedOutletWithEmail) {
+              return 'email';
+          }
+      }
+  
+      if (updateData.phoneNumber) {
+          const existedOutletWithContactNumber = await this.checkIfOutletExistsWithContactNumber(updateData.phoneNumber, outletId);
+          if (existedOutletWithContactNumber) {
+              return 'contact number';
+          }
+      }
+  
+      return null;
     }
 
     async updateOutletStatus(outletId: number, status: OutletStatusEnum): Promise<OutletEntity> {  
