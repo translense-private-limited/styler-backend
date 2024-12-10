@@ -114,14 +114,20 @@ export class OutletAdminService{
     
     async updateOutletByIdOrThrow(outletId: number, updateData: Partial<OutletEntity>): Promise<OutletEntity> {
         const outlet = await this.outletService.getOutletByIdOrThrow(outletId)
-    
-        //throw exception if outlet not found
         throwIfNotFound(outlet,`Outlet with ID ${outletId} not found`);
-        console.log(updateData)
+
+        const existedOutletWithEmail = await this.outletService.getOutletByEmailIdOrThrow(updateData.email);
+        
+        if(existedOutletWithEmail){
+          throw new Error('An outlet already existed with the provided email')
+        }
+        const existedOutletWithContactNumber = await this.outletService.getOutletByContactNumber(updateData.phoneNumber);
+        if(existedOutletWithContactNumber){
+          throw new Error('An outlet already existed with the provided contact number');
+        }
+
         // Merge the updateData with the existing outlet entity
         const updatedOutlet = Object.assign(outlet, updateData);
-        console.log(updatedOutlet)
-    
         return this.outletRepository.getRepository().save(updatedOutlet);
     }
 

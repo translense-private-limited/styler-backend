@@ -49,5 +49,14 @@ export class OutletService {
     return "outlet deleted successfully";
   }
 
+  async getOutletByEmailIdOrThrow(emailId:string):Promise<OutletEntity>{
+      const outlet =  await this.outletRepository.getRepository().findOne({where:{email:emailId}})
+      return outlet;
+  }
+
+  async getOutletByContactNumber(contactNumber:string):Promise<OutletEntity>{
+      return await this.outletRepository.getRepository().findOne({where:{phoneNumber:contactNumber}});
+  }
+
 }
 
