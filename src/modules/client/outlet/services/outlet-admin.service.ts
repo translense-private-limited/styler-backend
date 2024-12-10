@@ -14,6 +14,7 @@ import { ClientOutletMappingEntity } from "@modules/admin/client-outlet-mapping/
 import { OutletStatusEnum } from "../enums/outlet-status.enum";
 import { ClientExternalService } from "@modules/client/client/services/client-external.service";
 import { RegisterClientDto } from "@modules/client/client/dtos/register-client.dto";
+import { Not } from "typeorm";
 
 @Injectable()
 export class OutletAdminService{
@@ -28,12 +29,22 @@ export class OutletAdminService{
 
     async createOutletWithClient(createOutletWithClientDto: CreateOutletWithClientDto) {
         const { client, outlet } = createOutletWithClientDto;
-    
         // Start a transaction
         const queryRunner = this.clientRepository.getRepository().manager.connection.createQueryRunner();
         await queryRunner.startTransaction();
     
         try {
+          console.log(outlet.email)
+          const existedOutletWithEmail = await this.outletService.getOutletByEmailIdOrThrow(outlet.email);
+          console.log(existedOutletWithEmail)
+          if(existedOutletWithEmail){
+            throw new Error('outlet with the email already exists');
+          }
+
+          const existedOutletWithContactNumber = await this.outletService.getOutletByContactNumber(outlet.phoneNumber);
+          if(existedOutletWithContactNumber){
+            throw new Error('outlet with the contact number already exists');
+          }
           // Step 1: Create the outlet
           const newOutlet = await queryRunner.manager.save(OutletEntity, outlet);
     
@@ -116,12 +127,12 @@ export class OutletAdminService{
         const outlet = await this.outletService.getOutletByIdOrThrow(outletId)
         throwIfNotFound(outlet,`Outlet with ID ${outletId} not found`);
 
-        const existedOutletWithEmail = await this.outletService.getOutletByEmailIdOrThrow(updateData.email);
-        
+        const existedOutletWithEmail = await this.checkIfOutletExistsWithEmail(updateData.email,outletId);
+
         if(existedOutletWithEmail){
           throw new Error('An outlet already existed with the provided email')
         }
-        const existedOutletWithContactNumber = await this.outletService.getOutletByContactNumber(updateData.phoneNumber);
+        const existedOutletWithContactNumber = await this.checkIfOutletExistsWithContactNumber(updateData.phoneNumber,outletId);
         if(existedOutletWithContactNumber){
           throw new Error('An outlet already existed with the provided contact number');
         }
@@ -148,4 +159,19 @@ export class OutletAdminService{
       }
       return await this.clientExternalService.createClient(clientData)
     }
+    async checkIfOutletExistsWithEmail(email:string,outletId:number):Promise<OutletEntity>{
+      return await this.outletRepository.getRepository()
+      .findOne({where:{
+        email,
+        id:Not(outletId)
+      }})
+  }
+
+  async checkIfOutletExistsWithContactNumber(contactNumber:string,outletId):Promise<OutletEntity>{
+      return await this.outletRepository.getRepository()
+      .findOne({where:{
+        phoneNumber:contactNumber,
+        id:Not(outletId)
+      }});
+  }
 }
