@@ -26,5 +26,13 @@ export class ClientExternalService {
   async resetClientPassword(clientId: number, resetClientPasswordDto: ResetClientPasswordDto):Promise<String> {
     return this.clientService.resetClientPassword(clientId,resetClientPasswordDto)
   }
+
+  async getClientByEmailIdOrThrow(email:string):Promise<ClientEntity>{
+    return await this.clientService.getClientByEmailOrThrow(email);
+  }
+
+  async getClientByContactNumber(contactNumber:string):Promise<ClientEntity>{
+    return await this.clientService.getClientByContactNumber(contactNumber)
+  }
 }
 

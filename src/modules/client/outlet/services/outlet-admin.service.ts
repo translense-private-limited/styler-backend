@@ -54,6 +54,14 @@ export class OutletAdminService{
     
           // Set the outletId on the client
           client.outletId = newOutlet.id;
+          const existedClientWithEmail = await this.clientExternalService.getClientByEmailIdOrThrow(client.email)
+          if(existedClientWithEmail){
+            throw new Error('client already existed with the given email')
+          }
+          const existedClientWithContactNumber = await this.clientExternalService.getClientByContactNumber(client.contactNumber);
+          if(existedClientWithContactNumber){
+            throw new Error('client already existed with the given contact number')
+          }
           const newClient = await queryRunner.manager.save(ClientEntity, client);
     
           // Step 3: Create a mapping between the client and the outlet
