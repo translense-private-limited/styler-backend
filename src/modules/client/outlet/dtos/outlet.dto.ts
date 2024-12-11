@@ -1,3 +1,4 @@
+import { AddressDto } from '@src/utils/dtos/address.dto';
 import {
   IsString,
   IsNotEmpty,
@@ -9,15 +10,15 @@ import {
 export class CreateOutletDto {
   @IsNotEmpty()
   @IsString()
-  name: string; // Required field
-
+  name: string;
+  
   @IsOptional()
   @IsString()
   description?: string; 
 
-  @IsNotEmpty()
-  @IsString()
-  address: string; // Required field
+  @IsOptional()
+  @IsNumber()
+  addressId: number; // Required field
 
   @IsNotEmpty()
   @IsNumber()
@@ -38,5 +39,8 @@ export class CreateOutletDto {
   @IsOptional()
   @IsString()
   website?: string; // Optional field
+
+  @IsNotEmpty()
+  address:AddressDto;
 
 }

@@ -11,4 +11,8 @@ export class CreateOutletWithClientDto {
   @ValidateNested()
   @Type(() => CreateOutletDto)
   outlet: CreateOutletDto;
+
+  // @ValidateNested()
+  // @Type(()=>AddressDto)
+  // address: AddressDto
 }

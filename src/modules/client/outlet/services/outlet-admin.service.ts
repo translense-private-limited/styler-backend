@@ -15,6 +15,9 @@ import { OutletStatusEnum } from "../enums/outlet-status.enum";
 import { ClientExternalService } from "@modules/client/client/services/client-external.service";
 import { RegisterClientDto } from "@modules/client/client/dtos/register-client.dto";
 import { Not } from "typeorm";
+import { AddressEntity } from "@src/utils/entities/address.entity";
+import { CreateOutletDto } from "../dtos/outlet.dto";
+import { AddressRepository } from "@src/utils/repositories/address.repository";
 
 @Injectable()
 export class OutletAdminService{
@@ -24,74 +27,93 @@ export class OutletAdminService{
         private readonly clientRepository:ClientRepository,
         private readonly clientOutletMappingRepository:ClientOutletMappingRepository,
         private readonly roleExternalService:RoleExternalService,
-        private readonly clientExternalService:ClientExternalService
+        private readonly clientExternalService:ClientExternalService,
+        private readonly addressRepository:AddressRepository
     ){}
-
-    async createOutletWithClient(createOutletWithClientDto: CreateOutletWithClientDto) {
-        const { client, outlet } = createOutletWithClientDto;
-        // Start a transaction
-        const queryRunner = this.clientRepository.getRepository().manager.connection.createQueryRunner();
-        await queryRunner.startTransaction();
-    
-        try {
-          console.log(outlet.email)
-          const existedOutletWithEmail = await this.outletService.getOutletByEmailIdOrThrow(outlet.email);
-          console.log(existedOutletWithEmail)
-          if(existedOutletWithEmail){
-            throw new Error('outlet with the email already exists');
-          }
-
-          const existedOutletWithContactNumber = await this.outletService.getOutletByContactNumber(outlet.phoneNumber);
-          if(existedOutletWithContactNumber){
-            throw new Error('outlet with the contact number already exists');
-          }
-          // Step 1: Create the outlet
-          const newOutlet = await queryRunner.manager.save(OutletEntity, outlet);
-    
-          // Step 2: Get the role for the client
-          const role = await this.roleExternalService.getRoleDetails(RoleEnum.OWNER);
-          client.roleId = role.id;
-    
-          // Set the outletId on the client
-          client.outletId = newOutlet.id;
-          const existedClientWithEmail = await this.clientExternalService.getClientByEmailIdOrThrow(client.email)
-          if(existedClientWithEmail){
-            throw new Error('client already existed with the given email')
-          }
-          const existedClientWithContactNumber = await this.clientExternalService.getClientByContactNumber(client.contactNumber);
-          if(existedClientWithContactNumber){
-            throw new Error('client already existed with the given contact number')
-          }
-          const newClient = await queryRunner.manager.save(ClientEntity, client);
-    
-          // Step 3: Create a mapping between the client and the outlet
-          const clientOutletMapping = {
-            clientId: newClient.id,
-            outletId: newOutlet.id
-          };
-          await queryRunner.manager.save(ClientOutletMappingEntity, clientOutletMapping);
-    
-          // Step 4: Update the outlet with the clientId if not already set
-          newOutlet.clientId = newClient.id;
-          await queryRunner.manager.save(OutletEntity, newOutlet);
-    
-          // Commit transaction
-          await queryRunner.commitTransaction();
-    
-          return {
-            message: 'Outlet and Client created successfully',
-            outlet: newOutlet,
-            client: newClient,
-          };
-        } catch (error) {
-          // If any error occurs, rollback the transaction
-          await queryRunner.rollbackTransaction();
-          throw error;
-        } finally {
-          // Release the query runner
-          await queryRunner.release();
-        }
+  
+  async createOutletWithClient(createOutletWithClientDto: CreateOutletWithClientDto) {
+    const { client, outlet } = createOutletWithClientDto;
+    const { address, ...outletData } = outlet;
+  
+    // Start a transaction
+    const queryRunner = this.clientRepository.getRepository().manager.connection.createQueryRunner();
+    await queryRunner.startTransaction();
+  
+    try {
+      // Validate outlet details
+      await this.validateOutletDetails(outletData);
+  
+      // Create the outlet first
+      const newOutlet = await queryRunner.manager.save(OutletEntity, outletData);
+  
+      // Create the address and associate it with the outlet
+      if (!address) {
+        throw new Error('Address is required for creating an outlet.');
       }
+      address.outletId = newOutlet.id; // Link the outlet ID to the address
+      const newAddress = await queryRunner.manager.save(AddressEntity, address);
+  
+      //check if the client with the given email and contact number already exists
+      await this.validateClientDetails(client);
+      // Create the client and associate it with the outlet
+      client.outletId = newOutlet.id; // Link the outlet ID to the client
+      client.roleId = await this.getOwnerRoleId(); // Assign role ID
+      const newClient = await queryRunner.manager.save(ClientEntity, client);
+  
+      // Update the outlet with both addressId and clientId
+      await queryRunner.manager.update(OutletEntity, newOutlet.id, {
+        addressId: newAddress.addressId,
+        clientId: newClient.id,
+      });
+  
+      // Add addressId and clientId to the newOutlet object for response
+      newOutlet.addressId = newAddress.addressId;
+      newOutlet.clientId = newClient.id;
+  
+      // Create client-outlet mapping
+      const clientOutletMapping = { clientId: newClient.id, outletId: newOutlet.id };
+      await queryRunner.manager.save(ClientOutletMappingEntity, clientOutletMapping);
+  
+      // Commit transaction
+      await queryRunner.commitTransaction();
+  
+      return {
+        message: 'Outlet, Client, and Address created successfully',
+        outlet: newOutlet,
+        client: newClient,
+        address: newAddress,
+      };
+    } catch (error) {
+      // Rollback transaction in case of error
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      // Release the query runner
+      await queryRunner.release();
+    }
+  }
+  
+
+    private async validateOutletDetails(outlet: Partial<OutletEntity>) {
+      if (await this.outletService.getOutletByEmailIdOrThrow(outlet.email)) {
+        throw new Error('Outlet with the email already exists');
+      }
+      if (await this.outletService.getOutletByContactNumber(outlet.phoneNumber)) {
+        throw new Error('Outlet with the contact number already exists');
+      }
+    }
+    private async validateClientDetails(client: Partial<ClientEntity>) {
+      if (await this.clientExternalService.getClientByEmailIdOrThrow(client.email)) {
+        throw new Error('Client with the email already exists');
+      }
+      if (await this.clientExternalService.getClientByContactNumber(client.contactNumber)) {
+        throw new Error('Client with the contact number already exists');
+      }
+    }
+    private async getOwnerRoleId(): Promise<number> {
+      const role = await this.roleExternalService.getRoleDetails(RoleEnum.OWNER);
+      return role.id;
+    }
 
     async deleteOutletByIdOrThrow(outletId: number, deleteOutletDto: DeleteOutletDto): Promise<string> {
         // Ensure confirmation is provided for deletion
@@ -107,7 +129,8 @@ export class OutletAdminService{
         const clientOutletMappings = await this.clientOutletMappingRepository.getRepository().find({
             where: { outletId: outletId },
         });
-    
+        
+        const outletAddress = await this.addressRepository.getRepository().findOne({where:{addressId:outlet.addressId}})
         // If there are clients associated with this outlet, delete them from the ClientEntity
         if (clientOutletMappings.length > 0) {
             for (const mapping of clientOutletMappings) {
@@ -122,8 +145,8 @@ export class OutletAdminService{
                 await this.clientOutletMappingRepository.getRepository().remove(mapping);
             }
         }
-        await this.outletRepository.getRepository().remove(outlet);
-    
+        await this.addressRepository.getRepository().remove(outletAddress); 
+        await this.outletRepository.getRepository().remove(outlet);    
         return "Outlet and associated clients deleted successfully";
     }
 
@@ -131,24 +154,49 @@ export class OutletAdminService{
         return this.outletService.getAllOutlets();
     }
     
-    async updateOutletByIdOrThrow(outletId: number, updateData: Partial<OutletEntity>): Promise<OutletEntity> {
-        const outlet = await this.outletService.getOutletByIdOrThrow(outletId)
-        throwIfNotFound(outlet,`Outlet with ID ${outletId} not found`);
-
-        if (Object.keys(updateData).length === 0) {
-          return outlet;
-        }
-
-        const conflictingFields = await this.checkForConflicts(updateData, outletId);
-        if (conflictingFields) {
+    async updateOutletByIdOrThrow(
+      outletId: number,
+      updateData: Partial<CreateOutletDto>
+    ): Promise<CreateOutletDto> {
+      // Fetch the outlet
+      const outlet = await this.outletService.getOutletByIdOrThrow(outletId);
+      const address = await this.addressRepository.getRepository().findOne({ where: { outletId } });
+      throwIfNotFound(outlet, `Outlet with ID ${outletId} not found`);
+      
+      // If there's no data to update, return the existing outlet and address
+      if (Object.keys(updateData).length === 0) {
+        return outlet;
+      }
+    
+      // Check for conflicting fields
+      const conflictingFields = await this.checkForConflicts(updateData, outletId);
+      if (conflictingFields) {
         throw new Error(`An outlet already exists with the provided ${conflictingFields}`);
+      }
+    
+      let savedAddress = address;
+    
+      // Update address if provided in updateData
+      if (updateData.address) {
+        if (!address) {
+          throw new Error('Address not found for the given outlet');
         }
-
-        // Merge the updateData with the existing outlet entity
-        const updatedOutlet = Object.assign(outlet, updateData);
-        return this.outletRepository.getRepository().save(updatedOutlet);
+        const updatedAddress = Object.assign(address, updateData.address);
+        savedAddress = await this.addressRepository.getRepository().save(updatedAddress);
+      }
+    
+      // Merge other updateData fields with the outlet entity
+      const updatedOutlet = Object.assign(outlet, updateData);
+    
+      // Save the updated outlet entity
+      const savedOutlet = await this.outletRepository.getRepository().save(updatedOutlet);
+    
+      // Return both the updated outlet and address
+      savedOutlet.address = savedAddress
+      return savedOutlet;
     }
-    private async checkForConflicts(updateData: Partial<OutletEntity>, outletId: number): Promise<string | null> {
+    
+    private async checkForConflicts(updateData: Partial<CreateOutletDto>, outletId: number): Promise<string | null> {
       if (updateData.email) {
           const existedOutletWithEmail = await this.checkIfOutletExistsWithEmail(updateData.email, outletId);
           if (existedOutletWithEmail) {
