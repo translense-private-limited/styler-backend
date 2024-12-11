@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 import { OutletStatusEnum } from '../enums/outlet-status.enum';
 import { BaseEntity } from '@src/utils/entities/base.entity';
-
+import { AddressEntity } from '@src/utils/entities/address.entity';
 @Entity('outlets')
 export class OutletEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -20,9 +20,6 @@ export class OutletEntity extends BaseEntity {
   })
   status: OutletStatusEnum;
 
-  @Column({ length: 255 })
-  address: string;
-
   @Column({ type: 'decimal', precision: 9, scale: 6, nullable: true })
   latitude: number;
 
@@ -40,4 +37,10 @@ export class OutletEntity extends BaseEntity {
 
   @Column({ type: 'int',nullable:true })
   clientId: number;
+
+  @OneToOne(() => AddressEntity, (address) => address.outlet)
+  address: AddressEntity; // One-to-one relation with Address
+
+  @Column({nullable:true})
+  addressId:number
 }

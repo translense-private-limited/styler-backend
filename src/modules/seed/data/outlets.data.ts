@@ -23,7 +23,13 @@ export class SeedOutletData{
                   name: 'Sample Outlet',
                   description: 'This is a sample outlet description.',
                   status: OutletStatusEnum.UNDER_CONSTRUCTION,
-                  address: '123 Main Street, City, Country',
+                  address:  {
+                            street: '123 Main Street',
+                            city: 'City',
+                            state: '',  
+                            postalCode: '',  
+                            country: 'Country'
+                            },
                   latitude: 37.7749,
                   longitude: -122.4194,
                   phoneNumber: '+1234567890',
@@ -38,7 +44,13 @@ export class SeedOutletData{
                   name: 'Example Outlet',
                   description: 'This is an example outlet description.',
                   status: OutletStatusEnum.COMING_SOON,
-                  address: '456 Another Street, City, Country',
+                  address: {
+                            street: '456 Another Street',
+                            city: 'City',
+                            state: '',  
+                            postalCode: '123456',
+                            country: 'Country'
+                            },
                   latitude: 34.0522,
                   longitude: -118.2437,
                   phoneNumber: '+1987654321',

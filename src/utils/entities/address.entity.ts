@@ -1,12 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne } from 'typeorm';
 
 @Entity('address')
 export class AddressEntity {
   @PrimaryGeneratedColumn()
   addressId: number;
-
-  @Column({ type: 'int' })
-  entityId: number;
 
   @Column({ default: 'india', type: 'varchar', length: 56 })
   country: string;
@@ -27,5 +25,12 @@ export class AddressEntity {
   street: string;
 
   @Column({ nullable: true, type: 'varchar', length: 64 })
-  landmark: string;
+  landmark?: string;
+
+  @OneToOne(() => OutletEntity, (outlet) => outlet.address)
+  @JoinColumn({ name: 'outletId' }) // Defines the foreign key column in the addresses table
+  outlet: OutletEntity;
+
+  @Column({type:'int',nullable:true})
+  outletId:number
 }
