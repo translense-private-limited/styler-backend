@@ -54,4 +54,8 @@ export class CustomerExternalService {
   async updatePassword(username: string, password: string) {
     await this.customerService.updatePassword(username, password);
   }
+
+  async getCustomerByIdOrThrow(customerId:number){
+    return this.customerService.getCustomerByIdOrThrow(customerId);
+  }
 }
