@@ -1,6 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ClientOrderDto } from '../dtos/client-order.dto';
 import { ClientOrdersService } from '../services/client-order.service';
+import { OpenOrderDetailsInterface } from '../interfaces/open-orders-details.interface';
 
 @Controller('client')
 export class ClientOrderController {
@@ -9,7 +10,7 @@ export class ClientOrderController {
   @Get('/:clientId/open-orders')
   async getAllOpenOrders(
     @Query() query: ClientOrderDto
-) {
+):Promise<OpenOrderDetailsInterface[]> {
     const { startTime, endTime } = query;
     return this.clientOrderService.getAllOpenOrders(startTime, endTime);
   }
