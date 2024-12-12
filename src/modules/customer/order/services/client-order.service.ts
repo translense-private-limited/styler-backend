@@ -2,6 +2,10 @@ import { Injectable,  } from '@nestjs/common';
 import { AppointmentRepository } from '../repositories/appointment.repository';
 import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
 import { OrderRepository } from '../repositories/order.repository';
+import { FetchOpenOrderInterface, FormattedServiceDetailsInterface, OpenOrderResponseInterface } from '../interfaces/open-orders.interface';
+import { ServiceSchema } from '@modules/client/services/schema/service.schema';
+import { OrderHistoryResponseInterface } from '../interfaces/order-history-response.interface';
+import { UpcomingOrdersResponseInterface } from '../interfaces/upcoming-order.interface';
 
 @Injectable()
 export class ClientOrdersService {
@@ -11,19 +15,19 @@ export class ClientOrdersService {
     private readonly orderRepository:OrderRepository,
   ) {}
 
-  async getAllOpenOrders(startTime: Date, endTime: Date, clientId: number): Promise<any[]> {
+  async getAllOpenOrders(startTime: Date, endTime: Date, clientId: number): Promise<OpenOrderResponseInterface[]> {
     // Fetch raw results from the database
     const results = await this.fetchOpenOrders(startTime, endTime, clientId);
   
     // Create a service details map
-    const serviceDetailsMap = await this.fetchServiceDetails(results);
+    const serviceDetailsMap = await this.fetchOpenOrderServiceDetails(results);
   
     // Format the results into the desired structure
-    return this.formatResults(results, serviceDetailsMap);
+    return this.formatOpenOrderResults(results, serviceDetailsMap);
   }
   
   // Private method to fetch open orders from the database
-  private async fetchOpenOrders(startTime: Date, endTime: Date, clientId: number): Promise<any[]> {
+  private async fetchOpenOrders(startTime: Date, endTime: Date, clientId: number): Promise<FetchOpenOrderInterface[]> {
     const queryBuilder = this.appointmentRepository.getRepository()
       .createQueryBuilder('a')
       .innerJoin('orders', 'o', 'a.orderId = o.OrderId')
@@ -51,8 +55,8 @@ export class ClientOrdersService {
   }
   
   // Private method to fetch service details for all serviceIds
-  private async fetchServiceDetails(results: any[]): Promise<Map<string, any>> {
-    const serviceDetailsMap = new Map<string, any>();
+  private async fetchOpenOrderServiceDetails(results: FetchOpenOrderInterface[]): Promise<Map<string, ServiceSchema>> {
+    const serviceDetailsMap = new Map<string, ServiceSchema>();
     await Promise.all(
       results.map(async (row) => {
         if (!serviceDetailsMap.has(row.serviceId)) {
@@ -65,7 +69,7 @@ export class ClientOrdersService {
   }
   
   // Private method to format the results into the desired structure
-  private formatResults(results: any[], serviceDetailsMap: Map<string, any>): any[] {
+  private formatOpenOrderResults(results: FetchOpenOrderInterface[], serviceDetailsMap: Map<string, ServiceSchema>): OpenOrderResponseInterface[] {
     return results.reduce((acc, row) => {
       // Find or create an order object
       let order = acc.find(item => item.orderId === row.orderId);
@@ -84,17 +88,17 @@ export class ClientOrdersService {
       }
   
       // Clean service details
-      const cleanedServiceDetails = this.getCleanedServiceDetails(row, serviceDetailsMap);
+      const formattedServiceDetails = this.formatServiceDetails(row, serviceDetailsMap);
   
       // Add service details to the order
-      order.services.push(cleanedServiceDetails);
+      order.services.push(formattedServiceDetails);
   
       return acc;
     }, []);
   }
   
   // Private method to clean up service details
-  private getCleanedServiceDetails(row: any, serviceDetailsMap: Map<string, any>): any {
+  private formatServiceDetails(row: FetchOpenOrderInterface, serviceDetailsMap: Map<string, ServiceSchema>): FormattedServiceDetailsInterface {
     const serviceDetails = serviceDetailsMap.get(row.serviceId);
     return {
       serviceId: serviceDetails._id,
@@ -114,7 +118,7 @@ export class ClientOrdersService {
     startDate: Date, 
     endDate: Date,
     clientId: number, 
-  ): Promise<any> {
+  ): Promise<OrderHistoryResponseInterface[]> {
     // Fetch orders based on the startTime from AppointmentEntity
     const orders = await this.appointmentRepository.getRepository().createQueryBuilder('a')
       .innerJoin('orders', 'o', 'a.orderId = o.orderId')  // Join AppointmentEntity with OrderEntity
@@ -133,7 +137,7 @@ export class ClientOrdersService {
     // If no orders exist, return "No orders"
     console.log("the orders are",orders)
     if (orders.length === 0) {
-      return { status: 200, message: "No orders" }; // Returning a message in a clean format
+      return []; 
     }
   
     // Format the orders to match the response structure
@@ -146,17 +150,14 @@ export class ClientOrdersService {
     }));
     console.log("formatted orders are:",formattedOrders)
     // Return the orders in the desired format
-    return {
-      status: 200,
-      data: formattedOrders,
-    };
+    return  formattedOrders;
   }
 
   async getUpcomingOrders(
     startDate: Date, 
     endDate: Date,
     clientId: number, 
-  ): Promise<any> {
+  ): Promise<UpcomingOrdersResponseInterface[]> {
     // Fetch upcoming orders based on the startTime from AppointmentEntity
     const orders = await this.appointmentRepository.getRepository().createQueryBuilder('a')
       .innerJoin('orders', 'o', 'a.orderId = o.orderId')  // Join AppointmentEntity with OrderEntity
@@ -174,9 +175,9 @@ export class ClientOrdersService {
       .andWhere('o.status != :status', { status: 'PENDING' })  // Exclude orders with status 'PENDING'
       .getRawMany();
   
-    // If no orders exist, return "No upcoming orders"
+    // If no orders exist, return empty arr
     if (orders.length === 0) {
-      return { status: 200, message: "No upcoming orders" }; // Returning a message in a clean format
+      return []; 
     }
   
     // Format the orders to match the response structure
@@ -184,15 +185,12 @@ export class ClientOrdersService {
       customerName: order.customerName,
       customerImage: '', // Use a placeholder if no image
       orderId: order.o_orderId,
-      time: new Date(order.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // Formatting the time to a 12-hour format
-      amount: order.o_amountPaid || "0",  // Default to 0 if amountPaid is not available
+      time: order.time,
+      amountPaid: order.o_amountPaid, 
     }));
   
     // Return the upcoming orders in the desired format
-    return {
-      status: 200,
-      data: formattedOrders,
-    };
+    return formattedOrders;
   }
   
 }

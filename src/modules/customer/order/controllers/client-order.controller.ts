@@ -1,7 +1,7 @@
 import { BadRequestException, Controller, Get, Param, Query } from '@nestjs/common';
 import { ClientOrderDto } from '../dtos/client-order.dto';
 import { ClientOrdersService } from '../services/client-order.service';
-import { OpenOrderDetailsInterface } from '../interfaces/open-orders-details.interface';
+import { OpenOrderResponseInterface } from '../interfaces/open-orders.interface';
 import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { OrderHistoryResponseInterface } from '../interfaces/order-history-response.interface';
@@ -12,10 +12,10 @@ export class ClientOrderController {
 
   @Get('/:clientId/open-orders')
   async getAllOpenOrders(
+    @ClientIdDecorator() clientIdDto:ClientIdDto,
     @Query() query: ClientOrderDto,
     @Param('clientId') clientId:number,
-    @ClientIdDecorator() clientIdDto:ClientIdDto
-):Promise<OpenOrderDetailsInterface[]> {
+):Promise<OpenOrderResponseInterface[]> {
     const { startTime, endTime } = query;
     // Check if startTime is in the future
     const currentTime = new Date();
@@ -37,9 +37,9 @@ export class ClientOrderController {
 
   @Get('/:clientId/upcoming-orders')
   async getAllUpcomingOrders(
+    @ClientIdDecorator() clientIdDto:ClientIdDto,
     @Query() query:ClientOrderDto,
     @Param('clientId') clientId:number,
-    @ClientIdDecorator() clientIdDto:ClientIdDto
   ){
       const {startTime,endTime} = query;
       if(new Date(startTime)>new Date(endTime)){
