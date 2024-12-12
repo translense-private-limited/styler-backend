@@ -17,6 +17,7 @@ import { AppointmentController } from './controllers/appoitment.controller';
 import { ClientOrderController } from './controllers/client-order.controller';
 import { ClientOrdersService } from './services/client-order.service';
 import { CustomerModule } from '../customer.module';
+import { ClientModule } from '@modules/client/client/client.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { CustomerModule } from '../customer.module';
     ),
     OutletModule,
     ServiceModule,
-    forwardRef(()=>CustomerModule)
+    forwardRef(()=>CustomerModule),
+    ClientModule
   ],
   controllers: [OrderController,AppointmentController,ClientOrderController],
   providers: [
