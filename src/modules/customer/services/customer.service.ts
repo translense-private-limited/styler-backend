@@ -15,7 +15,7 @@ export class CustomerService {
     private customerRepository: CustomerRepository,
     private bcryptEncryptionService: BcryptEncryptionService,
   ) {}
-  private async getCustomerByIdOrThrow(
+   async getCustomerByIdOrThrow(
     customerId: number,
   ): Promise<CustomerEntity> {
     const customer = await this.customerRepository.getRepository().findOne({
