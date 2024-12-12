@@ -1,12 +1,14 @@
 import { Injectable,  } from '@nestjs/common';
 import { AppointmentRepository } from '../repositories/appointment.repository';
 import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
+import { OrderRepository } from '../repositories/order.repository';
 
 @Injectable()
 export class ClientOrdersService {
   constructor(
     private readonly appointmentRepository:AppointmentRepository,
     private readonly serviceExternalService:ServiceExternalService,
+    private readonly orderRepository:OrderRepository,
   ) {}
 
   async getAllOpenOrders(startTime: Date, endTime: Date, clientId: number): Promise<any[]> {
@@ -108,4 +110,47 @@ export class ClientOrdersService {
       notes: row.notes,
     };
   }
+  async getAllOrderHistory(
+    startDate: Date, 
+    endDate: Date,
+    clientId: number, 
+  ): Promise<any> {
+    // Fetch orders based on the startTime from AppointmentEntity
+    const orders = await this.appointmentRepository.getRepository().createQueryBuilder('a')
+      .innerJoin('orders', 'o', 'a.orderId = o.orderId')  // Join AppointmentEntity with OrderEntity
+      .innerJoin('customers', 'c', 'o.customerId = c.id')  // Join with customers table to get customer name
+      .select([
+        'c.name AS customerName',
+        'o.orderId as orderId',
+        'a.startTime AS time',  // Use startTime from AppointmentEntity
+        'o.amountPaid as amountPaid',
+        'o.status as status',
+      ])
+      .where('o.customerId = :clientId', { clientId })
+      .andWhere('a.startTime BETWEEN :startDate AND :endDate', { startDate, endDate })  // Filter by startTime from AppointmentEntity
+      .getRawMany();
+  
+    // If no orders exist, return "No orders"
+    console.log("the orders are",orders)
+    if (orders.length === 0) {
+      return { status: 200, message: "No orders" }; // Returning a message in a clean format
+    }
+  
+    // Format the orders to match the response structure
+    const formattedOrders = orders.map(order => ({
+      customerName: order.customerName,
+      orderId: order.orderId,
+      time: new Date(order.time).toLocaleString(),
+      amountPaid: order.amountPaid,  // Default to 0 if amountPaid is not available
+      status: order.status,
+    }));
+    console.log("formatted orders are:",formattedOrders)
+    // Return the orders in the desired format
+    return {
+      status: 200,
+      data: formattedOrders,
+    };
+  }
 }
+
+

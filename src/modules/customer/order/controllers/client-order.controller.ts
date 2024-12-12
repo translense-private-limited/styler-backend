@@ -4,6 +4,7 @@ import { ClientOrdersService } from '../services/client-order.service';
 import { OpenOrderDetailsInterface } from '../interfaces/open-orders-details.interface';
 import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
+import { OrderHistoryResponseInterface } from '../interfaces/order-history-response.interface';
 
 @Controller('client')
 export class ClientOrderController {
@@ -22,5 +23,15 @@ export class ClientOrderController {
         throw new BadRequestException('Start time cannot be in the future');
     }
     return this.clientOrderService.getAllOpenOrders(startTime, endTime,clientId);
+  }
+
+  @Get('/:clientId/orders')
+  async getOrderHistory(
+    @ClientIdDecorator() clientIdDto:ClientIdDto,
+    @Query() query:ClientOrderDto,
+    @Param('clientId') clientId:number
+  ):Promise<OrderHistoryResponseInterface[]>{
+    const {startTime,endTime} = query;
+    return this.clientOrderService.getAllOrderHistory(startTime,endTime,clientId)
   }
 }
