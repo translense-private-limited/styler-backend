@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Query } from '@nestjs/common';
 import { ClientOrderDto } from '../dtos/client-order.dto';
 import { ClientOrdersService } from '../services/client-order.service';
 import { OpenOrderDetailsInterface } from '../interfaces/open-orders-details.interface';
@@ -16,6 +16,11 @@ export class ClientOrderController {
     @ClientIdDecorator() clientIdDto:ClientIdDto
 ):Promise<OpenOrderDetailsInterface[]> {
     const { startTime, endTime } = query;
+    // Check if startTime is in the future
+    const currentTime = new Date();
+    if (new Date(startTime) > currentTime) {
+        throw new BadRequestException('Start time cannot be in the future');
+    }
     return this.clientOrderService.getAllOpenOrders(startTime, endTime,clientId);
   }
 }
