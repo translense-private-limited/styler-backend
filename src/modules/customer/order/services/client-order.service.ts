@@ -151,6 +151,50 @@ export class ClientOrdersService {
       data: formattedOrders,
     };
   }
+
+  async getUpcomingOrders(
+    startDate: Date, 
+    endDate: Date,
+    clientId: number, 
+  ): Promise<any> {
+    // Fetch upcoming orders based on the startTime from AppointmentEntity
+    const orders = await this.appointmentRepository.getRepository().createQueryBuilder('a')
+      .innerJoin('orders', 'o', 'a.orderId = o.orderId')  // Join AppointmentEntity with OrderEntity
+      .innerJoin('customers', 'c', 'o.customerId = c.id')  // Join with customers table to get customer name
+      .select([
+        'c.name AS customerName',
+        'o.orderId AS o_orderId',  // Alias for orderId
+        'a.startTime AS time',  // Use startTime from AppointmentEntity
+        'o.amountPaid AS o_amountPaid',  // Alias for amountPaid
+        'o.status AS o_status',  // Alias for status
+      ])
+      .where('o.customerId = :clientId', { clientId })
+      .andWhere('a.startTime BETWEEN :startDate AND :endDate', { startDate, endDate })  // Filter by startTime from AppointmentEntity
+      .andWhere('a.startTime > :currentDate', { currentDate: new Date() })  // Only upcoming orders
+      .andWhere('o.status != :status', { status: 'PENDING' })  // Exclude orders with status 'PENDING'
+      .getRawMany();
+  
+    // If no orders exist, return "No upcoming orders"
+    if (orders.length === 0) {
+      return { status: 200, message: "No upcoming orders" }; // Returning a message in a clean format
+    }
+  
+    // Format the orders to match the response structure
+    const formattedOrders = orders.map(order => ({
+      customerName: order.customerName,
+      customerImage: '', // Use a placeholder if no image
+      orderId: order.o_orderId,
+      time: new Date(order.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // Formatting the time to a 12-hour format
+      amount: order.o_amountPaid || "0",  // Default to 0 if amountPaid is not available
+    }));
+  
+    // Return the upcoming orders in the desired format
+    return {
+      status: 200,
+      data: formattedOrders,
+    };
+  }
+  
 }
 
 

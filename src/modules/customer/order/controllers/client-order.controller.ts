@@ -34,4 +34,17 @@ export class ClientOrderController {
     const {startTime,endTime} = query;
     return this.clientOrderService.getAllOrderHistory(startTime,endTime,clientId)
   }
+
+  @Get('/:clientId/upcoming-orders')
+  async getAllUpcomingOrders(
+    @Query() query:ClientOrderDto,
+    @Param('clientId') clientId:number,
+    @ClientIdDecorator() clientIdDto:ClientIdDto
+  ){
+      const {startTime,endTime} = query;
+      if(new Date(startTime)>new Date(endTime)){
+        return { status: 400, message: 'Start date cannot be after end date' };
+      }
+      return this.clientOrderService.getUpcomingOrders(startTime,endTime,clientId)
+  }
 }
