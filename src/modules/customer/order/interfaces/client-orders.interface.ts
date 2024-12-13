@@ -9,6 +9,7 @@ export interface OrderResponseInterface extends Omit<OrderItemInterface, 'servic
   orderStatus:OrderStatusEnum;
   services: ServiceDetailsInterface[];
   customer: {
+    customerId:number;
     customerName: string;
     customerImage: string;
     customerContact: number;
@@ -35,6 +36,7 @@ export interface OrderDetailsInterface extends OrderItemInterface {
   updatedAt: Date;
   amountPaid: number;
   orderStatus: OrderStatusEnum;
+  customerId:number;
   customerName: string;
   customerContact: string;
   customerEmail: string;
