@@ -368,4 +368,7 @@ export class OrderService {
     };
   }  
   
+  async getOrderByIdOrThrow(orderId:number){
+    return await this.orderRepository.getRepository().findOne({where:{orderId}})
+  }
 }  

@@ -17,6 +17,5 @@ export class CreateOrderDto implements CreateOrderPayloadInterface {
   @IsNotEmpty()
   startTime: Date;
 
-  @IsNotEmpty()
-  endTime:Date;
+  endTime?:Date;
 }

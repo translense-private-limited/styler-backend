@@ -20,6 +20,9 @@ export class OrderEntity extends BaseEntity implements OrderInterface {
   @Column()
   outletId: number;
 
-  @Column()
+  @Column({default:OrderStatusEnum.ORDER_PLACED})
   status?: OrderStatusEnum;
+
+  @Column({nullable:true})
+  reasonForRejection:string;
 }

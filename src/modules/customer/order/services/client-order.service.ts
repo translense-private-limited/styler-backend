@@ -5,6 +5,16 @@ import { OrderRepository } from '../repositories/order.repository';
 import {  OrderDetailsInterface, OrderResponseInterface, ServiceDetailsInterface } from '../interfaces/client-orders.interface';
 import { ServiceSchema } from '@modules/client/services/schema/service.schema';
 import { OrderFilterDto } from '../dtos/order-filter.dto';
+import { OrderConfirmationDto } from '../dtos/order-confirmation.dto';
+import { OrderItemService } from './order-item.service';
+import { OrderItemStatusEnum } from '../enums/order-item-status.enum';
+import { BookingStatusEnum } from '../enums/booking-status.enum';
+import { AppointmentService } from './appointment.service';
+import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { OrderService } from './order.service';
+import { QueryRunner } from 'typeorm';
+import { OrderEntity } from '../entities/orders.entity';
+import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 
 @Injectable()
 export class ClientOrdersService {
@@ -12,6 +22,9 @@ export class ClientOrdersService {
     private readonly appointmentRepository:AppointmentRepository,
     private readonly serviceExternalService:ServiceExternalService,
     private readonly orderRepository:OrderRepository,
+    private readonly orderItemService:OrderItemService,
+    private readonly appointmentService:AppointmentService,
+    private readonly orderService:OrderService
   ) {}
 
   async getAllOpenOrders(clientId: number): Promise<OrderResponseInterface[]> {
@@ -141,6 +154,97 @@ private formatServiceDetails(
     // Format the results into the desired structure
     return this.formatOrderResponse(upcomingOrders, services);
   }
+
+  async confirmOrder(
+    orderId: number,
+    orderConfirmationDto: OrderConfirmationDto,
+    clientId:number,
+    clientIdDto:ClientIdDto
+  ): Promise<string> {
+
+    const order = await this.orderService.getOrderByIdOrThrow(orderId);
+    if(!clientIdDto.outletIds.includes(order.outletId)){
+      throw new Error(`you are not authorized to take action on this order`);
+    }
+    const { accept, reject, reasonForRejection } = orderConfirmationDto;
+  
+    const queryRunner = this.orderRepository.getRepository().manager.connection.createQueryRunner();
+    await queryRunner.startTransaction();
+  
+    try {
+      // Step 1: Validate the order and update the reason if any service is rejected
+      await this.getAndUpdateOrderDetails(queryRunner, orderId, reject, reasonForRejection);
+  
+      // Step 2: Update order items
+      await this.updateOrderItemsStatus(queryRunner, orderId, accept, reject);
+  
+      // Step 3: Update appointment status
+      if (accept && accept.length > 0) {
+        await this.updateAppointmentStatus(queryRunner, orderId);
+      }
+  
+      // Commit the transaction
+      await queryRunner.commitTransaction();
+      return "Booking Confirmed"
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      console.error('Error during order confirmation:', error);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+  
+  private async getAndUpdateOrderDetails(
+    queryRunner: QueryRunner,
+    orderId: number,
+    reject: string[],
+    reasonForRejection: string
+  ): Promise<OrderEntity> {
+    const order = await this.orderService.getOrderByIdOrThrow(orderId);
+    throwIfNotFound(order, 'Order not found with the provided orderId');
+  
+    if (reject && reject.length > 0) {
+      if (!reasonForRejection) {
+        throw new Error('A rejection reason must be provided when services are rejected.');
+      }
+  
+      // Update the reasonForRejection for the order within the transaction
+      order.reasonForRejection = reasonForRejection;
+      await queryRunner.manager.save(order);
+    }
+    return order;
+  }
+  
+  private async updateOrderItemsStatus(
+    queryRunner: QueryRunner,
+    orderId: number,
+    accept: string[],
+    reject: string[]
+  ): Promise<void> {
+    const orderItems = await this.orderItemService.getAllOrderItemsByOrderId(orderId);
+  
+    const updatedOrderItems = orderItems.map((item) => {
+      if (reject.includes(item.serviceId)) {
+        item.status = OrderItemStatusEnum.REJECTED;
+      }
+      return item;
+    });
+  
+    await queryRunner.manager.save(updatedOrderItems);
+  }
+  
+  private async updateAppointmentStatus(
+    queryRunner: QueryRunner,
+    orderId: number
+  ): Promise<void> {
+    const appointment = await this.appointmentService.getAppointmentByOrderIdOrThrow(orderId);
+    throwIfNotFound(appointment, 'Appointment not found for the provided orderId');
+  
+    appointment.status = BookingStatusEnum.CONFIRMED;
+    await queryRunner.manager.save(appointment);
+  }    
+  
 }
 
 
