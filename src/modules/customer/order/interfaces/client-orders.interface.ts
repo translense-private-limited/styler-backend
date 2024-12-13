@@ -18,22 +18,18 @@ export interface OrderResponseInterface extends Omit<OrderItemInterface, 'servic
     appointmentId: number;
     startTime: Date;
     endTime: Date;
-    actualStartTime: Date;
-    actualEndTime: Date;
-    status:BookingStatusEnum;
+    BookingStatus:BookingStatusEnum;
   };
 }
 
 export interface ServiceDetailsInterface extends ServiceSchema{
-    quantity:number;
+  quantity:number;
     notes?:string;
 }
 export interface OrderDetailsInterface extends OrderItemInterface {
   appointmentId: number;
   startTime: Date;
   endTime: Date;
-  actualStartTime: Date | null; 
-  actualEndTime: Date | null;
   status:BookingStatusEnum;
   orderId: number;
   updatedAt: Date;

@@ -2,7 +2,7 @@ import { Injectable,  } from '@nestjs/common';
 import { AppointmentRepository } from '../repositories/appointment.repository';
 import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
 import { OrderRepository } from '../repositories/order.repository';
-import {  OrderDetailsInterface, OrderResponseInterface } from '../interfaces/client-orders.interface';
+import {  OrderDetailsInterface, OrderResponseInterface, ServiceDetailsInterface } from '../interfaces/client-orders.interface';
 import { ServiceSchema } from '@modules/client/services/schema/service.schema';
 
 @Injectable()
@@ -23,12 +23,10 @@ export class ClientOrdersService {
         .where('a.status = :status', { status: 'PENDING' })
         .andWhere('c.id = :clientId', { clientId });
 
-    const openOrders = await queryBuilder.select([
+    const openOrders :OrderDetailsInterface[]= await queryBuilder.select([
         'a.appointmentId AS appointmentId',
         'a.startTime AS startTime',
         'a.endTime AS endTime',
-        'a.actualStartTime AS actualStartTime', 
-        'a.actualEndTime AS actualEndTime',
         'a.status AS status',    
         'o.orderId AS orderId',
         'o.updatedAt AS updatedAt',
@@ -78,9 +76,7 @@ private formatOrderResponse(
           appointmentId: row.appointmentId,
           startTime: row.startTime,
           endTime: row.endTime,
-          actualStartTime: row.actualStartTime,
-          actualEndTime: row.actualEndTime,
-          status:row.status
+          AppointmentStatus:row.status
         },
       };
       acc.push(order);
@@ -100,7 +96,7 @@ private formatOrderResponse(
 private formatServiceDetails(
   row: OrderDetailsInterface,
   services: ServiceSchema[]
-) {  // Ensure the return type matches the type expected for services
+) :ServiceDetailsInterface{  // Ensure the return type matches the type expected for services
   const serviceDetails = services.find(service => service._id.toString() === row.serviceId.toString());
 
   if (!serviceDetails) {
@@ -111,7 +107,7 @@ private formatServiceDetails(
     ...serviceDetails, // Return all the properties of ServiceSchema
     quantity: row.quantity,
     notes: row.notes,
-  };
+  } as ServiceDetailsInterface;
 }
 
   // async getAllOrderHistory(
