@@ -173,7 +173,7 @@ private formatServiceDetails(
   
     try {
       // Step 1: Validate the order and update the reason if any service is rejected
-      await this.getOrderDetails(queryRunner, orderId, reject, reasonForRejection);
+      await this.getAndUpdateOrderDetails(queryRunner, orderId, reject, reasonForRejection);
   
       // Step 2: Update order items
       await this.updateOrderItemsStatus(queryRunner, orderId, accept, reject);
@@ -195,7 +195,7 @@ private formatServiceDetails(
     }
   }
   
-  private async getOrderDetails(
+  private async getAndUpdateOrderDetails(
     queryRunner: QueryRunner,
     orderId: number,
     reject: string[],
