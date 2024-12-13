@@ -70,4 +70,9 @@ export class ServiceExternalService {
 
   //   return serviceDetails;
   // }
+
+  async getServicesByServiceIds(serviceIds:string[]):Promise<ServiceSchema[]>{
+      const services = await  this.serviceRepository.getRepository().find({'_id': { $in: serviceIds } }).lean()
+      return services;
+  }
 }
