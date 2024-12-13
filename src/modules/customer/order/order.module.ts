@@ -2,7 +2,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderEntity } from './entities/orders.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
 import { OrderItemEntity } from './entities/order-item.entity';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { OrderController } from './controllers/order.controller';
 import { OrderService } from './services/order.service';
 import { OutletModule } from '@modules/client/outlet/outlet.module';
@@ -14,6 +14,10 @@ import { AppointmentRepository } from './repositories/appointment.repository';
 import { AppointmentService } from './services/appointment.service';
 import { AppointmentEntity } from './entities/appointment.entity';
 import { AppointmentController } from './controllers/appoitment.controller';
+import { ClientOrderController } from './controllers/client-order.controller';
+import { ClientOrdersService } from './services/client-order.service';
+import { CustomerModule } from '../customer.module';
+import { ClientModule } from '@modules/client/client/client.module';
 
 @Module({
   imports: [
@@ -23,8 +27,10 @@ import { AppointmentController } from './controllers/appoitment.controller';
     ),
     OutletModule,
     ServiceModule,
+    forwardRef(()=>CustomerModule),
+    ClientModule
   ],
-  controllers: [OrderController,AppointmentController],
+  controllers: [OrderController,AppointmentController,ClientOrderController],
   providers: [
     OrderService,
     OrderRepository,
@@ -32,6 +38,7 @@ import { AppointmentController } from './controllers/appoitment.controller';
     OrderItemService,
     AppointmentRepository,
     AppointmentService,
+    ClientOrdersService
   ],
   exports: [],
 })
