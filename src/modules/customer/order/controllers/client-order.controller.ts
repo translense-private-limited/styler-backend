@@ -45,6 +45,6 @@ export class ClientOrderController {
     @Param('clientId') clientId:number,
     @Param('orderId') orderId:number,
   ):Promise<string>{
-      return this.clientOrderService.confirmOrder(orderId,orderConfirmationDto)
+      return this.clientOrderService.confirmOrder(orderId,orderConfirmationDto,clientId,clientIdDto)
   }
 }

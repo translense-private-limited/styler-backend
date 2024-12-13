@@ -13,6 +13,8 @@ import { AppointmentService } from './appointment.service';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { OrderService } from './order.service';
 import { QueryRunner } from 'typeorm';
+import { OrderEntity } from '../entities/orders.entity';
+import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 
 @Injectable()
 export class ClientOrdersService {
@@ -155,8 +157,15 @@ private formatServiceDetails(
 
   async confirmOrder(
     orderId: number,
-    orderConfirmationDto: OrderConfirmationDto
+    orderConfirmationDto: OrderConfirmationDto,
+    clientId:number,
+    clientIdDto:ClientIdDto
   ): Promise<string> {
+
+    const order = await this.orderService.getOrderByIdOrThrow(orderId);
+    if(!clientIdDto.outletIds.includes(order.outletId)){
+      throw new Error(`you are not authorized to take action on this order`);
+    }
     const { accept, reject, reasonForRejection } = orderConfirmationDto;
   
     const queryRunner = this.orderRepository.getRepository().manager.connection.createQueryRunner();
@@ -164,7 +173,7 @@ private formatServiceDetails(
   
     try {
       // Step 1: Validate the order and update the reason if any service is rejected
-      await this.validateAndFetchOrder(queryRunner, orderId, reject, reasonForRejection);
+      await this.getOrderDetails(queryRunner, orderId, reject, reasonForRejection);
   
       // Step 2: Update order items
       await this.updateOrderItemsStatus(queryRunner, orderId, accept, reject);
@@ -186,12 +195,12 @@ private formatServiceDetails(
     }
   }
   
-  private async validateAndFetchOrder(
+  private async getOrderDetails(
     queryRunner: QueryRunner,
     orderId: number,
     reject: string[],
     reasonForRejection: string
-  ): Promise<void> {
+  ): Promise<OrderEntity> {
     const order = await this.orderService.getOrderByIdOrThrow(orderId);
     throwIfNotFound(order, 'Order not found with the provided orderId');
   
@@ -204,6 +213,7 @@ private formatServiceDetails(
       order.reasonForRejection = reasonForRejection;
       await queryRunner.manager.save(order);
     }
+    return order;
   }
   
   private async updateOrderItemsStatus(
