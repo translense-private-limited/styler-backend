@@ -1,10 +1,13 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { ClientOrdersService } from '../services/client-order.service';
 import { OrderResponseInterface } from '../interfaces/client-orders.interface';
 import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { OrderFilterDto } from '../dtos/order-filter.dto';
+import { OrderConfirmationDto } from '../dtos/order-confirmation.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Client/Orders')
 @Controller('client')
 export class ClientOrderController {
   constructor(private readonly clientOrderService: ClientOrdersService) {}
@@ -33,5 +36,15 @@ export class ClientOrderController {
     @Param('clientId') clientId:number,
   ):Promise<OrderResponseInterface[]>{
       return this.clientOrderService.getUpcomingOrders(clientId,dateRange)
+  }
+
+  @Put('/:clientId/order/:orderId')
+  async orderConfirmation(
+    @ClientIdDecorator() clientIdDto:ClientIdDto,
+    @Body() orderConfirmationDto:OrderConfirmationDto,
+    @Param('clientId') clientId:number,
+    @Param('orderId') orderId:number,
+  ):Promise<string>{
+      return this.clientOrderService.confirmOrder(orderId,orderConfirmationDto)
   }
 }

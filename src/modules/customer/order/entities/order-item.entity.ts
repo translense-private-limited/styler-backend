@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from '
 import { OrderEntity } from './orders.entity';
 import { IsOptional } from 'class-validator';
 import { BaseEntity } from '@src/utils/entities/base.entity';
+import { OrderItemStatusEnum } from '../enums/order-item-status.enum';
 @Entity('order_items')
 export class OrderItemEntity extends BaseEntity{
   @PrimaryGeneratedColumn()
@@ -20,6 +21,9 @@ export class OrderItemEntity extends BaseEntity{
   @Column({ type: 'text', nullable: true })
   @IsOptional()
   notes?: string; // Optional notes for the order item
+
+  @Column({default:OrderItemStatusEnum.ACCEPTED})
+  status:OrderItemStatusEnum
 
   @ManyToOne(() => OrderEntity, (order) => order.orderId, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'orderId' })
