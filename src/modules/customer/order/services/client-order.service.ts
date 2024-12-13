@@ -112,61 +112,55 @@ private formatServiceDetails(
   } as ServiceDetailsInterface;
 }
 
-  // async getAllOrderHistory(
-  //   startDate: Date,
-  //   endDate: Date,
-  //   clientId: number,
-  // ): Promise<OrderResponseInterface[]> {
-  //   // Fetch orders based on the startTime from AppointmentEntity
-  //   const orders = await this.appointmentRepository.getRepository().createQueryBuilder('a')
-  //     .innerJoin('orders', 'o', 'a.orderId = o.orderId') // Join AppointmentEntity with OrderEntity
-  //     .innerJoin('customers', 'c', 'o.customerId = c.id') // Join with customers table to get customer details
-  //     .select([
-  //       'c.name AS customerName',
-  //       'c.contactNumber AS customerContact',
-  //       'c.email AS customerEmail',
-  //       'o.orderId AS orderId',
-  //       'a.startTime AS startTime',
-  //       'a.endTime AS endTime',
-  //       'a.actualStartTime AS actualStartTime',
-  //       'a.actualEndTime AS actualEndTime',
-  //       'o.amountPaid AS amountPaid',
-  //       'o.status AS status',
-  //     ])
-  //     .where('o.customerId = :clientId', { clientId })
-  //     .andWhere('a.startTime BETWEEN :startDate AND :endDate', { startDate, endDate }) // Filter by startTime from AppointmentEntity
-  //     .getRawMany();
-  
-  //   // If no orders exist, return an empty array
-  //   console.log("the orders are", orders);
-  //   if (orders.length === 0) {
-  //     return [];
-  //   }
-  
-  //   // Format the orders to match the desired response structure
-  //   const formattedOrders = orders.map(order => ({
-  //     customer: {
-  //       customerName: order.customerName,
-  //       customerContact: order.customerContact,
-  //       customerEmail: order.customerEmail,
-  //     },
-  //     appointment: {
-  //       appointmentId: order.orderId, // Use orderId as a placeholder for appointmentId if not available
-  //       startTime: order.startTime,
-  //       endTime: order.endTime,
-  //       actualStartTime: order.actualStartTime,
-  //       actualEndTime: order.actualEndTime,
-  //     },
-  //     orderId: order.orderId,
-  //     amountPaid: order.amountPaid ?? 0,
-  //     status: order.status,
-  //   }));
-  
-  //   console.log("formatted orders are:", formattedOrders);
-  //   // Return the orders in the desired format
-  //   return formattedOrders;
-  // }
-  
+  async getAllOrderHistory(
+    startTime: Date,
+    endTime: Date,
+    clientId: number,
+  ): Promise<OrderResponseInterface[]> {
+    const currentTime = new Date();
+    if(startTime>endTime|| startTime>currentTime || endTime> currentTime){
+      throw new Error ("please select valid date range");
+    }
+    // Fetch orders based on the startTime from AppointmentEntity
+      const queryBuilder = await this.appointmentRepository.getRepository()
+      .createQueryBuilder('a')
+      .innerJoin('orders', 'o', 'a.orderId = o.OrderId')
+      .leftJoin('order_items', 'oi', 'o.OrderId = oi.orderId')
+      .innerJoin('customers', 'c', 'o.customerId = c.id')
+      .where('a.status != :status', { status: 'PENDING' })
+      .andWhere('c.id = :clientId', { clientId })
+      .andWhere('a.startTime BETWEEN :startTime AND :endTime', { startTime, endTime });
+
+  const openOrders :OrderDetailsInterface[]= await queryBuilder.select([
+      'a.appointmentId AS appointmentId',
+      'a.startTime AS startTime',
+      'a.endTime AS endTime',
+      'a.status AS status',    
+      'o.orderId AS orderId',
+      'o.updatedAt AS updatedAt',
+      'o.amountPaid AS amountPaid',
+      'o.status AS orderStatus',
+      'oi.serviceId AS serviceId',
+      'oi.quantity AS quantity',
+      'oi.discount AS discount',
+      'oi.notes AS notes',
+      'c.id AS customerId',
+      'c.name AS customerName',
+      'c.contactNumber AS customerContact',
+      'c.email AS customerEmail',
+  ]).getRawMany();
+
+  // Extract unique serviceIds
+  const serviceIds = [...new Set(openOrders.map(order => order.serviceId))];
+
+  // Fetch services by serviceIds
+  const services = await this.serviceExternalService.getServicesByServiceIds(serviceIds);
+
+  // Format the results into the desired structure
+  return this.formatOrderResponse(openOrders, services);
+
+  }
+
 
   async getUpcomingOrders(
     startTime: Date, 
@@ -174,12 +168,10 @@ private formatServiceDetails(
     clientId: number, 
   ): Promise<OrderResponseInterface[]> {
     const currentTime = new Date();
-    if(startTime>currentTime){
-      throw new Error("start time should be greater than current time")
+    if(startTime<currentTime || startTime>endTime){
+      throw new Error("please enter valid date range")
     }
-    const bufferTimeInMinutes = parseInt(process.env.BUFFER_TIME);
-    console.log("buffer",bufferTimeInMinutes)
-    const bufferTime = new Date(currentTime.getTime() - bufferTimeInMinutes * 60 * 1000);
+    const bufferTime = new Date(new Date(startTime).getTime() - 30 * 60 * 1000);
     // Fetch upcoming orders based on the startTime from AppointmentEntity
     const queryBuilder = await this.appointmentRepository.getRepository().createQueryBuilder('a')
       .innerJoin('orders', 'o', 'a.orderId = o.OrderId')

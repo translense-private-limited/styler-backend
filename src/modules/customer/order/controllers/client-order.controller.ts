@@ -17,15 +17,15 @@ export class ClientOrderController {
     return this.clientOrderService.getAllOpenOrders(clientId);
   }
 
-  // @Get('/:clientId/orders')
-  // async getOrderHistory(
-  //   @ClientIdDecorator() clientIdDto:ClientIdDto,
-  //   @Query() query:OrderFilterDto,
-  //   @Param('clientId') clientId:number
-  // ):Promise<OrderResponseInterface[]>{
-  //   const {startTime,endTime} = query;
-  //   return this.clientOrderService.getAllOrderHistory(startTime,endTime,clientId)
-  // }
+  @Get('/:clientId/orders')
+  async getOrderHistory(
+    @ClientIdDecorator() clientIdDto:ClientIdDto,
+    @Query() query:OrderFilterDto,
+    @Param('clientId') clientId:number
+  ):Promise<OrderResponseInterface[]>{
+    const {startTime,endTime} = query;
+    return this.clientOrderService.getAllOrderHistory(startTime,endTime,clientId)
+  }
 
   @Get('/:clientId/upcoming-orders')
   async getAllUpcomingOrders(
