@@ -27,7 +27,11 @@ export class ClientOrdersService {
   }
   
   // Private method to fetch open orders from the database
-  private async fetchOpenOrders(startTime: Date, endTime: Date, clientId: number): Promise<FetchOpenOrderInterface[]> {
+  private async fetchOpenOrders(
+    startTime: Date,
+    endTime: Date,
+    clientId: number
+  ): Promise<FetchOpenOrderInterface[]> {
     const queryBuilder = this.appointmentRepository.getRepository()
       .createQueryBuilder('a')
       .innerJoin('orders', 'o', 'a.orderId = o.OrderId')
@@ -41,9 +45,11 @@ export class ClientOrdersService {
       'a.appointmentId AS appointmentId',
       'a.startTime AS startTime',
       'a.endTime AS endTime',
+      'a.actualStartTime AS actualStartTime', // New field
+      'a.actualEndTime AS actualEndTime',     // New field
       'o.orderId AS orderId',
       'o.updatedAt AS updatedAt',
-      'o.amountPaid As amountPaid',
+      'o.amountPaid AS amountPaid',
       'oi.serviceId AS serviceId',
       'oi.quantity AS quantity',
       'oi.discount AS discount',
@@ -52,7 +58,7 @@ export class ClientOrdersService {
       'c.contactNumber AS customerContact',
       'c.email AS customerEmail',
     ]).getRawMany();
-  }
+  }  
   
   // Private method to fetch service details for all serviceIds
   private async fetchOpenOrderServiceDetails(results: FetchOpenOrderInterface[]): Promise<Map<string, ServiceSchema>> {
@@ -69,20 +75,31 @@ export class ClientOrdersService {
   }
   
   // Private method to format the results into the desired structure
-  private formatOpenOrderResults(results: FetchOpenOrderInterface[], serviceDetailsMap: Map<string, ServiceSchema>): OpenOrderResponseInterface[] {
+  private formatOpenOrderResults(
+    results: FetchOpenOrderInterface[],
+    serviceDetailsMap: Map<string, ServiceSchema>
+  ): OpenOrderResponseInterface[] {
     return results.reduce((acc, row) => {
       // Find or create an order object
       let order = acc.find(item => item.orderId === row.orderId);
       if (!order) {
         order = {
-          customerName: row.customerName,
           orderId: row.orderId,
-          Amount: row.amountPaid, 
+          Amount: row.amountPaid,
           services: [],
-          time: row.startTime,
-          customerImage: "",
-          contact: row.customerContact,
-          email: row.customerEmail,
+          customer: {
+            customerName: row.customerName,
+            contact: row.customerContact,
+            email: row.customerEmail,
+            customerImage: "", // Placeholder for customer image
+          },
+          appointment: {
+            appointmentId: row.appointmentId,
+            time: row.startTime,
+            endTime: row.endTime,
+            actualStartTime: row.actualStartTime, // Added here
+            actualEndTime: row.actualEndTime,     // Added here
+          },
         };
         acc.push(order);
       }
@@ -95,7 +112,7 @@ export class ClientOrdersService {
   
       return acc;
     }, []);
-  }
+  }  
   
   // Private method to clean up service details
   private formatServiceDetails(row: FetchOpenOrderInterface, serviceDetailsMap: Map<string, ServiceSchema>): FormattedServiceDetailsInterface {
@@ -153,45 +170,45 @@ export class ClientOrdersService {
     return  formattedOrders;
   }
 
-  async getUpcomingOrders(
-    startDate: Date, 
-    endDate: Date,
-    clientId: number, 
-  ): Promise<UpcomingOrdersResponseInterface[]> {
-    // Fetch upcoming orders based on the startTime from AppointmentEntity
-    const orders = await this.appointmentRepository.getRepository().createQueryBuilder('a')
-      .innerJoin('orders', 'o', 'a.orderId = o.orderId')  // Join AppointmentEntity with OrderEntity
-      .innerJoin('customers', 'c', 'o.customerId = c.id')  // Join with customers table to get customer name
-      .select([
-        'c.name AS customerName',
-        'o.orderId AS o_orderId',  // Alias for orderId
-        'a.startTime AS time',  // Use startTime from AppointmentEntity
-        'o.amountPaid AS o_amountPaid',  // Alias for amountPaid
-        'o.status AS o_status',  // Alias for status
-      ])
-      .where('o.customerId = :clientId', { clientId })
-      .andWhere('a.startTime BETWEEN :startDate AND :endDate', { startDate, endDate })  // Filter by startTime from AppointmentEntity
-      .andWhere('a.startTime > :currentDate', { currentDate: new Date() })  // Only upcoming orders
-      .andWhere('o.status != :status', { status: 'PENDING' })  // Exclude orders with status 'PENDING'
-      .getRawMany();
+  // async getUpcomingOrders(
+  //   startDate: Date, 
+  //   endDate: Date,
+  //   clientId: number, 
+  // ): Promise<UpcomingOrdersResponseInterface[]> {
+  //   // Fetch upcoming orders based on the startTime from AppointmentEntity
+  //   const orders = await this.appointmentRepository.getRepository().createQueryBuilder('a')
+  //     .innerJoin('orders', 'o', 'a.orderId = o.orderId')  // Join AppointmentEntity with OrderEntity
+  //     .innerJoin('customers', 'c', 'o.customerId = c.id')  // Join with customers table to get customer name
+  //     .select([
+  //       'c.name AS customerName',
+  //       'o.orderId AS o_orderId',  // Alias for orderId
+  //       'a.startTime AS time',  // Use startTime from AppointmentEntity
+  //       'o.amountPaid AS o_amountPaid',  // Alias for amountPaid
+  //       'o.status AS o_status',  // Alias for status
+  //     ])
+  //     .where('o.customerId = :clientId', { clientId })
+  //     .andWhere('a.startTime BETWEEN :startDate AND :endDate', { startDate, endDate })  // Filter by startTime from AppointmentEntity
+  //     .andWhere('a.startTime > :currentDate', { currentDate: new Date() })  // Only upcoming orders
+  //     .andWhere('o.status != :status', { status: 'PENDING' })  // Exclude orders with status 'PENDING'
+  //     .getRawMany();
   
-    // If no orders exist, return empty arr
-    if (orders.length === 0) {
-      return []; 
-    }
+  //   // If no orders exist, return empty arr
+  //   if (orders.length === 0) {
+  //     return []; 
+  //   }
   
-    // Format the orders to match the response structure
-    const formattedOrders = orders.map(order => ({
-      customerName: order.customerName,
-      customerImage: '', // Use a placeholder if no image
-      orderId: order.o_orderId,
-      time: order.time,
-      amountPaid: order.o_amountPaid, 
-    }));
+  //   // Format the orders to match the response structure
+  //   const formattedOrders = orders.map(order => ({
+  //     customerName: order.customerName,
+  //     customerImage: '', // Use a placeholder if no image
+  //     orderId: order.o_orderId,
+  //     time: order.time,
+  //     amountPaid: order.o_amountPaid, 
+  //   }));
   
-    // Return the upcoming orders in the desired format
-    return formattedOrders;
-  }
+  //   // Return the upcoming orders in the desired format
+  //   return formattedOrders;
+  // }
   
 }
 

@@ -1,15 +1,23 @@
 import { ServiceInterface } from "@modules/client/services/interfaces/service.interface";
 import { OrderItemInterface } from "./order-item.interface";
 
-export interface OpenOrderResponseInterface extends Omit<OrderItemInterface, 'serviceId' | 'quantity'|'outletId'|'notes'> {
+export interface OpenOrderResponseInterface extends Omit<OrderItemInterface, 'serviceId' | 'quantity' | 'outletId' | 'notes'> {
   orderId: number;
-  amountPaid: number; 
+  amountPaid: number;
   services: ServiceDetailsInterface[];
-  time: Date; 
-  customerName: string; 
-  customerImage: string; 
-  contact: number; 
-  email: string; 
+  customer: {
+    customerName: string;
+    customerImage: string;
+    customerContact: number;
+    customerEmail: string;
+  };
+  appointment: {
+    appointmentId: number;
+    time: Date;
+    endTime: Date;
+    actualStartTime: Date;
+    actualEndTime: Date;
+  };
 }
 
 export interface ServiceDetailsInterface {
@@ -21,6 +29,8 @@ export interface ServiceDetailsInterface {
 export interface FetchOpenOrderInterface extends OrderItemInterface{
   appointmentId: number;
   startTime: Date;
+  actualStartTime:Date;
+  actualEndTime:Date;
   endTime: Date;
   orderId: number;
   updatedAt: Date;
