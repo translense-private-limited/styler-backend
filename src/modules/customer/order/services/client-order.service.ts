@@ -4,6 +4,7 @@ import { ServiceExternalService } from '@modules/client/services/services/servic
 import { OrderRepository } from '../repositories/order.repository';
 import {  OrderDetailsInterface, OrderResponseInterface, ServiceDetailsInterface } from '../interfaces/client-orders.interface';
 import { ServiceSchema } from '@modules/client/services/schema/service.schema';
+import { OrderFilterDto } from '../dtos/order-filter.dto';
 
 @Injectable()
 export class ClientOrdersService {
@@ -15,31 +16,7 @@ export class ClientOrdersService {
 
   async getAllOpenOrders(clientId: number): Promise<OrderResponseInterface[]> {
     // Fetch raw results from the database
-    const queryBuilder = await this.appointmentRepository.getRepository()
-        .createQueryBuilder('a')
-        .innerJoin('orders', 'o', 'a.orderId = o.OrderId')
-        .leftJoin('order_items', 'oi', 'o.OrderId = oi.orderId')
-        .innerJoin('customers', 'c', 'o.customerId = c.id')
-        .where('a.status = :status', { status: 'PENDING' })
-        .andWhere('c.id = :clientId', { clientId });
-
-    const openOrders :OrderDetailsInterface[]= await queryBuilder.select([
-        'a.appointmentId AS appointmentId',
-        'a.startTime AS startTime',
-        'a.endTime AS endTime',
-        'a.status AS status',    
-        'o.orderId AS orderId',
-        'o.updatedAt AS updatedAt',
-        'o.amountPaid AS amountPaid',
-        'o.status AS orderStatus',
-        'oi.serviceId AS serviceId',
-        'oi.quantity AS quantity',
-        'oi.discount AS discount',
-        'oi.notes AS notes',
-        'c.name AS customerName',
-        'c.contactNumber AS customerContact',
-        'c.email AS customerEmail',
-    ]).getRawMany();
+    const openOrders:OrderDetailsInterface[] = await this.orderRepository.getAllOpenOrders(clientId)
 
     // Extract unique serviceIds
     const serviceIds = [...new Set(openOrders.map(order => order.serviceId))];
@@ -65,8 +42,9 @@ private formatOrderResponse(
         orderId: row.orderId,
         amountPaid: row.amountPaid,
         orderStatus: row.orderStatus,
-        services: [], // Initialize the services array
+        services: [], 
         customer: {
+          customerId:row.customerId,
           customerName: row.customerName,
           customerContact: row.customerContact,
           customerEmail: row.customerEmail,
@@ -110,102 +88,59 @@ private formatServiceDetails(
   } as ServiceDetailsInterface;
 }
 
-  // async getAllOrderHistory(
-  //   startDate: Date,
-  //   endDate: Date,
-  //   clientId: number,
-  // ): Promise<OpenOrderResponseInterface[]> {
-  //   // Fetch orders based on the startTime from AppointmentEntity
-  //   const orders = await this.appointmentRepository.getRepository().createQueryBuilder('a')
-  //     .innerJoin('orders', 'o', 'a.orderId = o.orderId') // Join AppointmentEntity with OrderEntity
-  //     .innerJoin('customers', 'c', 'o.customerId = c.id') // Join with customers table to get customer details
-  //     .select([
-  //       'c.name AS customerName',
-  //       'c.contactNumber AS customerContact',
-  //       'c.email AS customerEmail',
-  //       'o.orderId AS orderId',
-  //       'a.startTime AS startTime',
-  //       'a.endTime AS endTime',
-  //       'a.actualStartTime AS actualStartTime',
-  //       'a.actualEndTime AS actualEndTime',
-  //       'o.amountPaid AS amountPaid',
-  //       'o.status AS status',
-  //     ])
-  //     .where('o.customerId = :clientId', { clientId })
-  //     .andWhere('a.startTime BETWEEN :startDate AND :endDate', { startDate, endDate }) // Filter by startTime from AppointmentEntity
-  //     .getRawMany();
-  
-  //   // If no orders exist, return an empty array
-  //   console.log("the orders are", orders);
-  //   if (orders.length === 0) {
-  //     return [];
-  //   }
-  
-  //   // Format the orders to match the desired response structure
-  //   const formattedOrders = orders.map(order => ({
-  //     customer: {
-  //       customerName: order.customerName,
-  //       customerContact: order.customerContact,
-  //       customerEmail: order.customerEmail,
-  //     },
-  //     appointment: {
-  //       appointmentId: order.orderId, // Use orderId as a placeholder for appointmentId if not available
-  //       startTime: order.startTime,
-  //       endTime: order.endTime,
-  //       actualStartTime: order.actualStartTime,
-  //       actualEndTime: order.actualEndTime,
-  //     },
-  //     orderId: order.orderId,
-  //     amountPaid: order.amountPaid ?? 0,
-  //     status: order.status,
-  //   }));
-  
-  //   console.log("formatted orders are:", formattedOrders);
-  //   // Return the orders in the desired format
-  //   return formattedOrders;
-  // }
-  
+  async getAllOrderHistory(
+    clientId: number,
+    dateRange: OrderFilterDto
+  ): Promise<OrderResponseInterface[]> {
 
-  // async getUpcomingOrders(
-  //   startDate: Date, 
-  //   endDate: Date,
-  //   clientId: number, 
-  // ): Promise<UpcomingOrdersResponseInterface[]> {
-  //   // Fetch upcoming orders based on the startTime from AppointmentEntity
-  //   const orders = await this.appointmentRepository.getRepository().createQueryBuilder('a')
-  //     .innerJoin('orders', 'o', 'a.orderId = o.orderId')  // Join AppointmentEntity with OrderEntity
-  //     .innerJoin('customers', 'c', 'o.customerId = c.id')  // Join with customers table to get customer name
-  //     .select([
-  //       'c.name AS customerName',
-  //       'o.orderId AS o_orderId',  // Alias for orderId
-  //       'a.startTime AS time',  // Use startTime from AppointmentEntity
-  //       'o.amountPaid AS o_amountPaid',  // Alias for amountPaid
-  //       'o.status AS o_status',  // Alias for status
-  //     ])
-  //     .where('o.customerId = :clientId', { clientId })
-  //     .andWhere('a.startTime BETWEEN :startDate AND :endDate', { startDate, endDate })  // Filter by startTime from AppointmentEntity
-  //     .andWhere('a.startTime > :currentDate', { currentDate: new Date() })  // Only upcoming orders
-  //     .andWhere('o.status != :status', { status: 'PENDING' })  // Exclude orders with status 'PENDING'
-  //     .getRawMany();
-  
-  //   // If no orders exist, return empty arr
-  //   if (orders.length === 0) {
-  //     return []; 
-  //   }
-  
-  //   // Format the orders to match the response structure
-  //   const formattedOrders = orders.map(order => ({
-  //     customerName: order.customerName,
-  //     customerImage: '', // Use a placeholder if no image
-  //     orderId: order.o_orderId,
-  //     time: order.time,
-  //     amountPaid: order.o_amountPaid, 
-  //   }));
-  
-  //   // Return the upcoming orders in the desired format
-  //   return formattedOrders;
-  // }
-  
+    const {startTime,endTime} = dateRange;
+    const currentTime = new Date();
+
+    if (startTime > endTime) {
+      throw new Error("Start time cannot be later than end time.");
+    }
+    if (endTime > currentTime) {
+      throw new Error("End time should be in the past.");
+    }
+
+    const pastOrders: OrderDetailsInterface[] = await this.orderRepository.getOrderHistory(clientId,startTime,endTime);
+    // Extract unique serviceIds
+    const serviceIds = [...new Set(pastOrders.map(order => order.serviceId))];
+
+    // Fetch services by serviceIds
+    const services = await this.serviceExternalService.getServicesByServiceIds(serviceIds);
+
+    // Format the results into the desired structure
+    return this.formatOrderResponse(pastOrders, services);
+
+  }
+
+
+  async getUpcomingOrders(
+    clientId: number, 
+    dateRange:OrderFilterDto
+  ): Promise<OrderResponseInterface[]> {
+    const {startTime,endTime} = dateRange;
+    const currentTime = new Date();
+    if (startTime > endTime) {
+      throw new Error("Start time cannot be later than end time.");
+    }
+    if (startTime < currentTime) {
+      throw new Error("Start time cannot be in the past.");
+    }
+    const bufferTime = new Date(new Date(startTime).getTime() - 30 * 60 * 1000);
+    // Fetch upcoming orders based on the startTime from AppointmentEntity
+    const upcomingOrders: OrderDetailsInterface[] = await this.orderRepository.getUpcomingOrders(clientId,bufferTime,endTime);
+
+    // Extract unique serviceIds
+    const serviceIds = [...new Set(upcomingOrders.map(order => order.serviceId))];
+
+    // Fetch services by serviceIds
+    const services = await this.serviceExternalService.getServicesByServiceIds(serviceIds);
+
+    // Format the results into the desired structure
+    return this.formatOrderResponse(upcomingOrders, services);
+  }
 }
 
 
