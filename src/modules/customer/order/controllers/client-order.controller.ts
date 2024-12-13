@@ -20,20 +20,18 @@ export class ClientOrderController {
   @Get('/:clientId/orders')
   async getOrderHistory(
     @ClientIdDecorator() clientIdDto:ClientIdDto,
-    @Query() query:OrderFilterDto,
+    @Query() dateRange:OrderFilterDto,
     @Param('clientId') clientId:number
   ):Promise<OrderResponseInterface[]>{
-    const {startTime,endTime} = query;
-    return this.clientOrderService.getAllOrderHistory(startTime,endTime,clientId)
+    return this.clientOrderService.getAllOrderHistory(clientId,dateRange)
   }
 
   @Get('/:clientId/upcoming-orders')
   async getAllUpcomingOrders(
     @ClientIdDecorator() clientIdDto:ClientIdDto,
-    @Query() query:OrderFilterDto,
+    @Query() dateRange:OrderFilterDto,
     @Param('clientId') clientId:number,
   ):Promise<OrderResponseInterface[]>{
-      const {startTime,endTime} = query;
-      return this.clientOrderService.getUpcomingOrders(startTime,endTime,clientId)
+      return this.clientOrderService.getUpcomingOrders(clientId,dateRange)
   }
 }

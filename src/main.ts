@@ -1,5 +1,3 @@
-import { config } from 'dotenv'
-config()
 import { NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
 import * as csurf from 'csurf';
