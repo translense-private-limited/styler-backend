@@ -4,6 +4,7 @@ import { ServiceExternalService } from '@modules/client/services/services/servic
 import { OrderRepository } from '../repositories/order.repository';
 import {  OrderDetailsInterface, OrderResponseInterface, ServiceDetailsInterface } from '../interfaces/client-orders.interface';
 import { ServiceSchema } from '@modules/client/services/schema/service.schema';
+import { buffer } from 'stream/consumers';
 
 @Injectable()
 export class ClientOrdersService {
@@ -169,21 +170,25 @@ private formatServiceDetails(
   
 
   async getUpcomingOrders(
-    startDate: Date, 
-    endDate: Date,
+    startTime: Date, 
+    endTime: Date,
     clientId: number, 
   ): Promise<OrderResponseInterface[]> {
-    const currentDate = new Date();
-    const bufferTime = new Date(currentDate.getTime() - 30 * 60 * 1000);
+    const currentTime = new Date();
+    if(startTime>currentTime){
+      throw new Error("start time should be greater than current time")
+    }
+    const bufferTimeInMinutes = parseInt(process.env.BUFFER_TIME);
+    console.log("buffer",bufferTimeInMinutes)
+    const bufferTime = new Date(currentTime.getTime() - bufferTimeInMinutes * 60 * 1000);
     // Fetch upcoming orders based on the startTime from AppointmentEntity
     const queryBuilder = await this.appointmentRepository.getRepository().createQueryBuilder('a')
       .innerJoin('orders', 'o', 'a.orderId = o.OrderId')
       .leftJoin('order_items', 'oi', 'o.OrderId = oi.orderId')
       .innerJoin('customers', 'c', 'o.customerId = c.id')
       .where('o.customerId = :clientId', { clientId })
-      .andWhere('a.startTime BETWEEN :bufferTime AND :endDate', { bufferTime, endDate }) 
-      .andWhere('a.startTime > :currentDate', { currentDate: new Date() }) 
-      .andWhere('o.status != :status', { status: 'CONFIRMED' })  // Exclude orders with status 'PENDING'
+      .andWhere('a.startTime BETWEEN :bufferTime AND :endTime', { bufferTime, endTime }) 
+      .andWhere('a.status = :status', { status: 'CONFIRMED' }) 
       
     const upcomingOrders : OrderDetailsInterface[] = await queryBuilder.select([
       'a.appointmentId AS appointmentId',
