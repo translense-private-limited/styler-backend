@@ -4,7 +4,6 @@ import { ServiceExternalService } from '@modules/client/services/services/servic
 import { OrderRepository } from '../repositories/order.repository';
 import {  OrderDetailsInterface, OrderResponseInterface, ServiceDetailsInterface } from '../interfaces/client-orders.interface';
 import { ServiceSchema } from '@modules/client/services/schema/service.schema';
-import { buffer } from 'stream/consumers';
 
 @Injectable()
 export class ClientOrdersService {
@@ -117,7 +116,7 @@ private formatServiceDetails(
   //   startDate: Date,
   //   endDate: Date,
   //   clientId: number,
-  // ): Promise<OpenOrderResponseInterface[]> {
+  // ): Promise<OrderResponseInterface[]> {
   //   // Fetch orders based on the startTime from AppointmentEntity
   //   const orders = await this.appointmentRepository.getRepository().createQueryBuilder('a')
   //     .innerJoin('orders', 'o', 'a.orderId = o.orderId') // Join AppointmentEntity with OrderEntity

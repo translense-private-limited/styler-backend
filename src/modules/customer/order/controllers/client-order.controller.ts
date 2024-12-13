@@ -20,9 +20,9 @@ export class ClientOrderController {
   // @Get('/:clientId/orders')
   // async getOrderHistory(
   //   @ClientIdDecorator() clientIdDto:ClientIdDto,
-  //   @Query() query:ClientOrderDto,
+  //   @Query() query:OrderFilterDto,
   //   @Param('clientId') clientId:number
-  // ):Promise<OpenOrderResponseInterface[]>{
+  // ):Promise<OrderResponseInterface[]>{
   //   const {startTime,endTime} = query;
   //   return this.clientOrderService.getAllOrderHistory(startTime,endTime,clientId)
   // }
