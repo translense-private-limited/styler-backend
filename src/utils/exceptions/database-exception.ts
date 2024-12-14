@@ -9,7 +9,7 @@ import { QueryFailedError } from 'typeorm';
 
 @Catch(QueryFailedError)
 export class DatabaseExceptionFilter implements ExceptionFilter {
-  catch(exception: QueryFailedError, host: ArgumentsHost) {
+  catch(exception: QueryFailedError, host: ArgumentsHost): void {
     console.log('DatabaseExceptionFilter caught an exception:', exception);
 
     const ctx = host.switchToHttp();

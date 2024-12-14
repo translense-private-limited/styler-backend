@@ -36,7 +36,10 @@ export class ImageController {
   }
 
   @Get(':key')
-  async getImage(@Param('key') key: string, @Res() res: Response) {
+  async getImage(
+    @Param('key') key: string,
+    @Res() res: Response,
+  ): Promise<void> {
     try {
       const image = await this.imageService.getImage(key);
       res.setHeader('Content-Type', 'image/jpeg'); // Set appropriate content type
@@ -47,11 +50,12 @@ export class ImageController {
     }
   }
   @Get('url/:key')
-  async getImageUrl(@Param('key') key: string, @Res() res: Response) {
+  async getImageUrl(@Param('key') key: string): Promise<string> {
     try {
-      const image = await this.imageService.generateSignedUrlForDownload(key);
+      const signedUrl =
+        await this.imageService.generateSignedUrlForDownload(key);
 
-      res.send(image);
+      return signedUrl;
     } catch (error) {
       console.log(error);
       throw new HttpException('Image not found', HttpStatus.NOT_FOUND);
@@ -59,14 +63,12 @@ export class ImageController {
   }
 
   @Post('url/:key')
-  async getPresignedUrlToUpload(
-    @Param('key') key: string,
-    @Res() res: Response,
-  ) {
+  async getPresignedUrlToUpload(@Param('key') key: string): Promise<string> {
     try {
-      const image = await this.imageService.generateSignedUrlForUpload(key);
+      const signedUrlToUpload =
+        await this.imageService.generateSignedUrlForUpload(key);
 
-      res.send(image);
+      return signedUrlToUpload;
     } catch (error) {
       console.log(error);
       throw new HttpException('Image not found', HttpStatus.NOT_FOUND);

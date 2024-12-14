@@ -11,7 +11,7 @@ export class ServiceExternalService {
     private readonly serviceRepository: ServiceRepository,
   ) {}
 
-  async getAllServicesForAnOutlet(outletId: number) {
+  async getAllServicesForAnOutlet(outletId: number): Promise<ServiceSchema[]> {
     return this.serviceService.getAllServicesByOutletId(outletId);
   }
 
@@ -24,7 +24,7 @@ export class ServiceExternalService {
     }
     return service;
   }
-  
+
   async getServiceByServiceAndOutletIdOrThrow(
     serviceId: string,
     outletId: number,
@@ -39,7 +39,7 @@ export class ServiceExternalService {
     outletId: number,
     serviceId: string,
     customer: CustomerDecoratorDto,
-  ) {
+  ): Promise<ServiceSchema> {
     const serviceDetails =
       await this.serviceService.getServiceByIdOrThrow(serviceId);
     if (
@@ -71,8 +71,13 @@ export class ServiceExternalService {
   //   return serviceDetails;
   // }
 
-  async getServicesByServiceIds(serviceIds:string[]):Promise<ServiceSchema[]>{
-      const services = await  this.serviceRepository.getRepository().find({'_id': { $in: serviceIds } }).lean()
-      return services;
+  async getServicesByServiceIds(
+    serviceIds: string[],
+  ): Promise<ServiceSchema[]> {
+    const services = await this.serviceRepository
+      .getRepository()
+      .find({ _id: { $in: serviceIds } })
+      .lean();
+    return services;
   }
 }

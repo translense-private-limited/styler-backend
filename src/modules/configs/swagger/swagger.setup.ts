@@ -12,7 +12,7 @@ const swaggerCustomOption: SwaggerCustomOptions = {
     'https://media.licdn.com/dms/image/C560BAQEgOil_8sLTAA/company-logo_100_100/0/1667873121695/translense_private_limited_logo?e=2147483647&v=beta&t=aoMhGOadwe8RCtjwOLUo9EUg8zLUUpegXeo5LSpfXWY   ',
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function filterPathsByPrefix(document: any, prefixes: string[]) {
+function filterPathsByPrefix(document: any, prefixes: string[]): void {
   const filteredPaths = {};
   for (const [path, operations] of Object.entries(document.paths)) {
     if (prefixes.some((prefix) => path.startsWith(prefix))) {
@@ -32,7 +32,7 @@ function filterPathsByPrefix(document: any, prefixes: string[]) {
 //   document.paths = filteredPaths;
 // }
 
-export function swaggerSetup(app: INestApplication) {
+export function swaggerSetup(app: INestApplication): void {
   const swaggerDocument = createSwaggerDocument(app);
   SwaggerModule.setup('swagger', app, swaggerDocument, swaggerCustomOption);
 

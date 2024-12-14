@@ -23,7 +23,10 @@ import { OrderItemService } from './order-item.service';
 import { OrderSummaryDto } from '../dtos/order-summary.dto';
 import { OutletExternalService } from '@modules/client/outlet/services/outlet-external.service';
 import { OrderItemSummaryDto } from '../dtos/order-item-summary.dto';
-import { OrderDetailsInterface, OrderResponseInterface } from '../interfaces/client-orders.interface';
+import {
+  OrderDetailsInterface,
+  OrderResponseInterface,
+} from '../interfaces/client-orders.interface';
 import { AppointmentRepository } from '../repositories/appointment.repository';
 import { ClientOrderService } from './client-order.service';
 
@@ -32,12 +35,12 @@ export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly serviceExternalService: ServiceExternalService,
-    private readonly orderItemService:OrderItemService,
-    private readonly outletExternalService:OutletExternalService,
+    private readonly orderItemService: OrderItemService,
+    private readonly outletExternalService: OutletExternalService,
     @Inject(forwardRef(() => AppointmentService))
     private readonly appointmentService: AppointmentService,
-    private readonly appointmentRepository:AppointmentRepository,
-    private readonly clientOrderService:ClientOrderService
+    private readonly appointmentRepository: AppointmentRepository,
+    private readonly clientOrderService: ClientOrderService,
   ) {}
 
   /*This method processes each orderItem from the provided list, retrieves the corresponding service details using serviceExternalService, and constructs an expanded order item with the service details, quantity, outlet ID, and notes.
@@ -137,10 +140,10 @@ export class OrderService {
     customerDecoratorDto: CustomerDecoratorDto,
   ): Promise<OrderResponseDto> {
     const { customerId } = customerDecoratorDto;
-    const {startTime} = createOrderDto
+    const { startTime } = createOrderDto;
     const currentTime = new Date();
-    if(new Date(startTime)<currentTime){
-      throw new Error("start time shouldn't be in the past")
+    if (new Date(startTime) < currentTime) {
+      throw new Error("start time shouldn't be in the past");
     }
     // Expand the orderItem payload to include service details
     const expandedOrderItems = await this.expandOrderItem(
@@ -177,7 +180,12 @@ export class OrderService {
       await this.saveOrderItems(transactionManager.manager, orderItemInstances); // Save the order items in the transaction
 
       // create appointment
-      const appointment = await this.createAppointment(order,createOrderDto.orderItems,createOrderDto.startTime,createOrderDto.endTime)
+      const appointment = await this.createAppointment(
+        order,
+        createOrderDto.orderItems,
+        createOrderDto.startTime,
+        createOrderDto.endTime,
+      );
 
       // Commit the transaction
       await transactionManager.commitTransaction();
@@ -212,12 +220,15 @@ export class OrderService {
     order: OrderEntity,
     orderItemsPayload: OrderItemPayloadDto[],
     startTime: Date,
-    providedEndTime:Date,
+    providedEndTime: Date,
   ): Promise<AppointmentEntity> {
     //converting providedEndTime from string to Date type
 
-    const providedTime = new Date(providedEndTime)
-    const calculatedEndTime = await this.calculateEndTime(orderItemsPayload, startTime);
+    const providedTime = new Date(providedEndTime);
+    const calculatedEndTime = await this.calculateEndTime(
+      orderItemsPayload,
+      startTime,
+    );
 
     const createAppointmentDto = new CreateAppointmentDto();
     createAppointmentDto.customerId = order.customerId;
@@ -228,18 +239,21 @@ export class OrderService {
       createAppointmentDto.endTime = calculatedEndTime;
     } else {
       console.warn(
-        `End time mismatch. Using calculated end time. Request payload: ${providedEndTime}, Calculated: ${calculatedEndTime}`
+        `End time mismatch. Using calculated end time. Request payload: ${providedEndTime}, Calculated: ${calculatedEndTime}`,
       );
       createAppointmentDto.endTime = calculatedEndTime;
-    }    
+    }
     const appointment =
       await this.appointmentService.createAppointment(createAppointmentDto);
     return appointment;
   }
 
-  private isEndTimeMatching(providedEndTime: Date, calculatedEndTime: Date): boolean {
+  private isEndTimeMatching(
+    providedEndTime: Date,
+    calculatedEndTime: Date,
+  ): boolean {
     return providedEndTime.getTime() === calculatedEndTime.getTime();
-  }  
+  }
 
   //This method saves the order items to the database within a transactional context.
   private async saveOrderItems(
@@ -284,89 +298,114 @@ export class OrderService {
   async getEndTime(startTime: Date, orderId: number): Promise<Date> {
     // Step 1: Get the total duration using getOrderFulfillmentDuration
     const totalDuration = await this.getOrderFulfillmentDuration(orderId);
-    const endTime = new Date(startTime.getTime() + totalDuration * 60000); 
+    const endTime = new Date(startTime.getTime() + totalDuration * 60000);
     // Step 2: Return the calculated end time
     return endTime;
   }
-  
+
   async getOrderFulfillmentDuration(orderId: number): Promise<number> {
     // Step 1: Get all order items associated with the orderId
-    const orderItems = await this.orderItemService.getAllOrderItemsByOrderId(orderId);
-  
+    const orderItems =
+      await this.orderItemService.getAllOrderItemsByOrderId(orderId);
+
     // Step 2: Calculate the total duration by iterating over order items and fetching service details
     let totalDuration = 0;
-  
+
     for (const item of orderItems) {
       try {
         // Step 3: Fetch the service details for the item using getServiceByServiceAndOutletIdOrThrow
-        const service = await this.serviceExternalService.getServiceByIdOrThrow(item.serviceId)
+        const service = await this.serviceExternalService.getServiceByIdOrThrow(
+          item.serviceId,
+        );
         totalDuration += service.timeTaken * item.quantity;
       } catch (error) {
         // Handle error, maybe log it, and decide if you want to continue or throw
-        console.error(`Error fetching service for serviceId: ${item.serviceId}`);
+        console.error(
+          `Error fetching service for serviceId: ${item.serviceId}`,
+        );
         // Continue to the next item if error occurs
       }
     }
-  
+
     // Step 5: Return the total duration in minutes
     return totalDuration;
   }
 
   // summarises the order details
-  async getOrderSummaryByOrderIdOrThrow(orderId: number,customerId:number): Promise<OrderSummaryDto> {
+  async getOrderSummaryByOrderIdOrThrow(
+    orderId: number,
+    customerId: number,
+  ): Promise<OrderSummaryDto> {
     // Fetch core details: order and outlet
-    const order = await this.getOrderByOrderAndCustomerIdOrThrow(orderId,customerId);
-    const outlet = await this.outletExternalService.getOutletById(order.outletId);
-    
+    const order = await this.getOrderByOrderAndCustomerIdOrThrow(
+      orderId,
+      customerId,
+    );
+    const outlet = await this.outletExternalService.getOutletById(
+      order.outletId,
+    );
+
     // Fetch order items with necessary details (avoid circular reference by fetching services separately)
     const orderItems = await this.getOrderItemsWithRequiredDetails(orderId);
-  
+
     // Calculate item total
     const itemTotal = this.calculateItemTotal(orderItems);
-  
+
     // Return constructed response with necessary details
-    return this.constructOrderSummaryResponse(order, outlet.name, orderItems, itemTotal);
-  }    
-  
+    return this.constructOrderSummaryResponse(
+      order,
+      outlet.name,
+      orderItems,
+      itemTotal,
+    );
+  }
+
   //fetches the order details by orderId
-  async getOrderByOrderAndCustomerIdOrThrow(orderId: number,customerId): Promise<OrderEntity> {
-    console.log("hello I'm getOrderByIdOrThrow method")
+  async getOrderByOrderAndCustomerIdOrThrow(
+    orderId: number,
+    customerId,
+  ): Promise<OrderEntity> {
+    console.log("hello I'm getOrderByIdOrThrow method");
     const order = await this.orderRepository.getRepository().findOne({
-      where: { orderId: orderId, customerId:customerId }
+      where: { orderId: orderId, customerId: customerId },
     });
     if (!order) {
       throw new Error(`Order with ID ${orderId} not found.`);
     }
     return order;
   }
-  
-  
-  private async getOrderItemsWithRequiredDetails(orderId: number): Promise<OrderItemSummaryDto[]> {
-    const orderItems = await this.orderItemService.getAllOrderItemsByOrderId(orderId);
-  
+
+  private async getOrderItemsWithRequiredDetails(
+    orderId: number,
+  ): Promise<OrderItemSummaryDto[]> {
+    const orderItems =
+      await this.orderItemService.getAllOrderItemsByOrderId(orderId);
+
     // Manually map orderItems to DTOs
     return Promise.all(
       orderItems.map(async (item) => {
-        const service = await this.serviceExternalService.getServiceByIdOrThrow(item.serviceId);
+        const service = await this.serviceExternalService.getServiceByIdOrThrow(
+          item.serviceId,
+        );
         return {
           name: service.serviceName,
           quantity: item.quantity,
           unitPrice: service.price,
           totalPrice: service.price * item.quantity,
         };
-      })
+      }),
     );
   }
-  
+
   private calculateItemTotal(items: { totalPrice: number }[]): number {
     return items.reduce((sum, item) => sum + item.totalPrice, 0);
   }
-  
+
   private constructOrderSummaryResponse(
     order: OrderEntity,
     outletName: string,
     items: OrderItemSummaryDto[],
-    itemTotal: number
+    itemTotal: number,
   ): OrderSummaryDto {
     return {
       orderId: order.orderId.toString(),
@@ -376,25 +415,34 @@ export class OrderService {
       itemTotal,
       grandTotal: itemTotal,
     };
-  }  
-  
-  async getOrderByIdOrThrow(orderId:number){
-    return await this.orderRepository.getRepository().findOne({where:{orderId}})
+  }
+
+  async getOrderByIdOrThrow(orderId: number): Promise<OrderEntity> {
+    return await this.orderRepository
+      .getRepository()
+      .findOne({ where: { orderId } });
   }
 
   async getUpcomingOrdersForCustomer(
-    customerId:number,
-):Promise<OrderResponseInterface[]>{
+    customerId: number,
+  ): Promise<OrderResponseInterface[]> {
     // Fetch upcoming orders based on the startTime from AppointmentEntity
-    const upcomingOrders: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrdersForCustomer(customerId);
+    const upcomingOrders: OrderDetailsInterface[] =
+      await this.appointmentRepository.getUpcomingOrdersForCustomer(customerId);
 
     // Extract unique serviceIds
-    const serviceIds = [...new Set(upcomingOrders.map(order => order.serviceId))];
+    const serviceIds = [
+      ...new Set(upcomingOrders.map((order) => order.serviceId)),
+    ];
 
     // Fetch services by serviceIds
-    const services = await this.serviceExternalService.getServicesByServiceIds(serviceIds);
+    const services =
+      await this.serviceExternalService.getServicesByServiceIds(serviceIds);
 
     // Format the results into the desired structure
-    return this.clientOrderService.formatOrderResponse(upcomingOrders, services);
+    return this.clientOrderService.formatOrderResponse(
+      upcomingOrders,
+      services,
+    );
+  }
 }
-}  

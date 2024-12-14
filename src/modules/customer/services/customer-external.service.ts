@@ -51,11 +51,11 @@ export class CustomerExternalService {
     return this.customerService.getCustomerByEmailOrContactNumber(username);
   }
 
-  async updatePassword(username: string, password: string) {
+  async updatePassword(username: string, password: string): Promise<void> {
     await this.customerService.updatePassword(username, password);
   }
 
-  async getCustomerByIdOrThrow(customerId:number){
+  async getCustomerByIdOrThrow(customerId: number): Promise<CustomerEntity> {
     return this.customerService.getCustomerByIdOrThrow(customerId);
   }
 }

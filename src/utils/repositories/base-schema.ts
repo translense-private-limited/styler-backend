@@ -4,7 +4,7 @@ import { PagerResultInterface } from '../response/interfaces/pager-result.interf
 import { PagerOptionsInterface } from '../response/interfaces/pager-options.interface';
 
 export class BaseSchema<T extends Document> {
-  constructor(protected baseModel: Model<T>) { }
+  constructor(protected baseModel: Model<T>) {}
 
   DEFAULT_PER_PAGE = 10;
   DEFAULT_PAGE_NUMBER = 1;
@@ -38,7 +38,7 @@ export class BaseSchema<T extends Document> {
     return { data, pagerOptions };
   }
 
-  getRepository() {
+  getRepository(): Model<T> {
     return this.baseModel; // This returns the Mongoose model
   }
 }

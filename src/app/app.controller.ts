@@ -1,11 +1,4 @@
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  HttpStatus,
-  Logger,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Logger, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 
 import { Public } from '@src/utils/decorators/public.decorator';
@@ -18,7 +11,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('/heartbeat')
-  getHeartbeat() {
+  getHeartbeat(): Object {
     return {
       status: 'OK',
       message: 'Service is up and running....',
@@ -27,26 +20,26 @@ export class AppController {
   }
 
   @Get('/')
-  root(@Res() res: Response) {
-    return this.appService.renderIndex(res); 
+  root(@Res() res: Response): void {
+    return this.appService.renderIndex(res);
   }
 
-  @Get('/pagination')
-  getAllOutlet() {
-    const pagerDto = {
-      pageNumber: 1,
-      pageSize: 5,
-    };
-    const data = [];
-    return {
-      status: HttpStatus.ACCEPTED,
-      data,
-      pagination: pagerDto,
-    };
-  }
+  // @Get('/pagination')
+  // getAllOutlet() {
+  //   const pagerDto = {
+  //     pageNumber: 1,
+  //     pageSize: 5,
+  //   };
+  //   const data = [];
+  //   return {
+  //     status: HttpStatus.ACCEPTED,
+  //     data,
+  //     pagination: pagerDto,
+  //   };
+  // }
 
-  @Get('/error')
-  getError() {
-    throw new BadRequestException('invalid email');
-  }
+  // @Get('/error')
+  // getError() {
+  //   throw new BadRequestException('invalid email');
+  // }
 }

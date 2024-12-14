@@ -7,7 +7,7 @@ import { Response } from 'express'; // Import Response from express
 
 @Injectable()
 export class AppService {
-  constructor(private envService: EnvService) { }
+  constructor(private envService: EnvService) {}
   async getHello(): Promise<string> {
     const appConfig = this.envService.getEnvValue<AppConfigInterface>(
       EnvNamespaceEnum.APP_CONFIG,
@@ -15,9 +15,9 @@ export class AppService {
     return `Translense Server up and running at port ${appConfig.port}`;
   }
 
-  renderIndex(res: Response) {
+  renderIndex(res: Response): void {
     // Resolve the path for index.html from the current directory
-    const indexPath = path.join(process.cwd(),'..', 'public', 'index.html');
+    const indexPath = path.join(process.cwd(), '..', 'public', 'index.html');
     return res.sendFile(indexPath);
   }
 }

@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'; // Import the UUID library
 
 @Injectable()
 export class RequestIdMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
+  use(req: Request, res: Response, next: NextFunction): void {
     // Generate a unique request ID
     const requestId = uuidv4();
 
