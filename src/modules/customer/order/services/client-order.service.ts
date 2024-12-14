@@ -138,8 +138,8 @@ private formatServiceDetails(
     clientId: number, 
     dateRange:OrderFilterDto
   ): Promise<OrderResponseInterface[]> {
-    const client = await this.clientExternalService.getClientById(clientId);
-    const outletId = client.outletId;
+    // const client = await this.clientExternalService.getClientById(clientId);
+    // const outletId = client.outletId;
     
     const {startTime,endTime} = dateRange;
     const currentTime = new Date();
