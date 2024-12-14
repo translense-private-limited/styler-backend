@@ -445,4 +445,20 @@ export class OrderService {
       services,
     );
   }
+
+  async getOrderHistoryForCustomer(
+    customerId: number,
+  ): Promise<OrderResponseInterface[]> {
+
+    const pastOrders: OrderDetailsInterface[] = await this.appointmentRepository.getOrderHistoryForCustomer(customerId);
+    // Extract unique serviceIds
+    const serviceIds = [...new Set(pastOrders.map((order) => order.serviceId))];
+
+    // Fetch services by serviceIds
+    const services =
+      await this.serviceExternalService.getServicesByServiceIds(serviceIds);
+
+    // Format the results into the desired structure
+    return this.clientOrderService.formatOrderResponse(pastOrders, services);
+  }
 }

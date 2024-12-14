@@ -26,7 +26,7 @@ export class ClientOrderController {
     @Query() dateRange:OrderFilterDto,
     @Param('clientId') clientId:number
   ):Promise<OrderResponseInterface[]>{
-    return this.clientOrderService.getAllOrderHistory(clientId,dateRange)
+    return this.clientOrderService.getAllOrderHistoryForClient(clientId,dateRange)
   }
 
   @Get('/:clientId/upcoming-orders')
@@ -35,7 +35,7 @@ export class ClientOrderController {
     @Query() dateRange:OrderFilterDto,
     @Param('clientId') clientId:number,
   ):Promise<OrderResponseInterface[]>{
-      return this.clientOrderService.getUpcomingOrders(clientId,dateRange)
+      return this.clientOrderService.getUpcomingOrdersForClient(clientId,dateRange)
   }
 
   @Put('/:clientId/order/:orderId')
