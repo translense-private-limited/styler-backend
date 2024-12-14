@@ -132,6 +132,11 @@ export class OrderService {
     customerDecoratorDto: CustomerDecoratorDto,
   ): Promise<OrderResponseDto> {
     const { customerId } = customerDecoratorDto;
+    const {startTime} = createOrderDto
+    const currentTime = new Date();
+    if(new Date(startTime)<currentTime){
+      throw new Error("start time shouldn't be in the past")
+    }
     // Expand the orderItem payload to include service details
     const expandedOrderItems = await this.expandOrderItem(
       createOrderDto.orderItems,
