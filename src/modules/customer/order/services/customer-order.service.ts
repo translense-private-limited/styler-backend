@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ClientOrdersService } from "./client-order.service";
 import { OrderFilterDto } from "../dtos/order-filter.dto";
-import { OrderDetailsInterface } from "../interfaces/client-orders.interface";
+import { OrderDetailsInterface, OrderResponseInterface } from "../interfaces/client-orders.interface";
 import { AppointmentRepository } from "../repositories/appointment.repository";
 import { ServiceExternalService } from "@modules/client/services/services/service-external.service";
 
@@ -16,7 +16,7 @@ export class CustomerOrderService{
     async getUpcomingOrders(
         customerId:number,
         dateRange:OrderFilterDto
-    ){
+    ):Promise<OrderResponseInterface[]>{
         const {startTime,endTime} = dateRange;
         const currentTime = new Date();
         if (startTime > endTime) {
