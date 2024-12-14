@@ -1,4 +1,4 @@
-import { Injectable,  } from '@nestjs/common';
+import { forwardRef, Inject, Injectable,  } from '@nestjs/common';
 import { AppointmentRepository } from '../repositories/appointment.repository';
 import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
 import { OrderRepository } from '../repositories/order.repository';
@@ -18,13 +18,14 @@ import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 
 @Injectable()
-export class ClientOrdersService {
+export class ClientOrderService {
   constructor(
     private readonly appointmentRepository:AppointmentRepository,
     private readonly serviceExternalService:ServiceExternalService,
     private readonly orderRepository:OrderRepository,
     private readonly orderItemService:OrderItemService,
     private readonly appointmentService:AppointmentService,
+    @Inject(forwardRef(() => OrderService))
     private readonly orderService:OrderService,
     private readonly clientExternalService:ClientExternalService
   ) {}

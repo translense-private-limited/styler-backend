@@ -113,20 +113,17 @@ async getUpcomingOrders(
   return upcomingOrders;
  }
 
- async getCustomerUpcomingOrders(
+ async getUpcomingOrdersForCustomer(
   customerId:number,
-  bufferTime: Date,
-  endTime: Date
 ): Promise<OrderDetailsInterface[]> {
   const queryBuilder = this.getRepository().createQueryBuilder('a')
     .innerJoin('orders', 'o', 'a.orderId = o.orderId')
     .leftJoin('order_items', 'oi', 'o.orderId = oi.orderId')
     .innerJoin('customers', 'c', 'o.customerId = c.id')
     .where('a.customerId = :customerId', { customerId })
-    .andWhere('a.startTime BETWEEN :bufferTime AND :endTime', { bufferTime, endTime })
     .andWhere('a.status = :status', { status: BookingStatusEnum.CONFIRMED });
 
-  const upcomingOrders: OrderDetailsInterface[] = await queryBuilder.select([
+  const upcomingOrdersForCustomer: OrderDetailsInterface[] = await queryBuilder.select([
     'a.appointmentId AS appointmentId',
     'a.startTime AS startTime',
     'a.endTime AS endTime',
@@ -145,6 +142,6 @@ async getUpcomingOrders(
     'c.email AS customerEmail',
   ]).getRawMany();
 
-  return upcomingOrders;
+  return upcomingOrdersForCustomer;
  }
 }

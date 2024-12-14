@@ -15,11 +15,9 @@ import { AppointmentService } from './services/appointment.service';
 import { AppointmentEntity } from './entities/appointment.entity';
 import { AppointmentController } from './controllers/appoitment.controller';
 import { ClientOrderController } from './controllers/client-order.controller';
-import { ClientOrdersService } from './services/client-order.service';
+import { ClientOrderService } from './services/client-order.service';
 import { CustomerModule } from '../customer.module';
 import { ClientModule } from '@modules/client/client/client.module';
-import { CustomerOrderController } from './controllers/customer-order.controller';
-import { CustomerOrderService } from './services/customer-order.service';
 
 @Module({
   imports: [
@@ -32,7 +30,7 @@ import { CustomerOrderService } from './services/customer-order.service';
     forwardRef(()=>CustomerModule),
     ClientModule
   ],
-  controllers: [OrderController,AppointmentController,ClientOrderController,CustomerOrderController],
+  controllers: [OrderController,AppointmentController,ClientOrderController],
   providers: [
     OrderService,
     OrderRepository,
@@ -40,9 +38,8 @@ import { CustomerOrderService } from './services/customer-order.service';
     OrderItemService,
     AppointmentRepository,
     AppointmentService,
-    ClientOrdersService,
-    CustomerOrderService
-  ],
+    ClientOrderService,
+    ],
   exports: [],
 })
 export class OrderModule {}
