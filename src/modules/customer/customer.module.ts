@@ -17,6 +17,6 @@ import { OrderModule } from './order/order.module';
   ],
   controllers: [],
   providers: [CustomerService, CustomerExternalService, CustomerRepository],
-  exports: [CustomerExternalService],
+  exports: [CustomerExternalService,CustomerRepository],
 })
 export class CustomerModule {}

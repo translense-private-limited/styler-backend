@@ -26,7 +26,7 @@ export class SeedAdminData {
                 },
                 {
                     name: 'ADMIN',
-                    email: 'Admin@translense.com',
+                    email: 'admin@translense.com',
                     password: '$2b$12$7ExBjna610jcXFIi1Rf1Su/vm5K7nCVdEFfzhY8dv6M.upac.fnQ2',
                     contactNumber: 9876543210,
                     roleId: 2, 
