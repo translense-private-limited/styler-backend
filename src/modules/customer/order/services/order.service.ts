@@ -23,6 +23,9 @@ import { OrderItemService } from './order-item.service';
 import { OrderSummaryDto } from '../dtos/order-summary.dto';
 import { OutletExternalService } from '@modules/client/outlet/services/outlet-external.service';
 import { OrderItemSummaryDto } from '../dtos/order-item-summary.dto';
+import { OrderDetailsInterface, OrderResponseInterface } from '../interfaces/client-orders.interface';
+import { AppointmentRepository } from '../repositories/appointment.repository';
+import { ClientOrderService } from './client-order.service';
 
 @Injectable()
 export class OrderService {
@@ -33,6 +36,8 @@ export class OrderService {
     private readonly outletExternalService:OutletExternalService,
     @Inject(forwardRef(() => AppointmentService))
     private readonly appointmentService: AppointmentService,
+    private readonly appointmentRepository:AppointmentRepository,
+    private readonly clientOrderService:ClientOrderService
   ) {}
 
   /*This method processes each orderItem from the provided list, retrieves the corresponding service details using serviceExternalService, and constructs an expanded order item with the service details, quantity, outlet ID, and notes.
@@ -376,4 +381,20 @@ export class OrderService {
   async getOrderByIdOrThrow(orderId:number){
     return await this.orderRepository.getRepository().findOne({where:{orderId}})
   }
+
+  async getUpcomingOrdersForCustomer(
+    customerId:number,
+):Promise<OrderResponseInterface[]>{
+    // Fetch upcoming orders based on the startTime from AppointmentEntity
+    const upcomingOrders: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrdersForCustomer(customerId);
+
+    // Extract unique serviceIds
+    const serviceIds = [...new Set(upcomingOrders.map(order => order.serviceId))];
+
+    // Fetch services by serviceIds
+    const services = await this.serviceExternalService.getServicesByServiceIds(serviceIds);
+
+    // Format the results into the desired structure
+    return this.clientOrderService.formatOrderResponse(upcomingOrders, services);
+}
 }  

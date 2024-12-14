@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
-import { ClientOrdersService } from '../services/client-order.service';
+import { ClientOrderService } from '../services/client-order.service';
 import { OrderResponseInterface } from '../interfaces/client-orders.interface';
 import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
@@ -10,7 +10,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Client/Orders')
 @Controller('client')
 export class ClientOrderController {
-  constructor(private readonly clientOrderService: ClientOrdersService) {}
+  constructor(private readonly clientOrderService: ClientOrderService) {}
 
   @Get('/:clientId/open-orders')
   async getAllOpenOrders(

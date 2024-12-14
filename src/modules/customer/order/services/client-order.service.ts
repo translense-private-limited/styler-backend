@@ -1,4 +1,4 @@
-import { Injectable,  } from '@nestjs/common';
+import { forwardRef, Inject, Injectable,  } from '@nestjs/common';
 import { AppointmentRepository } from '../repositories/appointment.repository';
 import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
 import { OrderRepository } from '../repositories/order.repository';
@@ -18,13 +18,14 @@ import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 
 @Injectable()
-export class ClientOrdersService {
+export class ClientOrderService {
   constructor(
     private readonly appointmentRepository:AppointmentRepository,
     private readonly serviceExternalService:ServiceExternalService,
     private readonly orderRepository:OrderRepository,
     private readonly orderItemService:OrderItemService,
     private readonly appointmentService:AppointmentService,
+    @Inject(forwardRef(() => OrderService))
     private readonly orderService:OrderService,
     private readonly clientExternalService:ClientExternalService
   ) {}
@@ -45,7 +46,7 @@ export class ClientOrdersService {
     return this.formatOrderResponse(openOrders, services);
 }
 
-private formatOrderResponse(
+formatOrderResponse(
   openOrders: OrderDetailsInterface[],
   services: ServiceSchema[]
 ): OrderResponseInterface[] {
@@ -116,7 +117,7 @@ private formatServiceDetails(
     if (startTime > endTime) {
       throw new Error("Start time cannot be later than end time.");
     }
-    if (endTime > currentTime) {
+    if (new Date(endTime) > currentTime) {
       throw new Error("End time should be in the past.");
     }
 
@@ -143,7 +144,7 @@ private formatServiceDetails(
     if (startTime > endTime) {
       throw new Error("Start time cannot be later than end time.");
     }
-    if (startTime < currentTime) {
+    if (new Date(startTime) < currentTime) {
       throw new Error("Start time cannot be in the past.");
     }
     const bufferTime = new Date(new Date(startTime).getTime() - 30 * 60 * 1000);
