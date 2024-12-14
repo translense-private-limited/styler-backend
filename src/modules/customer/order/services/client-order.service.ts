@@ -45,7 +45,7 @@ export class ClientOrdersService {
     return this.formatOrderResponse(openOrders, services);
 }
 
-private formatOrderResponse(
+formatOrderResponse(
   openOrders: OrderDetailsInterface[],
   services: ServiceSchema[]
 ): OrderResponseInterface[] {
@@ -116,7 +116,7 @@ private formatServiceDetails(
     if (startTime > endTime) {
       throw new Error("Start time cannot be later than end time.");
     }
-    if (endTime > currentTime) {
+    if (new Date(endTime) > currentTime) {
       throw new Error("End time should be in the past.");
     }
 
@@ -143,7 +143,7 @@ private formatServiceDetails(
     if (startTime > endTime) {
       throw new Error("Start time cannot be later than end time.");
     }
-    if (startTime < currentTime) {
+    if (new Date(startTime) < currentTime) {
       throw new Error("Start time cannot be in the past.");
     }
     const bufferTime = new Date(new Date(startTime).getTime() - 30 * 60 * 1000);

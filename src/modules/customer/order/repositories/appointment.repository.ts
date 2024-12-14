@@ -112,4 +112,39 @@ async getUpcomingOrders(
 
   return upcomingOrders;
  }
+
+ async getCustomerUpcomingOrders(
+  customerId:number,
+  bufferTime: Date,
+  endTime: Date
+): Promise<OrderDetailsInterface[]> {
+  const queryBuilder = this.getRepository().createQueryBuilder('a')
+    .innerJoin('orders', 'o', 'a.orderId = o.orderId')
+    .leftJoin('order_items', 'oi', 'o.orderId = oi.orderId')
+    .innerJoin('customers', 'c', 'o.customerId = c.id')
+    .where('a.customerId = :customerId', { customerId })
+    .andWhere('a.startTime BETWEEN :bufferTime AND :endTime', { bufferTime, endTime })
+    .andWhere('a.status = :status', { status: BookingStatusEnum.CONFIRMED });
+
+  const upcomingOrders: OrderDetailsInterface[] = await queryBuilder.select([
+    'a.appointmentId AS appointmentId',
+    'a.startTime AS startTime',
+    'a.endTime AS endTime',
+    'a.status AS status',    
+    'o.orderId AS orderId',
+    'o.updatedAt AS updatedAt',
+    'o.amountPaid AS amountPaid',
+    'o.status AS orderStatus',
+    'oi.serviceId AS serviceId',
+    'oi.quantity AS quantity',
+    'oi.discount AS discount',
+    'oi.notes AS notes',
+    'c.id AS customerId',
+    'c.name AS customerName',
+    'c.contactNumber AS customerContact',
+    'c.email AS customerEmail',
+  ]).getRawMany();
+
+  return upcomingOrders;
+ }
 }

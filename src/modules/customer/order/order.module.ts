@@ -18,6 +18,8 @@ import { ClientOrderController } from './controllers/client-order.controller';
 import { ClientOrdersService } from './services/client-order.service';
 import { CustomerModule } from '../customer.module';
 import { ClientModule } from '@modules/client/client/client.module';
+import { CustomerOrderController } from './controllers/customer-order.controller';
+import { CustomerOrderService } from './services/customer-order.service';
 
 @Module({
   imports: [
@@ -30,7 +32,7 @@ import { ClientModule } from '@modules/client/client/client.module';
     forwardRef(()=>CustomerModule),
     ClientModule
   ],
-  controllers: [OrderController,AppointmentController,ClientOrderController],
+  controllers: [OrderController,AppointmentController,ClientOrderController,CustomerOrderController],
   providers: [
     OrderService,
     OrderRepository,
@@ -38,7 +40,8 @@ import { ClientModule } from '@modules/client/client/client.module';
     OrderItemService,
     AppointmentRepository,
     AppointmentService,
-    ClientOrdersService
+    ClientOrdersService,
+    CustomerOrderService
   ],
   exports: [],
 })
