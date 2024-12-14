@@ -36,5 +36,12 @@ export class OrderController {
         console.log(customerId);
         return this.orderService.getUpcomingOrdersForCustomer(customerId);
     }
+
+  @Get('order/:customerId/orders')
+  async getOrderHistoryForCustomer(
+    @Param('customerId') customerId:number
+  ):Promise<OrderResponseInterface[]>{
+      return this.orderService.getOrderHistoryForCustomer(customerId)
+  }
 }
 

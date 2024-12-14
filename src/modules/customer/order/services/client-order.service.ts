@@ -106,7 +106,7 @@ private formatServiceDetails(
   } as ServiceDetailsInterface;
 }
 
-  async getAllOrderHistory(
+  async getAllOrderHistoryForClient(
     clientId: number,
     dateRange: OrderFilterDto
   ): Promise<OrderResponseInterface[]> {
@@ -121,7 +121,7 @@ private formatServiceDetails(
       throw new Error("End time should be in the past.");
     }
 
-    const pastOrders: OrderDetailsInterface[] = await this.appointmentRepository.getOrderHistory(outletId,startTime,endTime);
+    const pastOrders: OrderDetailsInterface[] = await this.appointmentRepository.getOrderHistoryForClient(outletId,startTime,endTime);
     // Extract unique serviceIds
     const serviceIds = [...new Set(pastOrders.map(order => order.serviceId))];
 
@@ -134,7 +134,7 @@ private formatServiceDetails(
   }
 
 
-  async getUpcomingOrders(
+  async getUpcomingOrdersForClient(
     clientId: number, 
     dateRange:OrderFilterDto
   ): Promise<OrderResponseInterface[]> {
@@ -149,16 +149,16 @@ private formatServiceDetails(
     }
     const bufferTime = new Date(new Date(startTime).getTime() - 30 * 60 * 1000);
     // Fetch upcoming orders based on the startTime from AppointmentEntity
-    const upcomingOrders: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrders(outletId,bufferTime,endTime);
+    const upcomingOrdersForClient: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrdersForClient(outletId,bufferTime,endTime);
 
     // Extract unique serviceIds
-    const serviceIds = [...new Set(upcomingOrders.map(order => order.serviceId))];
+    const serviceIds = [...new Set(upcomingOrdersForClient.map(order => order.serviceId))];
 
     // Fetch services by serviceIds
     const services = await this.serviceExternalService.getServicesByServiceIds(serviceIds);
 
     // Format the results into the desired structure
-    return this.formatOrderResponse(upcomingOrders, services);
+    return this.formatOrderResponse(upcomingOrdersForClient, services);
   }
 
   async confirmOrder(
