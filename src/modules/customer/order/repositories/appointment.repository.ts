@@ -44,7 +44,7 @@ export class AppointmentRepository extends BaseRepository<AppointmentEntity> {
   }
 
   async getOrderHistory(
-    clientId: number,
+    outletId:number,
     startTime: Date,
     endTime: Date
   ): Promise<OrderDetailsInterface[]> {
@@ -53,7 +53,7 @@ export class AppointmentRepository extends BaseRepository<AppointmentEntity> {
       .leftJoin('order_items', 'oi', 'o.OrderId = oi.orderId')
       .innerJoin('customers', 'c', 'o.customerId = c.id')
       .where('a.status != :status', { status: BookingStatusEnum.PENDING }) 
-      .andWhere('c.id = :clientId', { clientId })
+      .andWhere('a.outletId = :outletId', { outletId })
       .andWhere('a.startTime BETWEEN :startTime AND :endTime', { startTime, endTime });
 
     const pastOrders: OrderDetailsInterface[] = await queryBuilder.select([
