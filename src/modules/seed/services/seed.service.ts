@@ -4,6 +4,7 @@ import { SeedOutletData } from '../data/outlets.data';
 import { SeedRoleData } from '../data/roles.data';
 import { SeedCategoryData } from '../data/category.data';
 import { SeedAdminData } from '../data/admin.data';
+import { SeedCustomerData } from '../data/customer.data';
 
 @Injectable()
 export class SeedService {
@@ -13,6 +14,7 @@ export class SeedService {
     private readonly seedRoleData: SeedRoleData,
     private readonly seedCategoryData: SeedCategoryData,
     private readonly seedAdminData: SeedAdminData,
+    private readonly seedCustomerData:SeedCustomerData
   ) {}
 
   async seedMySQL(): Promise<void> {
@@ -23,6 +25,7 @@ export class SeedService {
       await this.seedOutletData.seedOutlets();
       await this.seedRoleData.seedRoles();
       await this.seedAdminData.seedAdmins();
+      await this.seedCustomerData.seedCustomers();
 
       console.log('Mysql seeding completed successfully');
       return;
