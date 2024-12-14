@@ -138,9 +138,8 @@ private formatServiceDetails(
     clientId: number, 
     dateRange:OrderFilterDto
   ): Promise<OrderResponseInterface[]> {
-    // const client = await this.clientExternalService.getClientById(clientId);
-    // const outletId = client.outletId;
-    
+    const client = await this.clientExternalService.getClientById(clientId);
+    const outletId = client.outletId;
     const {startTime,endTime} = dateRange;
     const currentTime = new Date();
     if (startTime > endTime) {
@@ -151,7 +150,7 @@ private formatServiceDetails(
     }
     const bufferTime = new Date(new Date(startTime).getTime() - 30 * 60 * 1000);
     // Fetch upcoming orders based on the startTime from AppointmentEntity
-    const upcomingOrders: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrders(clientId,bufferTime,endTime);
+    const upcomingOrders: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrders(outletId,bufferTime,endTime);
 
     // Extract unique serviceIds
     const serviceIds = [...new Set(upcomingOrders.map(order => order.serviceId))];

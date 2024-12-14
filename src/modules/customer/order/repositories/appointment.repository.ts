@@ -79,15 +79,15 @@ export class AppointmentRepository extends BaseRepository<AppointmentEntity> {
   }
 
 async getUpcomingOrders(
-  clientId: number,
+  outletId:number,
   bufferTime: Date,
   endTime: Date
 ): Promise<OrderDetailsInterface[]> {
   const queryBuilder = this.getRepository().createQueryBuilder('a')
-    .innerJoin('orders', 'o', 'a.orderId = o.OrderId')
-    .leftJoin('order_items', 'oi', 'o.OrderId = oi.orderId')
+    .innerJoin('orders', 'o', 'a.orderId = o.orderId')
+    .leftJoin('order_items', 'oi', 'o.orderId = oi.orderId')
     .innerJoin('customers', 'c', 'o.customerId = c.id')
-    .where('o.customerId = :clientId', { clientId })
+    .where('a.outletId = :outletId', { outletId })
     .andWhere('a.startTime BETWEEN :bufferTime AND :endTime', { bufferTime, endTime })
     .andWhere('a.status = :status', { status: BookingStatusEnum.CONFIRMED });
 
