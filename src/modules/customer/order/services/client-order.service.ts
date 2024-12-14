@@ -30,8 +30,7 @@ export class ClientOrdersService {
   ) {}
 
   async getAllOpenOrders(clientId: number): Promise<OrderResponseInterface[]> {
-    const client = await this.clientExternalService.getClientById(clientId);
-    const outletId = client.outletId;
+    const outletId = await this.getClientOutletIdByClientId(clientId)
 
     // Fetch raw results from the database
     const openOrders:OrderDetailsInterface[] = await this.appointmentRepository.getAllOpenOrders(clientId,outletId)
@@ -110,7 +109,7 @@ private formatServiceDetails(
     clientId: number,
     dateRange: OrderFilterDto
   ): Promise<OrderResponseInterface[]> {
-
+    const outletId = await this.getClientOutletIdByClientId(clientId)
     const {startTime,endTime} = dateRange;
     const currentTime = new Date();
 
@@ -121,7 +120,7 @@ private formatServiceDetails(
       throw new Error("End time should be in the past.");
     }
 
-    const pastOrders: OrderDetailsInterface[] = await this.appointmentRepository.getOrderHistory(clientId,startTime,endTime);
+    const pastOrders: OrderDetailsInterface[] = await this.appointmentRepository.getOrderHistory(outletId,startTime,endTime);
     // Extract unique serviceIds
     const serviceIds = [...new Set(pastOrders.map(order => order.serviceId))];
 
@@ -138,9 +137,7 @@ private formatServiceDetails(
     clientId: number, 
     dateRange:OrderFilterDto
   ): Promise<OrderResponseInterface[]> {
-    // const client = await this.clientExternalService.getClientById(clientId);
-    // const outletId = client.outletId;
-    
+    const outletId = await this.getClientOutletIdByClientId(clientId);
     const {startTime,endTime} = dateRange;
     const currentTime = new Date();
     if (startTime > endTime) {
@@ -151,7 +148,7 @@ private formatServiceDetails(
     }
     const bufferTime = new Date(new Date(startTime).getTime() - 30 * 60 * 1000);
     // Fetch upcoming orders based on the startTime from AppointmentEntity
-    const upcomingOrders: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrders(clientId,bufferTime,endTime);
+    const upcomingOrders: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrders(outletId,bufferTime,endTime);
 
     // Extract unique serviceIds
     const serviceIds = [...new Set(upcomingOrders.map(order => order.serviceId))];
@@ -251,7 +248,12 @@ private formatServiceDetails(
   
     appointment.status = BookingStatusEnum.CONFIRMED;
     await queryRunner.manager.save(appointment);
-  }    
+  }
+  
+  private async getClientOutletIdByClientId(clientId:number){
+    const client = await this.clientExternalService.getClientById(clientId)
+    return client.outletId;
+  }
   
 }
 
