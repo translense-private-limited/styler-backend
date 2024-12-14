@@ -115,7 +115,7 @@ export class ClientOrderService {
     } as ServiceDetailsInterface;
   }
 
-  async getAllOrderHistory(
+  async getAllOrderHistoryForClient(
     clientId: number,
     dateRange: OrderFilterDto,
   ): Promise<OrderResponseInterface[]> {
@@ -131,7 +131,7 @@ export class ClientOrderService {
     }
 
     const pastOrders: OrderDetailsInterface[] =
-      await this.appointmentRepository.getOrderHistory(
+      await this.appointmentRepository.getOrderHistoryForClient(
         outletId,
         startTime,
         endTime,
@@ -147,7 +147,7 @@ export class ClientOrderService {
     return this.formatOrderResponse(pastOrders, services);
   }
 
-  async getUpcomingOrders(
+  async getUpcomingOrdersForClient(
     clientId: number,
     dateRange: OrderFilterDto,
   ): Promise<OrderResponseInterface[]> {
@@ -162,8 +162,8 @@ export class ClientOrderService {
     }
     const bufferTime = new Date(new Date(startTime).getTime() - 30 * 60 * 1000);
     // Fetch upcoming orders based on the startTime from AppointmentEntity
-    const upcomingOrders: OrderDetailsInterface[] =
-      await this.appointmentRepository.getUpcomingOrders(
+    const upcomingOrdersForClient: OrderDetailsInterface[] =
+      await this.appointmentRepository.getUpcomingOrdersForClient(
         outletId,
         bufferTime,
         endTime,
@@ -171,7 +171,7 @@ export class ClientOrderService {
 
     // Extract unique serviceIds
     const serviceIds = [
-      ...new Set(upcomingOrders.map((order) => order.serviceId)),
+      ...new Set(upcomingOrdersForClient.map((order) => order.serviceId)),
     ];
 
     // Fetch services by serviceIds
@@ -179,7 +179,7 @@ export class ClientOrderService {
       await this.serviceExternalService.getServicesByServiceIds(serviceIds);
 
     // Format the results into the desired structure
-    return this.formatOrderResponse(upcomingOrders, services);
+    return this.formatOrderResponse(upcomingOrdersForClient, services);
   }
 
   async confirmOrder(
