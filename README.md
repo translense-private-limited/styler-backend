@@ -1,25 +1,23 @@
 Here is the concise version of the README content in **Markdown** format for your `readme.md` file:
 
-```markdown
-
+````markdown
 #Project documentation
 
 This document outlines the project setup,extensions requirements and necessary software installations.
 
 ##Prerequisites
 
-1.**VSCode Extensions**:
-   -Markdown Preview
-   -ESLint
-   -GitLens
-   -Pieces for VSCode
-   -Prettier Code Formatter
-   -YAML
-   -Swagger Viewer
+1.**VSCode Extensions**:s
+-Markdown Preview
+-ESLint
+-GitLens
+-Pieces for VSCode
+-Prettier Code Formatter
+-YAML
+-Swagger Viewer
 
-2.**Software**:
-  -**MySQL Workbench**(Linux)
-  -**NoSQLBooster** 
+2.**Software**: -**MySQL Workbench**(Linux) -**NoSQLBooster**
+
 ---
 
 # API Response Structure
@@ -32,9 +30,9 @@ This document outlines the standard format for API responses in both success and
 
 ```json
 {
-  "status": 200,                     
-  "data": {                         
-    "outlet": {                     
+  "status": 200,
+  "data": {
+    "outlet": {
       "id": 1,
       "name": "Outlet Name",
       "location": "Outlet Location",
@@ -44,14 +42,14 @@ This document outlines the standard format for API responses in both success and
       "email": "example@outlet.com",
       "website": "https://www.outlet.com"
     },
-    "additionalInfo": {             
+    "additionalInfo": {
       "someKey": "someValue"
     }
   },
-  "meta": {                         
+  "meta": {
     "timestamp": "2024-09-28T12:00:00Z",
-    "requestId": "abc123",          
-    "pagination": {                 
+    "requestId": "abc123",
+    "pagination": {
       "currentPage": 1,
       "totalPages": 5,
       "totalItems": 50
@@ -59,6 +57,7 @@ This document outlines the standard format for API responses in both success and
   }
 }
 ```
+````
 
 ### Fields
 
@@ -77,20 +76,20 @@ This document outlines the standard format for API responses in both success and
 
 ```json
 {
-  "status": 400,                    
-  "error": {                        
-    "code": "INVALID_INPUT",        
-    "message": "The input provided is invalid.", 
-    "details": {                   
-      "fieldErrors": {             
+  "status": 400,
+  "error": {
+    "code": "INVALID_INPUT",
+    "message": "The input provided is invalid.",
+    "details": {
+      "fieldErrors": {
         "name": "Name is required.",
         "location": "Location is invalid."
       }
     }
   },
-  "meta": {                         
+  "meta": {
     "timestamp": "2024-09-28T12:00:00Z",
-    "requestId": "abc123"          
+    "requestId": "abc123"
   }
 }
 ```
@@ -124,10 +123,12 @@ This document outlines the standard format for API responses in both success and
 ## Meta Information
 
 The **meta** field contains:
+
 - **timestamp**: When the response was generated.
 - **requestId**: Unique ID for tracing logs and requests.
 - **pagination**: Present in paginated responses, providing pagination details.
-```
+
+````
 
 Here’s the markdown version you can copy and paste:
 
@@ -140,19 +141,20 @@ Here’s the markdown version you can copy and paste:
 
 1. **Start Support Services:**
    Run the following command to start the support services using Docker Compose:
-   
+
    ```bash
    docker compose -f stack.yaml up
-   ```
-   or
-   
-   ```bash
-   docker-compose -f stack.yaml up
-   ```
+````
+
+or
+
+```bash
+docker-compose -f stack.yaml up
+```
 
 2. **Start the Application:**
    After the services are up, start the application with the following command:
-   
+
    ```bash
    npm run start:dev
    ```
@@ -168,7 +170,7 @@ Here’s the markdown version you can copy and paste:
 
 1. **Start Support Services:**
    Run the following command to start all services at once:
-   
+
    ```bash
    docker-compose up
    ```
@@ -177,16 +179,18 @@ Here’s the markdown version you can copy and paste:
 
 # NestJS Folder Structure Generator
 
-This script generates a NestJS module folder structure with  necessary subfolders and files.
+This script generates a NestJS module folder structure with necessary subfolders and files.
 
 ## Usage
 
 1. Install `ts-node` if not installed:
+
    ```bash
    npm install -g ts-node
    ```
 
 2. Run the script:
+
    ```bash
    ts-node create-structure.ts <module-name> <location>
    ```
@@ -195,12 +199,14 @@ This script generates a NestJS module folder structure with  necessary subfolder
    - `<location>`: The path where the folder should be created.
 
 Example:
+
 ```bash
 node create-structure.ts outlet ./src/modules/your/project/src/modules
 ```
 
 This will create the folder structure for the module in the specified location.
-```
+
+````
 
 ## Seed Data Setup
 
@@ -208,16 +214,19 @@ To populate the necessary data required to boot up the system, run the following
 
 ```bash
 npm run seed
-```
+````
+
 **Instructions**
-- make sure databases are up and running 
+
+- make sure databases are up and running
 
 **Info**
-- it will create outlet with following details 
-**Outlet Details**
-	Outlet Name: `Sample Outlet`
-	Outlet Email: `sample@translense.com`
-**Owner Details**
+
+- it will create outlet with following details
+  **Outlet Details**
+  Outlet Name: `Sample Outlet`
+  Outlet Email: `sample@translense.com`
+  **Owner Details**
   Owner Name: `Sample Outlet Owner`
-	Owner Email: `sampleOutletOwner@translense.com`
-	Owner Password: `password` 
+  Owner Email: `sampleOutletOwner@translense.com`
+  Owner Password: `password`
