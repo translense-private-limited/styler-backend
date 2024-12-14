@@ -33,7 +33,12 @@ export class OutletAdminService {
 
   async createOutletWithClient(
     createOutletWithClientDto: CreateOutletWithClientDto,
-  ) {
+  ): Promise<{
+    message: string;
+    outlet: OutletEntity;
+    client: ClientEntity;
+    address: AddressEntity;
+  }> {
     const { client, outlet } = createOutletWithClientDto;
     const { address, ...outletData } = outlet;
 
@@ -106,7 +111,9 @@ export class OutletAdminService {
     }
   }
 
-  private async validateOutletDetails(outlet: Partial<OutletEntity>) {
+  private async validateOutletDetails(
+    outlet: Partial<OutletEntity>,
+  ): Promise<void> {
     if (await this.outletService.getOutletByEmailIdOrThrow(outlet.email)) {
       throw new Error('Outlet with the email already exists');
     }
@@ -114,7 +121,9 @@ export class OutletAdminService {
       throw new Error('Outlet with the contact number already exists');
     }
   }
-  private async validateClientDetails(client: Partial<ClientEntity>) {
+  private async validateClientDetails(
+    client: Partial<ClientEntity>,
+  ): Promise<void> {
     if (
       await this.clientExternalService.getClientByEmailIdOrThrow(client.email)
     ) {
@@ -276,7 +285,7 @@ export class OutletAdminService {
   async addClientToAnExistingOutlet(
     outletId: number,
     registerClientDto: RegisterClientDto,
-  ) {
+  ): Promise<ClientEntity> {
     //check if outlet exists
     await this.outletService.getOutletByIdOrThrow(outletId);
     const clientData = {

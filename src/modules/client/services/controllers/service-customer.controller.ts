@@ -2,6 +2,7 @@ import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ServiceCustomerService } from '../services/service-customer.service';
 import { ServiceSchema } from '../schema/service.schema';
+import { CategoryWithServiceCountDto } from '../dtos/category-with-service-count.dto';
 
 @ApiTags('Customer/Services')
 @ApiBearerAuth('jwt')
@@ -16,7 +17,7 @@ export class ServiceCustomerController {
   })
   async getCategoriesWithServiceCountByOutlet(
     @Param('outletId', ParseIntPipe) outletId: number,
-  ) {
+  ): Promise<CategoryWithServiceCountDto[]> {
     return this.serviceCustomerService.getCategoriesWithServiceCountByOutlet(
       outletId,
     );

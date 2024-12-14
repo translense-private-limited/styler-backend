@@ -3,6 +3,7 @@ import { OutletService } from './outlet.service';
 import { OutletEntity } from '../entities/outlet.entity';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
+import { ServiceSchema } from '@modules/client/services/schema/service.schema';
 
 @Injectable()
 export class OutletExternalService {
@@ -20,7 +21,7 @@ export class OutletExternalService {
     outletId: number,
     serviceId: string,
     customer: CustomerDecoratorDto,
-  ) {
+  ): Promise<ServiceSchema> {
     return this.serviceExternalService.getServiceDetailsByServiceAndOutletIdOrThrow(
       outletId,
       serviceId,
