@@ -36,6 +36,8 @@ export class SeedCategoryData {
     ];
 
     try {
+
+      await this.categoryRepository.getRepository().deleteMany({});
       // Convert plain objects into Mongoose documents synchronously
       const categoryDocuments = categories.map((category) =>
         this.categoryRepository.getRepository().create(category),

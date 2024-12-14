@@ -28,7 +28,7 @@ export class SeedClientData{
                     outletId: 1,
                     createdAt: new Date(),
                     updatedAt: new Date(),
-                }
+                },
             ];
 
             await this.clientRepository.getRepository().save(clients);
