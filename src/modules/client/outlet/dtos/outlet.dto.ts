@@ -16,9 +16,9 @@ export class CreateOutletDto {
   @IsString()
   description?: string; 
 
-  @IsOptional()
-  @IsNumber()
-  addressId: number; // Required field
+  // @IsOptional()
+  // @IsNumber()
+  // addressId: number; // Required field
 
   @IsNotEmpty()
   @IsNumber()
