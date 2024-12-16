@@ -11,6 +11,7 @@ import { CreateAppointmentDto } from '../dtos/create-appointment.interface';
 import { AppointmentEntity } from '../entities/appointment.entity';
 import { UpdateAppointmentTimeDto } from '../dtos/update-appointment-time.dto';
 import { TimeSlotDto } from '../dtos/time-slot.dto';
+import { roundToNearest30Minutes } from '@src/utils/helpers/timestamp.helper';
 
 @Injectable()
 export class AppointmentService {
@@ -151,10 +152,10 @@ export class AppointmentService {
 
     // Map to formatted time slots with 30-minute interval adjustments
     const occupiedTimeSlots = appointments.map((appointment) => {
-      const adjustedStartTime = this.roundToNearest30Minutes(
+      const adjustedStartTime = roundToNearest30Minutes(
         appointment.startTime,
       );
-      const adjustedEndTime = this.roundToNearest30Minutes(appointment.endTime);
+      const adjustedEndTime = roundToNearest30Minutes(appointment.endTime);
 
       return {
         startTime: adjustedStartTime,
@@ -171,20 +172,5 @@ export class AppointmentService {
    * @param time - The `Date` object to round.
    * @returns A new `Date` object rounded to the nearest 30-minute interval.
    */
-  private roundToNearest30Minutes(time: Date): Date {
-    const roundedTime = new Date(time);
-    const minutes = roundedTime.getMinutes();
 
-    // Round minutes to the nearest 30-minute interval
-    if (minutes < 15) {
-      roundedTime.setMinutes(0, 0, 0); // Round down to the hour
-    } else if (minutes < 45) {
-      roundedTime.setMinutes(30, 0, 0); // Round to the half-hour
-    } else {
-      roundedTime.setMinutes(0, 0, 0); // Round up to the next hour
-      roundedTime.setHours(roundedTime.getHours() + 1);
-    }
-
-    return roundedTime;
-  }
 }
