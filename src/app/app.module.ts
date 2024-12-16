@@ -85,7 +85,7 @@ export class AppModule {
     // Enable Mongoose debug logging
     mongoose.set('debug', false);
   }
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(RequestIdMiddleware) // Apply your middleware here
       .forRoutes('*'); // Apply to all routes

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import {
   ThrottlerException,
@@ -16,7 +16,7 @@ class CustomThrottler extends ThrottlerGuard {
   }
 }
 
-function setUpThrottler() {
+function setUpThrottler(): DynamicModule[] {
   const { RATE_LIMITTER_CONFIG } = loadConfigFile();
   return [
     ThrottlerModule.forRoot([

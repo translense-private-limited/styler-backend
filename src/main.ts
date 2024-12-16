@@ -11,7 +11,7 @@ import { createWinstonLoggerService } from './utils/logger/winston-logger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: createWinstonLoggerService(),
   });
@@ -37,7 +37,7 @@ async function bootstrap() {
     }),
   );
 
-  app.useStaticAssets(join(process.cwd(),'public'))  
+  app.useStaticAssets(join(process.cwd(), 'public'));
 
   await app.listen(port);
 

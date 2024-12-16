@@ -21,7 +21,7 @@ export class IsObjectIdConstraint implements ValidatorConstraintInterface {
 //
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function IsObjectId(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: Object, propertyName: string): void {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,

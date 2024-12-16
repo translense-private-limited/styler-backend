@@ -6,6 +6,7 @@ import { CustomerDecorator } from '@src/utils/decorators/customer.decorator';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 import { OrderResponseDto } from '../dtos/order-response.dto';
 import { OrderSummaryDto } from '../dtos/order-summary.dto';
+import { OrderResponseInterface } from '../interfaces/client-orders.interface';
 
 @ApiTags('Customer/Orders')
 @Controller('customer')
@@ -26,6 +27,21 @@ export class OrderController {
     @CustomerDecorator() customerDecoratorDto:CustomerDecoratorDto
   ):Promise<OrderSummaryDto>{
     return this.orderService.getOrderSummaryByOrderIdOrThrow(orderId,customerDecoratorDto.customerId)
+  }
+
+  @Get('order/:customerId/upcoming-orders')
+    async getUpcomingOrdersForCustomer(
+        @Param('customerId') customerId:number,
+    ):Promise<OrderResponseInterface[]>{
+        console.log(customerId);
+        return this.orderService.getUpcomingOrdersForCustomer(customerId);
+    }
+
+  @Get('order/:customerId/orders')
+  async getOrderHistoryForCustomer(
+    @Param('customerId') customerId:number
+  ):Promise<OrderResponseInterface[]>{
+      return this.orderService.getOrderHistoryForCustomer(customerId)
   }
 }
 

@@ -1,10 +1,10 @@
-import { ObjectLiteral, Repository } from 'typeorm';
+import { EntityManager, ObjectLiteral, Repository } from 'typeorm';
 import { PagerDto } from '../response/dtos/pager.dto';
 import { PagerResultInterface } from '../response/interfaces/pager-result.interface';
 import { PagerOptionsInterface } from '../response/interfaces/pager-options.interface';
 
 export class BaseRepository<T extends ObjectLiteral> {
-  constructor(protected baseRepository: Repository<T>) { }
+  constructor(protected baseRepository: Repository<T>) {}
 
   DEFAULT_PER_PAGE = 10;
   DEFAULT_PAGE_NUMBER = 1;
@@ -38,11 +38,11 @@ export class BaseRepository<T extends ObjectLiteral> {
     return { data, pagerOptions };
   }
 
-  getRepository() {
+  getRepository(): Repository<T> {
     return this.baseRepository;
   }
 
-  getEntityManager() {
+  getEntityManager(): EntityManager {
     return this.baseRepository.manager;
   }
 }

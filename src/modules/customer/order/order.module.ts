@@ -15,7 +15,7 @@ import { AppointmentService } from './services/appointment.service';
 import { AppointmentEntity } from './entities/appointment.entity';
 import { AppointmentController } from './controllers/appoitment.controller';
 import { ClientOrderController } from './controllers/client-order.controller';
-import { ClientOrdersService } from './services/client-order.service';
+import { ClientOrderService } from './services/client-order.service';
 import { CustomerModule } from '../customer.module';
 import { ClientModule } from '@modules/client/client/client.module';
 
@@ -38,8 +38,8 @@ import { ClientModule } from '@modules/client/client/client.module';
     OrderItemService,
     AppointmentRepository,
     AppointmentService,
-    ClientOrdersService
-  ],
+    ClientOrderService,
+    ],
   exports: [],
 })
 export class OrderModule {}

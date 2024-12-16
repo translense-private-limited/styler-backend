@@ -40,10 +40,12 @@ export class AppointmentService {
     return appointment;
   }
 
-  async getAppointmentByOrderIdOrThrow(orderId:number){
+  async getAppointmentByOrderIdOrThrow(
+    orderId: number,
+  ): Promise<AppointmentEntity> {
     return this.appointmentRepository.getRepository().findOne({
-      where:{orderId:orderId}
-    })
+      where: { orderId: orderId },
+    });
   }
 
   /**

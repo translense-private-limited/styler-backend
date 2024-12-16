@@ -1,12 +1,12 @@
-import {
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CustomerEntity } from '../entities/customer.entity';
 import { CustomerRepository } from '../repositories/customer.repository';
 import { CustomerDto } from '../dtos/customer.dto';
 import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
-import { isContactNumber, isEmail } from '@src/utils/validators/email-contact.validator';
+import {
+  isContactNumber,
+  isEmail,
+} from '@src/utils/validators/email-contact.validator';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 
 @Injectable()
@@ -15,9 +15,7 @@ export class CustomerService {
     private customerRepository: CustomerRepository,
     private bcryptEncryptionService: BcryptEncryptionService,
   ) {}
-   async getCustomerByIdOrThrow(
-    customerId: number,
-  ): Promise<CustomerEntity> {
+  async getCustomerByIdOrThrow(customerId: number): Promise<CustomerEntity> {
     const customer = await this.customerRepository.getRepository().findOne({
       where: {
         id: customerId,
@@ -79,21 +77,23 @@ export class CustomerService {
     return this.customerRepository.getRepository().save(customerDto);
   }
 
-  async getCustomerByEmailOrContactNumber(username: string): Promise<CustomerEntity | null> {
+  async getCustomerByEmailOrContactNumber(
+    username: string,
+  ): Promise<CustomerEntity | null> {
     const repository = this.customerRepository.getRepository();
 
     if (isEmail(username)) {
-        return repository.findOne({ where: { email: username } });
+      return repository.findOne({ where: { email: username } });
     }
 
     if (isContactNumber(username)) {
-        return repository.findOne({ where: { contactNumber: +username } });
+      return repository.findOne({ where: { contactNumber: +username } });
     }
 
     throw new Error('Invalid username format');
   }
 
-  async updatePassword(username: string, password: string) {
+  async updatePassword(username: string, password: string): Promise<void> {
     const customer = await this.getCustomerByEmailOrContactNumber(username);
 
     // Use the helper function to handle the NotFoundException

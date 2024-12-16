@@ -22,7 +22,7 @@ export class OtpService {
     return 123456;
   }
 
-  async sendOtpToRecipient(recipient: string, otp: number) {
+  async sendOtpToRecipient(recipient: string, otp: number): Promise<void> {
     //
     console.log(recipient, otp);
   }
@@ -136,7 +136,7 @@ export class OtpService {
     return true; // OTP is valid and not expired
   }
 
-  async deleteByRecipient(recipient: string) {
+  async deleteByRecipient(recipient: string): Promise<void> {
     this.otpRepository.getRepository().delete({ recipient });
   }
 }

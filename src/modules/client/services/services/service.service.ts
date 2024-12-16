@@ -42,8 +42,8 @@ export class ServiceService {
     outletId: number,
   ): Promise<ServiceSchema> {
     const service = await this.serviceRepository.getRepository().findOne({
-      outletId:outletId,
-      _id:serviceId,
+      outletId: outletId,
+      _id: serviceId,
     });
     if (!service) {
       throw new NotFoundException('no service exist with provided Id');
@@ -82,7 +82,7 @@ export class ServiceService {
     return this.getServices();
   }
 
-  async deleteAll() {
+  async deleteAll(): Promise<ServiceSchema[]> {
     await this.serviceRepository.getRepository().deleteMany({});
     return this.getServices();
   }

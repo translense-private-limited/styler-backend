@@ -10,7 +10,7 @@ import { isPublicKey } from '@src/utils/decorators/public.decorator';
 
 @Injectable()
 export class OutletGuard implements CanActivate {
-  constructor(private reflector: Reflector) { }
+  constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // Check if the route is marked as public using the `@Public()` decorator.
@@ -67,7 +67,7 @@ export class OutletGuard implements CanActivate {
      * Ensures consistency of outletId across params, body, and query.
      * If multiple sources provide an outletId, they must all match.
      */
-    const checkConsistency = (ids) => {
+    const checkConsistency = (ids): boolean => {
       const validIds = Object.values(ids).filter(
         (id) => id !== undefined && id !== null,
       );
