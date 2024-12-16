@@ -4,7 +4,7 @@ import { CustomerAuthenticationService } from '../services/customer-authenticati
 import { CustomerLoginResponseInterface } from '../interfaces/customer-login-response.interface';
 import { LoginDto } from '../dtos/login.dto';
 import { CustomerSignupDto } from '../dtos/customer-signup.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('CustomerAuth')
 @Controller('customer')
@@ -23,6 +23,15 @@ export class CustomerAuthenticationController {
     );
   }
 
+  @ApiBody({
+    description: 'Customer Login',
+    schema: {
+      example: {
+        username: 'customer@translense.com',
+        password: 'password',
+      },
+    },
+  })
   @Post('login')
   async loginCustomer(
     @Body() loginDto: LoginDto, // Use the DTO for validation
