@@ -22,7 +22,6 @@ export class CategoryService {
   async createCategory(
     createCategoryDto: CategoryDto,
   ): Promise<CategorySchema> {
-    console.log(createCategoryDto, '****');
     try {
       // Create a new category document using create()
       const createdCategory = await this.categoryRepository

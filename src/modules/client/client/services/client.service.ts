@@ -48,7 +48,6 @@ export class ClientService {
       );
       return { ...teamMember, role };
     } catch (error) {
-      console.error('Error fetching team member:', error);
 
       throw new HttpException(
         'An unexpected error occurred.',
@@ -77,7 +76,6 @@ export class ClientService {
         return teamMemberInstance;
       });
     } catch (error) {
-      console.error('Error retrieving team members:', error);
       throw new Error('An error occurred while fetching team members');
     }
   }

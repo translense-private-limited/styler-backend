@@ -65,10 +65,8 @@ export class SeedOutletData{
               await this.outletRepository.getRepository().save(outlets);
               await queryRunner.commitTransaction();
 
-              console.log('outlets table seeding completed');
         }catch (error) {
             await queryRunner.rollbackTransaction();
-            console.error('Error during outlets table seeding:', error);
             throw error;
           }finally {
             await queryRunner.release();

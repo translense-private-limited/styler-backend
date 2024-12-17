@@ -19,7 +19,6 @@ export class SeedService {
 
   async seedMySQL(): Promise<void> {
     try {
-      console.log('Starting mysql seeding...');
 
       await this.seedClientData.seedClients();
       await this.seedOutletData.seedOutlets();
@@ -27,23 +26,18 @@ export class SeedService {
       await this.seedAdminData.seedAdmins();
       await this.seedCustomerData.seedCustomers();
 
-      console.log('Mysql seeding completed successfully');
       return;
     } catch (error) {
-      console.error('Error during mysql seeding:', error);
-      throw error;
+      throw new Error(error);
     }
   }
 
   async seedMongoDB(): Promise<void> {
     try {
-      console.log('MongoDB seeding started...');
       await this.seedCategoryData.seedCategories();
-      console.log('completed MongoDB seeding');
       return;
     } catch (error) {
-      console.log('Error during MongoDB seeding');
-      throw error;
+      throw new Error(error);
     }
   }
 }

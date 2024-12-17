@@ -48,10 +48,8 @@ export class SeedRoleData {
 
       await this.roleRepository.getRepository().save(roles);
       await queryRunner.commitTransaction();
-      console.log('Roles table seeding completed.');
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      console.error('Error during roles table seeding:', error);
       throw error;
     } finally {
         await queryRunner.release();
