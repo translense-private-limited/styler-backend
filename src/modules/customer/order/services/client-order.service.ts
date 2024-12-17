@@ -147,6 +147,38 @@ export class ClientOrderService {
     return this.formatOrderResponse(pastOrders, services);
   }
 
+  async getAllCompletedOrdersForClient(
+    clientId: number,
+    dateRange: OrderFilterDto,
+  ): Promise<OrderResponseInterface[]> {
+    const outletId = await this.getClientOutletIdByClientId(clientId);
+    const { startTime, endTime } = dateRange;
+    const currentTime = new Date();
+
+    if (startTime > endTime) {
+      throw new Error('Start time cannot be later than end time.');
+    }
+    if (new Date(endTime) > currentTime) {
+      throw new Error('End time should be in the past.');
+    }
+
+    const pastOrders: OrderDetailsInterface[] =
+      await this.appointmentRepository.getCompletedOrdersForClient(
+        outletId,
+        startTime,
+        endTime,
+      );
+    // Extract unique serviceIds
+    const serviceIds = [...new Set(pastOrders.map((order) => order.serviceId))];
+
+    // Fetch services by serviceIds
+    const services =
+      await this.serviceExternalService.getServicesByServiceIds(serviceIds);
+
+    // Format the results into the desired structure
+    return this.formatOrderResponse(pastOrders, services);
+  }
+
   async getUpcomingOrdersForClient(
     clientId: number,
     dateRange: OrderFilterDto,

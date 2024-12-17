@@ -113,6 +113,42 @@ async getUpcomingOrdersForClient(
   return upcomingOrdersForClient;
  }
 
+ async getCompletedOrdersForClient(
+  outletId: number,
+  startTime: Date,
+  endTime: Date
+): Promise<OrderDetailsInterface[]> {
+  const queryBuilder = this.getRepository().createQueryBuilder('a')
+    .innerJoin('orders', 'o', 'a.orderId = o.OrderId')
+    .leftJoin('order_items', 'oi', 'o.OrderId = oi.orderId')
+    .innerJoin('customers', 'c', 'o.customerId = c.id')
+    .where('a.status != :status', { status: BookingStatusEnum.PENDING }) 
+    .andWhere('a.outletId = :outletId', { outletId }) 
+    .andWhere('a.startTime BETWEEN :startTime AND :endTime', { startTime, endTime }) 
+    .andWhere('o.status = :orderStatus', { orderStatus: 'ORDER_COMPLETED' }); 
+
+  const completedOrdersForClient: OrderDetailsInterface[] = await queryBuilder.select([
+    'a.appointmentId AS appointmentId',
+    'a.startTime AS startTime',
+    'a.endTime AS endTime',
+    'a.status AS status',
+    'o.orderId AS orderId',
+    'o.updatedAt AS updatedAt',
+    'o.amountPaid AS amountPaid',
+    'o.status AS orderStatus',
+    'oi.serviceId AS serviceId',
+    'oi.quantity AS quantity',
+    'oi.discount AS discount',
+    'oi.notes AS notes',
+    'c.id AS customerId',
+    'c.name AS customerName',
+    'c.contactNumber AS customerContact',
+    'c.email AS customerEmail',
+  ]).getRawMany();
+
+  return completedOrdersForClient;
+}
+
  async getUpcomingOrdersForCustomer(
   customerId:number,
 ): Promise<OrderDetailsInterface[]> {
