@@ -32,6 +32,7 @@ export interface OrderDetailsInterface extends OrderItemInterface {
   startTime: Date;
   endTime: Date;
   status:BookingStatusEnum;
+  outletId:number
   orderId: number;
   updatedAt: Date;
   amountPaid: number;

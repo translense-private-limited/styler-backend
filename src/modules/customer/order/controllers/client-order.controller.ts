@@ -47,4 +47,13 @@ export class ClientOrderController {
   ):Promise<string>{
       return this.clientOrderService.confirmOrder(orderId,orderConfirmationDto,clientId,clientIdDto)
   }
+
+  @Get('/:clientId/completed-orders')
+  async getAllcompletedOrders(
+    @Param('clientId') clientId:number,
+    @ClientIdDecorator() clientIdDto:ClientIdDto,
+    @Query() dateRange:OrderFilterDto
+  ):Promise<OrderResponseInterface[]>{
+    return this.clientOrderService.getAllCompletedOrdersForClient(clientId,dateRange)
+  }
 }

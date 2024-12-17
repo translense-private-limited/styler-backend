@@ -35,7 +35,7 @@ export class ClientOrderService {
   ) {}
 
   async getAllOpenOrders(clientId: number): Promise<OrderResponseInterface[]> {
-    const outletId = await this.getClientOutletIdByClientId(clientId);
+    const outletId = await this.getOutletIdByClientId(clientId);
 
     // Fetch raw results from the database
     const openOrders: OrderDetailsInterface[] =
@@ -95,7 +95,7 @@ export class ClientOrderService {
   }
 
   // Private method to clean up service details
-  private formatServiceDetails(
+  formatServiceDetails(
     row: OrderDetailsInterface,
     services: ServiceSchema[],
   ): ServiceDetailsInterface {
@@ -119,7 +119,7 @@ export class ClientOrderService {
     clientId: number,
     dateRange: OrderFilterDto,
   ): Promise<OrderResponseInterface[]> {
-    const outletId = await this.getClientOutletIdByClientId(clientId);
+    const outletId = await this.getOutletIdByClientId(clientId);
     const { startTime, endTime } = dateRange;
     const currentTime = new Date();
 
@@ -147,11 +147,43 @@ export class ClientOrderService {
     return this.formatOrderResponse(pastOrders, services);
   }
 
+  async getAllCompletedOrdersForClient(
+    clientId: number,
+    dateRange: OrderFilterDto,
+  ): Promise<OrderResponseInterface[]> {
+    const outletId = await this.getOutletIdByClientId(clientId);
+    const { startTime, endTime } = dateRange;
+    const currentTime = new Date();
+
+    if (startTime > endTime) {
+      throw new Error('Start time cannot be later than end time.');
+    }
+    if (new Date(endTime) > currentTime) {
+      throw new Error('End time should be in the past.');
+    }
+
+    const pastOrders: OrderDetailsInterface[] =
+      await this.appointmentRepository.getCompletedOrdersForClient(
+        outletId,
+        startTime,
+        endTime,
+      );
+    // Extract unique serviceIds
+    const serviceIds = [...new Set(pastOrders.map((order) => order.serviceId))];
+
+    // Fetch services by serviceIds
+    const services =
+      await this.serviceExternalService.getServicesByServiceIds(serviceIds);
+
+    // Format the results into the desired structure
+    return this.formatOrderResponse(pastOrders, services);
+  }
+
   async getUpcomingOrdersForClient(
     clientId: number,
     dateRange: OrderFilterDto,
   ): Promise<OrderResponseInterface[]> {
-    const outletId = await this.getClientOutletIdByClientId(clientId);
+    const outletId = await this.getOutletIdByClientId(clientId);
     const { startTime, endTime } = dateRange;
     const currentTime = new Date();
     if (startTime > endTime) {
@@ -291,7 +323,7 @@ export class ClientOrderService {
     await queryRunner.manager.save(appointment);
   }
 
-  private async getClientOutletIdByClientId(clientId: number): Promise<number> {
+  private async getOutletIdByClientId(clientId: number): Promise<number> {
     const client = await this.clientExternalService.getClientById(clientId);
     return client.outletId;
   }
