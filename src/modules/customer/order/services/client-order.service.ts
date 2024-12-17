@@ -35,7 +35,7 @@ export class ClientOrderService {
   ) {}
 
   async getAllOpenOrders(clientId: number): Promise<OrderResponseInterface[]> {
-    const outletId = await this.getClientOutletIdByClientId(clientId);
+    const outletId = await this.getOutletIdByClientId(clientId);
 
     // Fetch raw results from the database
     const openOrders: OrderDetailsInterface[] =
@@ -119,7 +119,7 @@ export class ClientOrderService {
     clientId: number,
     dateRange: OrderFilterDto,
   ): Promise<OrderResponseInterface[]> {
-    const outletId = await this.getClientOutletIdByClientId(clientId);
+    const outletId = await this.getOutletIdByClientId(clientId);
     const { startTime, endTime } = dateRange;
     const currentTime = new Date();
 
@@ -151,7 +151,7 @@ export class ClientOrderService {
     clientId: number,
     dateRange: OrderFilterDto,
   ): Promise<OrderResponseInterface[]> {
-    const outletId = await this.getClientOutletIdByClientId(clientId);
+    const outletId = await this.getOutletIdByClientId(clientId);
     const { startTime, endTime } = dateRange;
     const currentTime = new Date();
 
@@ -183,7 +183,7 @@ export class ClientOrderService {
     clientId: number,
     dateRange: OrderFilterDto,
   ): Promise<OrderResponseInterface[]> {
-    const outletId = await this.getClientOutletIdByClientId(clientId);
+    const outletId = await this.getOutletIdByClientId(clientId);
     const { startTime, endTime } = dateRange;
     const currentTime = new Date();
     if (startTime > endTime) {
@@ -317,7 +317,7 @@ export class ClientOrderService {
     await queryRunner.manager.save(appointment);
   }
 
-  private async getClientOutletIdByClientId(clientId: number): Promise<number> {
+  private async getOutletIdByClientId(clientId: number): Promise<number> {
     const client = await this.clientExternalService.getClientById(clientId);
     return client.outletId;
   }

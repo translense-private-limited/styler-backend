@@ -33,7 +33,6 @@ export class OrderController {
     async getUpcomingOrdersForCustomer(
         @Param('customerId') customerId:number,
     ):Promise<CustomerOrderResponseInterface[]>{
-        console.log(customerId);
         return this.orderService.getUpcomingOrdersForCustomer(customerId);
     }
 

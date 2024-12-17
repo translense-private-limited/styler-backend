@@ -425,21 +425,21 @@ export class OrderService {
 
   async getUpcomingOrdersForCustomer(customerId: number): Promise<CustomerOrderResponseInterface[]> {
     // Fetch upcoming orders based on the startTime from AppointmentEntity
-    const upcomingOrders: OrderDetailsInterface[] = 
-      await this.appointmentRepository.getUpcomingOrdersForCustomer(customerId);
-
+    const upcomingOrders: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrdersForCustomer(customerId);
+  
     // Extract unique serviceIds and outletIds
     const serviceIds = [...new Set(upcomingOrders.map((order) => order.serviceId))];
     const outletIds = [...new Set(upcomingOrders.map((order) => order.outletId))];
   
-    // Fetch services by serviceIds
-    const services = await this.serviceExternalService.getServicesByServiceIds(serviceIds);
+    // Use Promise.all to fetch services and outlet details in parallel
+    const [services, outletDetails] = await Promise.all([
+      this.serviceExternalService.getServicesByServiceIds(serviceIds),
+      this.outletExternalService.getOutletDetailsByIds(outletIds),
+    ]);
   
-    // Fetch outlet details by outletIds
-    const outletDetails = await this.outletExternalService.getOutletDetailsByIds(outletIds);  
     // Format the results into the desired structure, including outlet details
     return this.formatCustomerOrderResponse(upcomingOrders, services, outletDetails);
-  }  
+  }    
 
   async getOrderHistoryForCustomer(
     customerId: number,
@@ -451,9 +451,11 @@ export class OrderService {
     const outletIds = [...new Set(pastOrders.map((order) => order.outletId))];
 
 
-    // Fetch services by serviceIds
-    const services = await this.serviceExternalService.getServicesByServiceIds(serviceIds);
-    const outletDetails = await this.outletExternalService.getOutletDetailsByIds(outletIds);  
+    // Use Promise.all to fetch services and outlet details in parallel
+    const [services, outletDetails] = await Promise.all([
+      this.serviceExternalService.getServicesByServiceIds(serviceIds),
+      this.outletExternalService.getOutletDetailsByIds(outletIds),
+    ]);
 
     // Format the results into the desired structure
     return this.formatCustomerOrderResponse(pastOrders, services,outletDetails);
@@ -500,7 +502,6 @@ export class OrderService {
           outletId: outlet.id,
           outletName: outlet.name,
           outletDescription: outlet.description,
-          outletStatus: outlet.status,
           outletLatitude: outlet.latitude,
           outletLongitude: outlet.longitude,
           outletPhoneNumber: outlet.phoneNumber,
@@ -541,9 +542,11 @@ export class OrderService {
     const serviceIds = [...new Set(completedOrders.map((order) => order.serviceId))];
     const outletIds = [...new Set(completedOrders.map((order) => order.outletId))];
 
-    // Fetch services by serviceIds
-    const services = await this.serviceExternalService.getServicesByServiceIds(serviceIds);
-    const outletDetails = await this.outletExternalService.getOutletDetailsByIds(outletIds);  
+    // Use Promise.all to fetch services and outlet details in parallel
+    const [services, outletDetails] = await Promise.all([
+      this.serviceExternalService.getServicesByServiceIds(serviceIds),
+      this.outletExternalService.getOutletDetailsByIds(outletIds),
+    ]); 
 
     // Format the results into the desired structure
     return this.formatCustomerOrderResponse(completedOrders, services,outletDetails);

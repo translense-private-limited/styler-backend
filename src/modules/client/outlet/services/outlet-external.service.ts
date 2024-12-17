@@ -33,7 +33,6 @@ export class OutletExternalService {
   }
 
   async getOutletDetailsByIds(outletIds:number[]):Promise<OutletEntity[]>{
-    console.log("inside outlet details method",outletIds)
       return this.outletRepository.getRepository().find({
         where:{id:In(outletIds)},
         relations:['address']
