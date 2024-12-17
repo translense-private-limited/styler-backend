@@ -209,11 +209,16 @@ export class ClientOrderService {
       );
 
       // Step 2: Update order items
-      await this.updateOrderItemsStatus(queryRunner, orderId, accept, reject);
+      if(reject && reject.length>0){
+        await this.updateOrderItemsStatus(queryRunner, orderId, accept, reject);
+      }
 
       // Step 3: Update appointment status
       if (accept && accept.length > 0) {
-        await this.updateAppointmentStatus(queryRunner, orderId);
+        await this.updateAppointmentStatus(queryRunner, orderId,BookingStatusEnum.CONFIRMED);
+      }
+      else{
+        await this.updateAppointmentStatus(queryRunner, orderId,BookingStatusEnum.CANCELLED_BY_SALON);
       }
 
       // Commit the transaction
@@ -273,6 +278,7 @@ export class ClientOrderService {
   private async updateAppointmentStatus(
     queryRunner: QueryRunner,
     orderId: number,
+    status:BookingStatusEnum
   ): Promise<void> {
     const appointment =
       await this.appointmentService.getAppointmentByOrderIdOrThrow(orderId);
@@ -281,7 +287,7 @@ export class ClientOrderService {
       'Appointment not found for the provided orderId',
     );
 
-    appointment.status = BookingStatusEnum.CONFIRMED;
+    appointment.status = status;
     await queryRunner.manager.save(appointment);
   }
 
