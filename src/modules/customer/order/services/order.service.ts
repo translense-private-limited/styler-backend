@@ -23,12 +23,12 @@ import { OrderItemService } from './order-item.service';
 import { OrderSummaryDto } from '../dtos/order-summary.dto';
 import { OutletExternalService } from '@modules/client/outlet/services/outlet-external.service';
 import { OrderItemSummaryDto } from '../dtos/order-item-summary.dto';
-import {
-  OrderDetailsInterface,
-  OrderResponseInterface,
-} from '../interfaces/client-orders.interface';
+import { OrderDetailsInterface } from '../interfaces/client-orders.interface';
 import { AppointmentRepository } from '../repositories/appointment.repository';
 import { ClientOrderService } from './client-order.service';
+import { ServiceSchema } from '@modules/client/services/schema/service.schema';
+import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
+import { CustomerOrderResponseInterface } from '../interfaces/customer-order-response.interface';
 
 @Injectable()
 export class OrderService {
@@ -423,42 +423,133 @@ export class OrderService {
       .findOne({ where: { orderId } });
   }
 
-  async getUpcomingOrdersForCustomer(
-    customerId: number,
-  ): Promise<OrderResponseInterface[]> {
+  async getUpcomingOrdersForCustomer(customerId: number): Promise<CustomerOrderResponseInterface[]> {
     // Fetch upcoming orders based on the startTime from AppointmentEntity
-    const upcomingOrders: OrderDetailsInterface[] =
-      await this.appointmentRepository.getUpcomingOrdersForCustomer(customerId);
-
-    // Extract unique serviceIds
-    const serviceIds = [
-      ...new Set(upcomingOrders.map((order) => order.serviceId)),
-    ];
-
-    // Fetch services by serviceIds
-    const services =
-      await this.serviceExternalService.getServicesByServiceIds(serviceIds);
-
-    // Format the results into the desired structure
-    return this.clientOrderService.formatOrderResponse(
-      upcomingOrders,
-      services,
-    );
-  }
+    const upcomingOrders: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrdersForCustomer(customerId);
+  
+    // Extract unique serviceIds and outletIds
+    const serviceIds = [...new Set(upcomingOrders.map((order) => order.serviceId))];
+    const outletIds = [...new Set(upcomingOrders.map((order) => order.outletId))];
+  
+    // Use Promise.all to fetch services and outlet details in parallel
+    const [services, outletDetails] = await Promise.all([
+      this.serviceExternalService.getServicesByServiceIds(serviceIds),
+      this.outletExternalService.getOutletDetailsByIds(outletIds),
+    ]);
+  
+    // Format the results into the desired structure, including outlet details
+    return this.formatCustomerOrderResponse(upcomingOrders, services, outletDetails);
+  }    
 
   async getOrderHistoryForCustomer(
     customerId: number,
-  ): Promise<OrderResponseInterface[]> {
+  ): Promise<CustomerOrderResponseInterface[]> {
 
     const pastOrders: OrderDetailsInterface[] = await this.appointmentRepository.getOrderHistoryForCustomer(customerId);
     // Extract unique serviceIds
     const serviceIds = [...new Set(pastOrders.map((order) => order.serviceId))];
+    const outletIds = [...new Set(pastOrders.map((order) => order.outletId))];
 
-    // Fetch services by serviceIds
-    const services =
-      await this.serviceExternalService.getServicesByServiceIds(serviceIds);
+
+    // Use Promise.all to fetch services and outlet details in parallel
+    const [services, outletDetails] = await Promise.all([
+      this.serviceExternalService.getServicesByServiceIds(serviceIds),
+      this.outletExternalService.getOutletDetailsByIds(outletIds),
+    ]);
 
     // Format the results into the desired structure
-    return this.clientOrderService.formatOrderResponse(pastOrders, services);
+    return this.formatCustomerOrderResponse(pastOrders, services,outletDetails);
   }
+
+
+  formatCustomerOrderResponse(orders: OrderDetailsInterface[], services: ServiceSchema[], outletDetails: OutletEntity[]): CustomerOrderResponseInterface[] {
+    console.log(outletDetails)
+    return orders.reduce((acc, row) => {
+      // Find or create an order object
+      let order = acc.find((item) => item.orderId === row.orderId);
+  
+      if (!order) {
+        // Create a new order object if it doesn't exist in the accumulator
+        order = {
+          orderId: row.orderId,
+          amountPaid: row.amountPaid,
+          orderStatus: row.orderStatus,
+          services: [],
+          customer: {
+            customerId: row.customerId,
+            customerName: row.customerName,
+            customerContact: row.customerContact,
+            customerEmail: row.customerEmail,
+            customerImage: '', 
+          },
+          appointment: {
+            appointmentId: row.appointmentId,
+            startTime: row.startTime,
+            endTime: row.endTime,
+            AppointmentStatus: row.status,
+          },
+          outlet: {} as OutletEntity,
+        };
+        acc.push(order);
+      }
+  
+      // Fetch outlet details for the current order
+      const outlet = outletDetails.find((outlet) => outlet.id === row.outletId);
+      console.log(outlet)
+  
+      if (outlet) {
+        order.outlet = {
+          outletId: outlet.id,
+          outletName: outlet.name,
+          outletDescription: outlet.description,
+          outletLatitude: outlet.latitude,
+          outletLongitude: outlet.longitude,
+          outletPhoneNumber: outlet.phoneNumber,
+          outletEmail: outlet.email,
+          outletWebsite: outlet.website,
+          address: outlet.address
+            ? {
+                addressId: outlet.address.addressId,
+                country: outlet.address.country,
+                state: outlet.address.state,
+                district: outlet.address.district,
+                city: outlet.address.city,
+                pincode: outlet.address.pincode,
+                street: outlet.address.street,
+                landmark: outlet.address.landmark,
+              }
+            : null,
+        };
+      }
+  
+      // Format service details
+      const formattedServiceDetails = this.clientOrderService.formatServiceDetails(row, services);
+  
+      // Add the formatted service details to the services array
+      order.services.push(formattedServiceDetails);
+  
+      return acc;
+    }, []);
+  }
+  
+  async getCompletedOrdersForCustomer(
+    customerId: number,
+  ): Promise<CustomerOrderResponseInterface[]> {
+
+    const completedOrders: OrderDetailsInterface[] =
+      await this.appointmentRepository.getCompletedOrdersForCustomer(customerId);
+    // Extract unique serviceIds
+    const serviceIds = [...new Set(completedOrders.map((order) => order.serviceId))];
+    const outletIds = [...new Set(completedOrders.map((order) => order.outletId))];
+
+    // Use Promise.all to fetch services and outlet details in parallel
+    const [services, outletDetails] = await Promise.all([
+      this.serviceExternalService.getServicesByServiceIds(serviceIds),
+      this.outletExternalService.getOutletDetailsByIds(outletIds),
+    ]); 
+
+    // Format the results into the desired structure
+    return this.formatCustomerOrderResponse(completedOrders, services,outletDetails);
+  }
+
 }
