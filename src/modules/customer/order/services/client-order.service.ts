@@ -95,7 +95,7 @@ export class ClientOrderService {
   }
 
   // Private method to clean up service details
-  private formatServiceDetails(
+  formatServiceDetails(
     row: OrderDetailsInterface,
     services: ServiceSchema[],
   ): ServiceDetailsInterface {
