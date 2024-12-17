@@ -48,7 +48,7 @@ export default [
     rules: {
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-console':'error',
+      'no-console':'error',
       '@typescript-eslint/explicit-function-return-type': [
         'error',
         {
