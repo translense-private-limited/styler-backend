@@ -60,7 +60,6 @@ export class OutletAdminController {
     @Param('outletId') outletId: number,
     @Body() updateOutletDto: Partial<CreateOutletDto>,
   ): Promise<CreateOutletDto> {
-    console.log(updateOutletDto);
     return await this.outletAdminService.updateOutletByIdOrThrow(
       outletId,
       updateOutletDto,

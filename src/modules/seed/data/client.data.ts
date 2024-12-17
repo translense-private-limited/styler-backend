@@ -33,11 +33,9 @@ export class SeedClientData{
 
             await this.clientRepository.getRepository().save(clients);
             await queryRunner.commitTransaction();
-            console.log('client table seeding completed')
         }
         catch(error){
             await queryRunner.rollbackTransaction();
-            console.error('Error during client table seeding:',error);
             throw error;
         }finally {
             await queryRunner.release();

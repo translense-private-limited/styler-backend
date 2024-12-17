@@ -37,10 +37,8 @@ export class SeedAdminData {
 
             await this.adminRepository.getRepository().save(admins);
             await queryRunner.commitTransaction();
-            console.log('admin table seeding completed');
         } catch (error) {
             await queryRunner.rollbackTransaction();
-            console.error('Error during admin table seeding:', error);
             throw error;
         } finally {
             await queryRunner.release();

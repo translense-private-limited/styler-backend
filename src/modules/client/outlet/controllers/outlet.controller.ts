@@ -15,7 +15,6 @@ export class OutletController {
     @Req() req: Request,
     @Body() createOutletDto: CreateOutletDto,
   ): Promise<OutletEntity> {
-    console.log(req);
     return this.outletService.createOutlet(createOutletDto);
   }
 

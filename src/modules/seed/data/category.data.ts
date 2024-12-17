@@ -35,8 +35,6 @@ export class SeedCategoryData {
       },
     ];
 
-    try {
-
       await this.categoryRepository.getRepository().deleteMany({});
       // Convert plain objects into Mongoose documents synchronously
       const categoryDocuments = categories.map((category) =>
@@ -49,10 +47,5 @@ export class SeedCategoryData {
       // Save all documents in bulk
       await this.categoryRepository.getRepository().bulkSave(resolvedDocuments);
 
-      console.log('Categories seeding completed successfully.');
-    } catch (error) {
-      console.error('Error during categories seeding:', error);
-      throw error;
-    }
   }
 }

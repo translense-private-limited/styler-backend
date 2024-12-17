@@ -27,10 +27,8 @@ export class SeedCustomerData {
 
             await this.customerRepository.getRepository().save(customers);
             await queryRunner.commitTransaction();
-            console.log('customer table seeding completed');
         } catch (error) {
             await queryRunner.rollbackTransaction();
-            console.error('Error during customer table seeding:', error);
             throw error;
         } finally {
             await queryRunner.release();

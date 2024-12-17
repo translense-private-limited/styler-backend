@@ -45,7 +45,6 @@ export class ImageController {
       res.setHeader('Content-Type', 'image/jpeg'); // Set appropriate content type
       res.send(image);
     } catch (error) {
-      console.log(error);
       throw new HttpException('Image not found', HttpStatus.NOT_FOUND);
     }
   }
@@ -57,7 +56,6 @@ export class ImageController {
 
       return signedUrl;
     } catch (error) {
-      console.log(error);
       throw new HttpException('Image not found', HttpStatus.NOT_FOUND);
     }
   }
@@ -70,7 +68,6 @@ export class ImageController {
 
       return signedUrlToUpload;
     } catch (error) {
-      console.log(error);
       throw new HttpException('Image not found', HttpStatus.NOT_FOUND);
     }
   }

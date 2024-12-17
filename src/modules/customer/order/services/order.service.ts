@@ -238,9 +238,6 @@ export class OrderService {
     if (this.isEndTimeMatching(providedTime, calculatedEndTime)) {
       createAppointmentDto.endTime = calculatedEndTime;
     } else {
-      console.warn(
-        `End time mismatch. Using calculated end time. Request payload: ${providedEndTime}, Calculated: ${calculatedEndTime}`,
-      );
       createAppointmentDto.endTime = calculatedEndTime;
     }
     const appointment =
@@ -319,11 +316,7 @@ export class OrderService {
         );
         totalDuration += service.timeTaken * item.quantity;
       } catch (error) {
-        // Handle error, maybe log it, and decide if you want to continue or throw
-        console.error(
-          `Error fetching service for serviceId: ${item.serviceId}`,
-        );
-        // Continue to the next item if error occurs
+        throw new Error(error)
       }
     }
 
@@ -365,7 +358,6 @@ export class OrderService {
     orderId: number,
     customerId,
   ): Promise<OrderEntity> {
-    console.log("hello I'm getOrderByIdOrThrow method");
     const order = await this.orderRepository.getRepository().findOne({
       where: { orderId: orderId, customerId: customerId },
     });
@@ -463,7 +455,6 @@ export class OrderService {
 
 
   formatCustomerOrderResponse(orders: OrderDetailsInterface[], services: ServiceSchema[], outletDetails: OutletEntity[]): CustomerOrderResponseInterface[] {
-    console.log(outletDetails)
     return orders.reduce((acc, row) => {
       // Find or create an order object
       let order = acc.find((item) => item.orderId === row.orderId);
@@ -495,7 +486,6 @@ export class OrderService {
   
       // Fetch outlet details for the current order
       const outlet = outletDetails.find((outlet) => outlet.id === row.outletId);
-      console.log(outlet)
   
       if (outlet) {
         order.outlet = {

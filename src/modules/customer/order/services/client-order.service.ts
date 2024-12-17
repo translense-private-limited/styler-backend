@@ -258,7 +258,6 @@ export class ClientOrderService {
       return 'Booking Confirmed';
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      console.error('Error during order confirmation:', error);
       throw error;
     } finally {
       await queryRunner.release();

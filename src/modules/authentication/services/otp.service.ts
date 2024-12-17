@@ -23,8 +23,8 @@ export class OtpService {
   }
 
   async sendOtpToRecipient(recipient: string, otp: number): Promise<void> {
-    //
-    console.log(recipient, otp);
+      // eslint-disable-next-line @/no-console
+      console.log(recipient, otp);
   }
 
   private async getCustomerByUsername(

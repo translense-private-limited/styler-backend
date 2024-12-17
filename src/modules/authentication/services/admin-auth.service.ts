@@ -43,7 +43,6 @@ export class AdminAuthenticationService {
   async registerAdmin(
     adminSignupDto: AdminSignupDto,
   ): Promise<AdminLoginResponseInterface> {
-    console.log("first-register admin")
     const getAdminByContactNumber =
       await this.adminExternalService.getAdminByContactNumber(
         adminSignupDto.contactNumber,

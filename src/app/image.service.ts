@@ -44,10 +44,10 @@ export class ImageService {
       const uploadResponse = await this.s3Client.send(
         new PutObjectCommand(uploadParams),
       );
+      // eslint-disable-next-line @/no-console
       console.log({ uploadResponse });
       return key;
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         'Error uploading image',
         HttpStatus.INTERNAL_SERVER_ERROR,
