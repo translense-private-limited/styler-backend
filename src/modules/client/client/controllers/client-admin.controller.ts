@@ -25,7 +25,7 @@ export class ClientAdminController{
     }
 
     @Patch('employees/:employeeId')
-    async updateTeamMember(
+    async updateEmployeeDetails(
       @Param('employeeId', ParseIntPipe) employeeId: number,
       @Body() updateEmployeeDto: Partial<TeamMember>,
     ): Promise<TeamMember> {
