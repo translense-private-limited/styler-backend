@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { TeamMember } from "../dtos/team-member.dto";
 import { RoleClientService } from "@modules/authorization/services/role-client.service";
-import { ClientRepository } from "../repository/client.repository";
 import { ClientEntity } from "../entities/client.entity";
 import { TeamMemberService } from "./team-member.service";
 import { ClientService } from "./client.service";
