@@ -7,7 +7,7 @@ import { ClientAdminService } from "../services/client-admin.service";
 @Controller('admin')
 export class ClientAdminController{
     constructor(
-        private readonly clientAdminService:ClientAdminService
+        private readonly clientAdminService:ClientAdminService,
     ){}
 
     @Get('employees/outlet/:outletId')

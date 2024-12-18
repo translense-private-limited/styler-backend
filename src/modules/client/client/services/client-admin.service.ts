@@ -4,6 +4,7 @@ import { RoleClientService } from "@modules/authorization/services/role-client.s
 import { ClientEntity } from "../entities/client.entity";
 import { TeamMemberService } from "./team-member.service";
 import { ClientService } from "./client.service";
+import { ClientRepository } from "../repository/client.repository";
 
 @Injectable()
 export class ClientAdminService{
@@ -11,6 +12,7 @@ export class ClientAdminService{
         private readonly roleClientService:RoleClientService,
         private readonly teamMemberService:TeamMemberService,
         private readonly clientService:ClientService,
+        private readonly clientRepository:ClientRepository
     ){}
 
     async getAllEmployeesForOutlet(outletId:number):Promise<TeamMember[]>{
@@ -21,12 +23,8 @@ export class ClientAdminService{
         employeeId: number,
       ): Promise<TeamMember> {
         try {
-        
-          const employee = await this.teamMemberService.getTeamMemberByIdOrThrow(employeeId) 
-          const role = await this.roleClientService.getRoleByIdOrThrow(
-            employee.roleId,
-          );
-          return { ...employee, role };
+          return await this.clientRepository.getClientDetails(employeeId);
+          
         } catch (error) {
     
           throw new HttpException(
