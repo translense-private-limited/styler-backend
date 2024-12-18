@@ -10,7 +10,7 @@ export class ClientAdminController{
         private readonly clientAdminService:ClientAdminService,
     ){}
 
-    @Get('employees/outlet/:outletId')
+    @Get('/outlet/:outletId/employees')
     async getAllEmployeesForOutlet(
         @Param('outletId',ParseIntPipe) outletId:number
     ):Promise<TeamMember[]>{
