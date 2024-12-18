@@ -9,6 +9,7 @@ import { CategoryModule } from '@modules/admin/category/category.module';
 import { ServiceCustomerController } from './controllers/service-customer.controller';
 import { ServiceCustomerService } from './services/service-customer.service';
 import { ServiceExternalService } from './services/service-external.service';
+import { ServiceAdminController } from './controllers/service-admin-controller';
 
 @Module({
   imports: [
@@ -25,6 +26,6 @@ import { ServiceExternalService } from './services/service-external.service';
     ServiceCustomerService,
     ServiceExternalService,
   ],
-  controllers: [ServiceController, ServiceCustomerController],
+  controllers: [ServiceController, ServiceCustomerController,ServiceAdminController],
 })
 export class ServiceModule {}
