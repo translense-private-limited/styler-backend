@@ -16,10 +16,6 @@ export class CreateOutletDto {
   @IsString()
   description?: string; 
 
-  // @IsOptional()
-  // @IsNumber()
-  // addressId: number; // Required field
-
   @IsNotEmpty()
   @IsNumber()
   latitude: number; // Required field

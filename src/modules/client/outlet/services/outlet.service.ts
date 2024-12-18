@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { OutletRepository } from '../repositories/outlet.repository';
 import { CreateOutletDto } from '../dtos/outlet.dto';
@@ -25,11 +25,10 @@ export class OutletService {
   async getOutletByIdOrThrow(outletId: number): Promise<OutletEntity> {
     const outlet = await this.outletRepository
       .getRepository()
-      .findOne({ where: { id: outletId } });
+      .findOne({ where: { id: outletId },
+      relations:['address'] });
 
-    if (!outlet) {
-      throw new NotFoundException(`Outlet with ID ${outletId} not found`);
-    }
+    throwIfNotFound(outlet,`outlet with ${outletId} not found`)
     return outlet;
   }
 

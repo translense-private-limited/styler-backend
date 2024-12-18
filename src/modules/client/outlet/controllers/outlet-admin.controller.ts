@@ -108,4 +108,14 @@ export class OutletAdminController {
       registerClientDto,
     );
   }
+
+  @ApiOperation({
+    summary: 'fetch all the details of an outlet by outletId',
+  }) 
+  @Get('outlet/:outletId')
+  async getOutletDetailsByOutletId(
+    @Param('outletId') outletId:number
+  ):Promise<OutletEntity>{
+    return this.outletService.getOutletByIdOrThrow(outletId);
+  } 
 }
