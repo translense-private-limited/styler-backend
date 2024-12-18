@@ -317,4 +317,8 @@ export class OutletAdminService {
       },
     });
   }
+
+  // async getOutletDetailsByIdOrThrow():Promise<OutletEntity>{
+  //   return 
+  // }
 }
