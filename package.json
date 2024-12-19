@@ -41,6 +41,7 @@
     "bson": "^6.10.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "country-state-city": "^3.2.1",
     "csurf": "^1.11.0",
     "eslint-plugin-check-file": "^2.8.0",
     "eslint-plugin-react": "^7.37.2",
