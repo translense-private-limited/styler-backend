@@ -19,7 +19,9 @@ export class OutletService {
 
   // Fetch all outlets
   async getAllOutlets(): Promise<OutletEntity[]> {
-    return this.outletRepository.getRepository().find();
+    return this.outletRepository.getRepository().find({
+      relations:['address']
+    });
   }
 
   async getOutletByIdOrThrow(outletId: number): Promise<OutletEntity> {
