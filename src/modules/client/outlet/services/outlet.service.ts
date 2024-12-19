@@ -5,6 +5,7 @@ import { CreateOutletDto } from '../dtos/outlet.dto';
 import { OutletEntity } from '../entities/outlet.entity';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { DeleteOutletDto } from '../dtos/delete-outlet.dto';
+import { OutletInterface } from '../interfaces/outlet.interface';
 
 @Injectable()
 export class OutletService {
@@ -18,10 +19,8 @@ export class OutletService {
   }
 
   // Fetch all outlets
-  async getAllOutlets(): Promise<OutletEntity[]> {
-    return this.outletRepository.getRepository().find({
-      relations:['address']
-    });
+  async getAllOutlets(): Promise<OutletInterface[]> {
+    return this.outletRepository.getAllOutletsWithOwner();
   }
 
   async getOutletByIdOrThrow(outletId: number): Promise<OutletEntity> {
