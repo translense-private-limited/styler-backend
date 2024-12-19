@@ -18,6 +18,7 @@ import { Not } from 'typeorm';
 import { AddressEntity } from '@src/utils/entities/address.entity';
 import { CreateOutletDto } from '../dtos/outlet.dto';
 import { AddressRepository } from '@src/utils/repositories/address.repository';
+import { OutletInterface } from '../interfaces/outlet.interface';
 
 @Injectable()
 export class OutletAdminService {
@@ -186,7 +187,7 @@ export class OutletAdminService {
     return 'Outlet and associated clients deleted successfully';
   }
 
-  async getAllOutlets(): Promise<OutletEntity[]> {
+  async getAllOutlets(): Promise<OutletInterface[]> {
     return this.outletService.getAllOutlets();
   }
 
