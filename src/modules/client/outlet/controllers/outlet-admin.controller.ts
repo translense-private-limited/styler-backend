@@ -18,6 +18,7 @@ import { OutletAdminService } from '../services/outlet-admin.service';
 import { RegisterClientDto } from '@modules/client/client/dtos/register-client.dto';
 import { ClientEntity } from '@modules/client/client/entities/client.entity';
 import { AddressEntity } from '@src/utils/entities/address.entity';
+import { CityInterface, CountryInterface, StateInterface } from '../address.interface';
 
 @ApiTags('Admin/Outlets')
 @Controller('admin')
@@ -118,4 +119,22 @@ export class OutletAdminController {
   ):Promise<OutletEntity>{
     return this.outletService.getOutletByIdOrThrow(outletId);
   } 
+
+  @Get('countries')
+  getCountries():CountryInterface[]{
+    return this.outletAdminService.getAllCountries();
+  }
+
+  @Get('states/:countryCode')
+  getStates(@Param('countryCode') countryCode: string):StateInterface[] {
+    return this.outletAdminService.getStatesByCountry(countryCode);
+  }
+
+  @Get('cities/:countryCode/:stateCode')
+  getCities(
+    @Param('countryCode') countryCode: string,
+    @Param('stateCode') stateCode: string,
+  ):CityInterface[]{
+    return this.outletAdminService.getCitiesByState(countryCode, stateCode);
+  }
 }
