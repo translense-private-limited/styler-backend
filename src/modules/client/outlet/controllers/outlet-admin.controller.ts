@@ -130,7 +130,7 @@ export class OutletAdminController {
     return this.outletAdminService.getStatesByCountry(countryCode);
   }
 
-  @Get('cities/:countryCode/:stateCode')
+  @Get('country-code/:countryCode/state-code/:stateCode/cities')
   getCities(
     @Param('countryCode') countryCode: string,
     @Param('stateCode') stateCode: string,
