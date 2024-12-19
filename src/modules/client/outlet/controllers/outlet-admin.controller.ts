@@ -18,7 +18,9 @@ import { OutletAdminService } from '../services/outlet-admin.service';
 import { RegisterClientDto } from '@modules/client/client/dtos/register-client.dto';
 import { ClientEntity } from '@modules/client/client/entities/client.entity';
 import { AddressEntity } from '@src/utils/entities/address.entity';
+
 import { CityInterface, CountryInterface, StateInterface } from '../address.interface';
+import { OutletInterface } from '../interfaces/outlet.interface';
 
 @ApiTags('Admin/Outlets')
 @Controller('admin')
@@ -49,7 +51,7 @@ export class OutletAdminController {
     summary: 'list out all the existing outlets',
   })
   @Get('outlets')
-  async getAllOutlets(): Promise<OutletEntity[]> {
+  async getAllOutlets(): Promise<OutletInterface[]> {
     return this.outletAdminService.getAllOutlets();
   }
 

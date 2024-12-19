@@ -20,6 +20,8 @@ import { CreateOutletDto } from '../dtos/outlet.dto';
 import { AddressRepository } from '@src/utils/repositories/address.repository';
 import * as csc from 'country-state-city';
 import { CityInterface, CountryInterface, StateInterface } from '../address.interface';
+import { OutletInterface } from '../interfaces/outlet.interface';
+
 
 @Injectable()
 export class OutletAdminService {
@@ -188,7 +190,7 @@ export class OutletAdminService {
     return 'Outlet and associated clients deleted successfully';
   }
 
-  async getAllOutlets(): Promise<OutletEntity[]> {
+  async getAllOutlets(): Promise<OutletInterface[]> {
     return this.outletService.getAllOutlets();
   }
 
