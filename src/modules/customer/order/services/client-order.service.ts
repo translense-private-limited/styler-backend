@@ -20,6 +20,7 @@ import { QueryRunner } from 'typeorm';
 import { OrderEntity } from '../entities/orders.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
+import { TimeSlotDto } from '../dtos/time-slot.dto';
 
 @Injectable()
 export class ClientOrderService {
@@ -326,4 +327,14 @@ export class ClientOrderService {
     const client = await this.clientExternalService.getClientById(clientId);
     return client.outletId;
   }
+
+  async rescheduleOrder(orderId:number,rescheduledTimeSlot:TimeSlotDto):Promise<string>{
+    const appointment = await this.appointmentRepository.getRepository().findOne({where:{orderId}})
+    
+    appointment.status = BookingStatusEnum.RESCHEDULED;
+    Object.assign(appointment,rescheduledTimeSlot)
+
+    await this.appointmentRepository.getRepository().save(appointment)
+    return 'rescheduled the order successfully';
+ }
 }
