@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Put, Query } from '@nestjs/common';
 import { ClientOrderService } from '../services/client-order.service';
 import { OrderResponseInterface } from '../interfaces/client-orders.interface';
 import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
@@ -6,6 +6,7 @@ import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { OrderFilterDto } from '../dtos/order-filter.dto';
 import { OrderConfirmationDto } from '../dtos/order-confirmation.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { TimeSlotDto } from '../dtos/time-slot.dto';
 
 @ApiTags('Client/Orders')
 @Controller('client')
@@ -49,11 +50,21 @@ export class ClientOrderController {
   }
 
   @Get('/:clientId/completed-orders')
-  async getAllcompletedOrders(
+  async getAllCompletedOrders(
     @Param('clientId') clientId:number,
     @ClientIdDecorator() clientIdDto:ClientIdDto,
     @Query() dateRange:OrderFilterDto
   ):Promise<OrderResponseInterface[]>{
     return this.clientOrderService.getAllCompletedOrdersForClient(clientId,dateRange)
+  }
+
+  @Patch('/:clientId/reschedule-order/:orderId')
+  async rescheduleOrder(
+    @Param('clientId') clientId:number,
+    @ClientIdDecorator() clientIdDto:ClientIdDto,
+    @Param('orderId') orderId:number,
+    @Body() rescheduledTimeSlot:TimeSlotDto,
+  ):Promise<string>{
+    return await this.clientOrderService.rescheduleOrder(orderId,rescheduledTimeSlot);
   }
 }

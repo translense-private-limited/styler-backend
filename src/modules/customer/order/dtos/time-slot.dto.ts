@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsDate } from 'class-validator';
 
 /**
@@ -10,6 +11,7 @@ export class TimeSlotDto {
     type: String,
     format: 'date-time',
   })
+  @Type(()=>Date)
   @IsDate()
   startTime: Date;
 
@@ -18,6 +20,7 @@ export class TimeSlotDto {
     type: String,
     format: 'date-time',
   })
+  @Type(()=>Date)
   @IsDate()
   endTime: Date;
 }
