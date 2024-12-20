@@ -58,7 +58,7 @@ export class ClientOrderController {
     return this.clientOrderService.getAllCompletedOrdersForClient(clientId,dateRange)
   }
 
-  @Patch('/:clientId/reschedule-order/:orderId')
+  @Patch('/:clientId/order/:orderId/reschedule-appointment')
   async rescheduleOrder(
     @Param('clientId') clientId:number,
     @ClientIdDecorator() clientIdDto:ClientIdDto,
