@@ -18,7 +18,10 @@ import { Not } from 'typeorm';
 import { AddressEntity } from '@src/utils/entities/address.entity';
 import { CreateOutletDto } from '../dtos/outlet.dto';
 import { AddressRepository } from '@src/utils/repositories/address.repository';
+import * as csc from 'country-state-city';
+import { CityInterface, CountryInterface, StateInterface } from '../address.interface';
 import { OutletInterface } from '../interfaces/outlet.interface';
+
 
 @Injectable()
 export class OutletAdminService {
@@ -319,7 +322,15 @@ export class OutletAdminService {
     });
   }
 
-  // async getOutletDetailsByIdOrThrow():Promise<OutletEntity>{
-  //   return 
-  // }
+  getAllCountries():CountryInterface[]{
+    return csc.Country.getAllCountries();
+  }
+
+  getStatesByCountry(countryCode: string):StateInterface[]{
+    return csc.State.getStatesOfCountry(countryCode);
+  }
+
+  getCitiesByState(countryCode: string, stateCode: string):CityInterface[] {
+    return csc.City.getCitiesOfState(countryCode, stateCode);
+  }
 }
