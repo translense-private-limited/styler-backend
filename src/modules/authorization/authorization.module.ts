@@ -12,6 +12,7 @@ import { RoleRepository } from './repositories/role.repository';
 import { RoleClientController } from './controllers/role-client.controller';
 import { RoleClientService } from './services/role-client.service';
 import { RoleExternalService } from './services/role-external.service';
+import { RoleAdminCOntroller } from './controllers/role-admin.controller';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { RoleExternalService } from './services/role-external.service';
       getMysqlDataSource(),
     ),
   ],
-  controllers: [ResourceController, roleController,RoleClientController],
+  controllers: [ResourceController, roleController,RoleClientController,RoleAdminCOntroller],
   providers: [ResourceService, ResourceRepository, RoleService, RoleRepository,RoleClientService,RoleExternalService],
   exports:[RoleClientService,RoleRepository,RoleExternalService]
 })
