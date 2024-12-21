@@ -19,6 +19,10 @@ import { AdminModule } from '../admin/admin.module';
 import { CategoryModule } from '@modules/admin/category/category.module';
 import { CustomerModule } from '@modules/customer/customer.module';
 import { SeedCustomerData } from './data/customer.data';
+import { UtilsModule } from '@src/utils/utils.module';
+import { SeedAddressData } from './data/address.data';
+import { ServiceModule } from '@modules/client/services/service.module';
+import { SeedServiceData } from './data/service.data';
 
 @Module({
   imports: [
@@ -29,9 +33,11 @@ import { SeedCustomerData } from './data/customer.data';
     DatabaseModule,
     forwardRef(() => AdminModule), // Use forwardRef to avoid circular dependency
     CategoryModule,
-    CustomerModule
+    CustomerModule,
+    UtilsModule,
+    ServiceModule
   ],
   controllers: [SeedController],
-  providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData,SeedAdminData,SeedCustomerData],  // Provide SeedService
+  providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData,SeedAdminData,SeedCustomerData,SeedAddressData,SeedServiceData],
 })
 export class SeedModule {}
