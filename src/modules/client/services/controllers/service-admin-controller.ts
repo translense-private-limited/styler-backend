@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
 import { ServiceSchema } from "../schema/service.schema";
 import { ServiceDto } from "../dtos/service.dto";
 import { ServiceService } from "../services/service.service";
@@ -9,6 +9,12 @@ export class ServiceAdminController{
         private readonly serviceService:ServiceService
     ){}
 
+    @Post('/service')
+    async createService(
+        @Body() createServiceDto:ServiceDto
+    ):Promise<ServiceSchema>{
+        return this.serviceService.createService(createServiceDto);
+    }
     @Get('/outlet/:outletId/services')
     async getAllServicesForOutlet(
         @Param('outletId',ParseIntPipe) outletId:number
