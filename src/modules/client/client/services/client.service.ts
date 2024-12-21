@@ -16,7 +16,6 @@ import { RoleClientService } from '@modules/authorization/services/role-client.s
 import { TeamMember } from '../dtos/team-member.dto';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { ResetClientPasswordDto } from '@modules/authentication/dtos/admin-reset-client-password.dto';
-import { RoleEnum } from '@src/utils/enums/role.enums';
 import { RegisterClientDto } from '../dtos/register-client.dto';
 import { RoleExternalService } from '@modules/authorization/services/role-external.service';
 
@@ -205,20 +204,14 @@ export class ClientService {
       ? await this.bcryptEncryptionService.encrypt(clientDto.password)
       : await this.bcryptEncryptionService.encrypt(clientDto.name);
   
-    // Retrieve the default role for clients
-    const role = await this.roleExternalService.getRoleDetails(RoleEnum.OWNER);
-    const roleId = role.id;
-  
     // Prepare the client data to be saved
     const clientDataToSave = {
       ...clientDto,
       password: encryptedPassword,
-      roleId,
     };
   
     // Save the client data in the database
     return this.clientRepository.getRepository().save(clientDataToSave);
   }
      
-  
 }
