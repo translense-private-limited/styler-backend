@@ -127,7 +127,7 @@ export class OutletAdminController {
     return this.outletAdminService.getAllCountries();
   }
 
-  @Get('states/:countryCode')
+  @Get('country/:countryCode/states')
   getStates(@Param('countryCode') countryCode: string):StateInterface[] {
     return this.outletAdminService.getStatesByCountry(countryCode);
   }
