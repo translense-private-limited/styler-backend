@@ -26,7 +26,6 @@ export class SeedClientOutletMappingData {
                 },
             ];
 
-            console.log("client-outlet-mapping seeding")
             await this.clientOutletMappingRepository.getRepository().save(clientOutletMappings);
             await queryRunner.commitTransaction();
         } catch (error) {
