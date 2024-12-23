@@ -23,14 +23,6 @@ export class SeedOutletData{
                   name: 'Sample Outlet',
                   description: 'This is a sample outlet description.',
                   status: OutletStatusEnum.UNDER_CONSTRUCTION,
-                  address:  {
-                            propertyNumber:'12-A',
-                            street: '123 Main Street',
-                            city: 'City',
-                            state: '',  
-                            postalCode: '',  
-                            country: 'Country'
-                            },
                   latitude: 37.7749,
                   longitude: -122.4194,
                   phoneNumber: '+1234567890',
@@ -38,6 +30,7 @@ export class SeedOutletData{
                   website: 'http://www.sampleoutlet.com',
                   createdAt: new Date(),
                   updatedAt: new Date(),
+                  addressId:1,
                   clientId: 1,
                 },
                 {
@@ -45,14 +38,6 @@ export class SeedOutletData{
                   name: 'Example Outlet',
                   description: 'This is an example outlet description.',
                   status: OutletStatusEnum.COMING_SOON,
-                  address: {
-                            propertyNumber:'12-A',
-                            street: '456 Another Street',
-                            city: 'City',
-                            state: '',  
-                            postalCode: '123456',
-                            country: 'Country'
-                            },
                   latitude: 34.0522,
                   longitude: -118.2437,
                   phoneNumber: '+1987654321',
@@ -60,6 +45,7 @@ export class SeedOutletData{
                   website: 'http://www.exampleoutlet.com',
                   createdAt: new Date(),
                   updatedAt: new Date(),
+                  addressId:2,
                   clientId: 2,
                 },
 

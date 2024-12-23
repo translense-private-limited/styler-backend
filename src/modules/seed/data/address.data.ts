@@ -18,6 +18,7 @@ export class SeedAddressData {
       const addresses = [
         {
           addressId: 1,
+          propertyNumber:'12-A',
           country: 'India',
           state: 'Maharashtra',
           district: 'Mumbai Suburban',
@@ -29,6 +30,7 @@ export class SeedAddressData {
         },
         {
           addressId: 2,
+          propertyNumber:'13-A',
           country: 'India',
           state: 'Karnataka',
           district: 'Bangalore Urban',
