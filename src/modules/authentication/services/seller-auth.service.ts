@@ -6,24 +6,27 @@ import { ClientExternalService } from '@modules/client/client/services/client-ex
 import { JwtService } from './jwt.service';
 //import { CreateClientDto } from '@modules/client/client/dtos/client.dto';
 import { ClientEntity } from '@modules/client/client/entities/client.entity';
+import { ClientOutletMappingExternalService } from '@modules/admin/client-outlet-mapping/services/client-outlet-mapping-external.service';
 
 @Injectable()
 export class SellerAuthService implements AuthServiceInterface {
   constructor(
     private bcryptEncryptionService: BcryptEncryptionService,
     private clientExternalService: ClientExternalService,
+    private readonly clientOutletMappingExternalService:ClientOutletMappingExternalService,
     private jwtService: JwtService,
   ) {}
 
-  addHeaderDataForTokenPayload(client: ClientEntity): object {
+  async addHeaderDataForTokenPayload(client: ClientEntity): Promise<ClientEntity> {
     // delete password from object
     delete client.password;
 
+    const outletIds = await this.clientOutletMappingExternalService.getClientLinkedOutletIds(client.id);
     // now add the
     const headers = {
       whitelabelId: 1,
-      clientId: 1,
-      outletIds: [1],
+      clientId: client.id,
+      outletIds: outletIds,
     };
 
     client['headers'] = headers;
@@ -46,7 +49,6 @@ export class SellerAuthService implements AuthServiceInterface {
     }
     const tokenPayload = await this.addHeaderDataForTokenPayload(seller);
     const jwtToken = await this.jwtService.generateToken(tokenPayload);
-
     return { seller, jwtToken };
   }
 }

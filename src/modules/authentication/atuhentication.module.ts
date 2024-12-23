@@ -24,6 +24,7 @@ import { AdminModule } from '@modules/admin/admin.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 import { AdminClientController } from './controllers/admin-client.controller';
 import { AdminClientService } from './services/admin-client.service';
+import { ClientOutletMappingModule } from '@modules/admin/client-outlet-mapping/client-outlet-mapping.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { AdminClientService } from './services/admin-client.service';
     CustomerModule,
     TypeOrmModule.forFeature([OtpEntity], getMysqlDataSource()),
     AuthorizationModule,
+    ClientOutletMappingModule
   ],
   providers: [
     SellerAuthService,
