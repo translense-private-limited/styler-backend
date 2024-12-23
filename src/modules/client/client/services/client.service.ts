@@ -18,6 +18,7 @@ import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { ResetClientPasswordDto } from '@modules/authentication/dtos/admin-reset-client-password.dto';
 import { RegisterClientDto } from '../dtos/register-client.dto';
 import { RoleExternalService } from '@modules/authorization/services/role-external.service';
+import { ClientOutletMappingEntity } from '@modules/admin/client-outlet-mapping/entities/client-outlet-mapping.entity';
 
 
 @Injectable()
@@ -188,30 +189,60 @@ export class ClientService {
   }
 
   async createClient(clientDto: RegisterClientDto): Promise<ClientEntity> {
-    // Check if a client with the provided email already exists
-    const getClientWithProvidedEmail = await this.getClientByEmailOrThrow(clientDto.email);
-    if(getClientWithProvidedEmail){
-      throw new Error ('client with given email already exists')
+    const queryRunner = this.clientRepository
+    .getRepository()
+    .manager.connection.createQueryRunner();  
+
+    await queryRunner.startTransaction();
+  
+    try {
+      // Check if a client with the provided email already exists
+      const getClientWithProvidedEmail = await this.getClientByEmailOrThrow(clientDto.email);
+      if (getClientWithProvidedEmail) {
+        throw new Error('Client with given email already exists');
+      }
+  
+      // Check if a client with the provided contact number already exists
+      const getClientWithContactNumber = await this.getClientByContactNumber(clientDto.contactNumber);
+      if (getClientWithContactNumber) {
+        throw new Error('Client with given contact number already exists');
+      }
+  
+      // Encrypt the password if it is provided, or use a default encrypted password (e.g., encrypted name)
+      const encryptedPassword = clientDto.password
+        ? await this.bcryptEncryptionService.encrypt(clientDto.password)
+        : await this.bcryptEncryptionService.encrypt(clientDto.name);
+  
+      // Prepare the client data to be saved
+      const clientDataToSave = {
+        ...clientDto,
+        password: encryptedPassword,
+      };
+  
+      // Save the client data in the database
+      const newClient = await queryRunner.manager.save(ClientEntity, clientDataToSave);
+  
+      // Create client-outlet mapping
+      const clientOutletMapping = {
+        clientId: newClient.id,
+        outletId: clientDto.outletId, 
+      };
+  
+      await queryRunner.manager.save(ClientOutletMappingEntity, clientOutletMapping);
+  
+      // Commit transaction
+      await queryRunner.commitTransaction();
+  
+      return newClient;
+    } catch (error) {
+      // Rollback transaction in case of error
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      // Release the query runner
+      await queryRunner.release();
     }
-    // Check if a client with the provided contact number already exists
-    const getClientWithContactNumber = await this.getClientByContactNumber(clientDto.contactNumber);
-    if(getClientWithContactNumber){
-      throw new Error('client with given contact number already exists')
-    }
-  
-    // Encrypt the password if it is provided, or use a default encrypted password (e.g., encrypted name)
-    const encryptedPassword = clientDto.password 
-      ? await this.bcryptEncryptionService.encrypt(clientDto.password)
-      : await this.bcryptEncryptionService.encrypt(clientDto.name);
-  
-    // Prepare the client data to be saved
-    const clientDataToSave = {
-      ...clientDto,
-      password: encryptedPassword,
-    };
-  
-    // Save the client data in the database
-    return this.clientRepository.getRepository().save(clientDataToSave);
   }
+  
      
 }
