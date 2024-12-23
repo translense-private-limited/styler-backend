@@ -18,36 +18,51 @@ export class SeedOutletData{
             await queryRunner.query('SET FOREIGN_KEY_CHECKS = 1;');
       
             const outlets = [
-              {
-                id: 1,
-                name: "Luxury Hair Studio",
-                description: "A high-end salon specializing in advanced hair treatments and styling services.",
-                status: OutletStatusEnum.LIVE,
-                addressId: 1,
-                latitude: 40.712776,
-                longitude: -74.005974,
-                phoneNumber: "+11234567890",
-                email: "luxury@salonscape.com",
-                website: "http://www.luxuryhairstudio.com",
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                clientId: 1,
-              },
-              {
-                id: 2,
-                name: "Urban Chic Salon",
-                description: "A trendy salon offering modern cuts, colors, and grooming services for urban lifestyles.",
-                status: OutletStatusEnum.COMING_SOON,
-                addressId: 2,
-                latitude: 34.052235,
-                longitude: -118.243683,
-                phoneNumber: "+19876543210",
-                email: "urban@salonscape.com",
-                website: "http://www.urbanchicsalon.com",
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                clientId: 2,
-              },
+                {
+                  id: 1,
+                  name: 'Sample Outlet',
+                  description: 'This is a sample outlet description.',
+                  status: OutletStatusEnum.UNDER_CONSTRUCTION,
+                  address:  {
+                            propertyNumber:'12-A',
+                            street: '123 Main Street',
+                            city: 'City',
+                            state: '',  
+                            postalCode: '',  
+                            country: 'Country'
+                            },
+                  latitude: 37.7749,
+                  longitude: -122.4194,
+                  phoneNumber: '+1234567890',
+                  email: 'sample@translense.com',
+                  website: 'http://www.sampleoutlet.com',
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                  clientId: 1,
+                },
+                {
+                  id: 2,
+                  name: 'Example Outlet',
+                  description: 'This is an example outlet description.',
+                  status: OutletStatusEnum.COMING_SOON,
+                  address: {
+                            propertyNumber:'12-A',
+                            street: '456 Another Street',
+                            city: 'City',
+                            state: '',  
+                            postalCode: '123456',
+                            country: 'Country'
+                            },
+                  latitude: 34.0522,
+                  longitude: -118.2437,
+                  phoneNumber: '+1987654321',
+                  email: 'example@translense.com',
+                  website: 'http://www.exampleoutlet.com',
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                  clientId: 2,
+                },
+
               ];
 
               await this.outletRepository.getRepository().save(outlets);
