@@ -62,6 +62,7 @@ export class SeedOutletData{
                   updatedAt: new Date(),
                   clientId: 2,
                 },
+
               ];
 
               await this.outletRepository.getRepository().save(outlets);

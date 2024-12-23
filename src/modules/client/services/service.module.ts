@@ -19,7 +19,7 @@ import { ServiceAdminController } from './controllers/service-admin-controller';
     ),
     CategoryModule,
   ],
-  exports: [ServiceExternalService],
+  exports: [ServiceExternalService,ServiceRepository],
   providers: [
     ServiceService,
     ServiceRepository,
