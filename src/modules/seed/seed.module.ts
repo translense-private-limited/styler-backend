@@ -23,6 +23,8 @@ import { UtilsModule } from '@src/utils/utils.module';
 import { SeedAddressData } from './data/address.data';
 import { ServiceModule } from '@modules/client/services/service.module';
 import { SeedServiceData } from './data/service.data';
+import { SeedClientOutletMappingData } from './data/client-outlet-mapping.data';
+import { ClientOutletMappingModule } from '@modules/admin/client-outlet-mapping/client-outlet-mapping.module';
 
 @Module({
   imports: [
@@ -35,9 +37,10 @@ import { SeedServiceData } from './data/service.data';
     CategoryModule,
     CustomerModule,
     UtilsModule,
-    ServiceModule
+    ServiceModule,
+    ClientOutletMappingModule,
   ],
   controllers: [SeedController],
-  providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData,SeedAdminData,SeedCustomerData,SeedAddressData,SeedServiceData],
+  providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData,SeedAdminData,SeedCustomerData,SeedAddressData,SeedServiceData,SeedClientOutletMappingData],
 })
 export class SeedModule {}
