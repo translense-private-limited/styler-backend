@@ -7,12 +7,14 @@ import { SeedAdminData } from '../data/admin.data';
 import { SeedCustomerData } from '../data/customer.data';
 import { SeedAddressData } from '../data/address.data';
 import { SeedServiceData } from '../data/service.data';
+import { SeedClientOutletMappingData } from '../data/client-outlet-mapping.data';
 
 @Injectable()
 export class SeedService {
   constructor(
     private readonly seedClientData: SeedClientData,
     private readonly seedOutletData: SeedOutletData,
+    private readonly seedClientOutletMapping:SeedClientOutletMappingData,
     private readonly seedRoleData: SeedRoleData,
     private readonly seedCategoryData: SeedCategoryData,
     private readonly seedAdminData: SeedAdminData,
@@ -26,6 +28,7 @@ export class SeedService {
 
       await this.seedClientData.seedClients();
       await this.seedOutletData.seedOutlets();
+      await this.seedClientOutletMapping.seedClientOutletMappings();
       await this.seedRoleData.seedRoles();
       await this.seedAdminData.seedAdmins();
       await this.seedCustomerData.seedCustomers();
