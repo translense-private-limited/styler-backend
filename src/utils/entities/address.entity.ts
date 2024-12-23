@@ -6,6 +6,9 @@ export class AddressEntity {
   @PrimaryGeneratedColumn()
   addressId: number;
 
+  @Column({nullable:false,type:'varchar'})
+  houseNumber:string;
+
   @Column({ default: 'india', type: 'varchar', length: 56 })
   country: string;
 

@@ -3,6 +3,10 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 export class AddressDto {
   @IsNotEmpty()
   @IsString()
+  houseNumber: string;
+
+  @IsNotEmpty()
+  @IsString()
   street: string;
 
   @IsNotEmpty()

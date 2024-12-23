@@ -58,6 +58,7 @@ export class OutletRepository extends BaseRepository<OutletEntity> {
         'outlet.clientId AS clientId',
         'outlet.addressId AS addressId',
         'address.addressId AS address_addressId',
+        'address.houseNumber AS address_houseNumber',
         'address.country AS address_country',
         'address.state AS address_state',
         'address.district AS address_district',
@@ -84,6 +85,7 @@ export class OutletRepository extends BaseRepository<OutletEntity> {
         addressId:outlet.addressId,
         address: {
           addressId: outlet.address_addressId,
+          houseNumber: outlet.address_houseNumber,
           country: outlet.address_country,
           state: outlet.address_state,
           district: outlet.address_district,
