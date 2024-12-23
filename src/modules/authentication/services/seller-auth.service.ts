@@ -17,11 +17,11 @@ export class SellerAuthService implements AuthServiceInterface {
     private jwtService: JwtService,
   ) {}
 
-  async addHeaderDataForTokenPayload(client: ClientEntity): Promise<object> {
+  async addHeaderDataForTokenPayload(client: ClientEntity): Promise<ClientEntity> {
     // delete password from object
     delete client.password;
 
-    const outletIds = await this.clientOutletMappingExternalService.getLinkedOutletIdsByClientId(client.id);
+    const outletIds = await this.clientOutletMappingExternalService.getClientLinkedOutletIds(client.id);
     // now add the
     const headers = {
       whitelabelId: 1,

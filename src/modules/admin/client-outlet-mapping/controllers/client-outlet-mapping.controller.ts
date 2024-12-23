@@ -26,7 +26,7 @@ export class ClientOutletMappingController {
     @Param('clientId') clientId: number,
   ): Promise<number[]> {
     const outletIds =
-      await this.clientOutletMappingService.getLinkedOutletIdsByClientId(
+      await this.clientOutletMappingService.getClientLinkedOutletIds(
         clientId,
       );
     return outletIds;

@@ -52,7 +52,7 @@ export class ClientOutletMappingService {
     return 'client belongs to outlet';
   }
 
-  async getLinkedOutletIdsByClientId(clientId: number): Promise<number[]> {
+  async getClientLinkedOutletIds(clientId: number): Promise<number[]> {
     const mapping = await this.clientOutletMappingRepository
       .getRepository()
       .find({

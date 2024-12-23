@@ -34,7 +34,7 @@ export class ClientOutletMappingExternalService {
     return mapping;
   }
 
-  async getLinkedOutletIdsByClientId(clientId:number):Promise<Number[]>{
-    return this.clientOutletMappingService.getLinkedOutletIdsByClientId(clientId);
+  async getClientLinkedOutletIds(clientId:number):Promise<Number[]>{
+    return this.clientOutletMappingService.getClientLinkedOutletIds(clientId);
   }
 }
