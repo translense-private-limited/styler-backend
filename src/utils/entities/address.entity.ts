@@ -7,7 +7,7 @@ export class AddressEntity {
   addressId: number;
 
   @Column({nullable:false,type:'varchar'})
-  houseNumber:string;
+  propertyNumber:string;
 
   @Column({ default: 'india', type: 'varchar', length: 56 })
   country: string;
