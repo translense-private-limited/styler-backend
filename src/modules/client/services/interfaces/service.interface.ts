@@ -8,6 +8,6 @@ export interface ServiceInterface {
   price: number;
   timeTaken: number;
   about: string;
-  description: string;
+  description?: string;
   outletId: number;
 }

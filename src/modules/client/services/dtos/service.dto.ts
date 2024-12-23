@@ -45,8 +45,8 @@ export class ServiceDto implements ServiceInterface {
   about: string;
 
   @IsString()
-  @IsNotEmpty()
-  description: string;
+  @IsOptional()
+  description?: string;
 
   @IsNumber()
   outletId: number;

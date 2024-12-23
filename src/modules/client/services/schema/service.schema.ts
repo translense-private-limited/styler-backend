@@ -28,8 +28,8 @@ export class ServiceSchema extends Document {
   @Prop({ required: true })
   about: string;
 
-  @Prop({ required: true })
-  description: string;
+  @Prop({ required: false })
+  description?: string;
 
   @Prop({ required: true })
   outletId: number;
