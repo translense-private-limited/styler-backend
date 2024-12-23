@@ -24,6 +24,7 @@ export class SeedOutletData{
                   description: 'This is a sample outlet description.',
                   status: OutletStatusEnum.UNDER_CONSTRUCTION,
                   address:  {
+                            propertyNumber:'12-A',
                             street: '123 Main Street',
                             city: 'City',
                             state: '',  
@@ -45,6 +46,7 @@ export class SeedOutletData{
                   description: 'This is an example outlet description.',
                   status: OutletStatusEnum.COMING_SOON,
                   address: {
+                            propertyNumber:'12-A',
                             street: '456 Another Street',
                             city: 'City',
                             state: '',  
