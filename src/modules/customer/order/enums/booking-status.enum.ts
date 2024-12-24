@@ -31,4 +31,6 @@ export enum BookingStatusEnum {
    * The customer did not show up for their appointment.
    */
   NO_SHOW = 'NO_SHOW',
+
+  COMPLETED = 'COMPLETED'
 }
