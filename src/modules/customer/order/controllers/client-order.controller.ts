@@ -7,6 +7,8 @@ import { OrderFilterDto } from '../dtos/order-filter.dto';
 import { OrderConfirmationDto } from '../dtos/order-confirmation.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { TimeSlotDto } from '../dtos/time-slot.dto';
+import { FulfillOrderDto } from '../dtos/order-fulfill.dto';
+import { FulfillOrderResponseInterface } from '../interfaces/order-fulfill-response.interface';
 
 @ApiTags('Client/Orders')
 @Controller('client')
@@ -67,4 +69,15 @@ export class ClientOrderController {
   ):Promise<string>{
     return await this.clientOrderService.rescheduleOrder(orderId,rescheduledTimeSlot);
   }
+
+  @Patch('/:clientId/order/:orderId/fulfill-order')
+  async fulFillTheOrder(
+    @Param('clientId') clientId: number,
+    @ClientIdDecorator() clientIdDto: ClientIdDto,
+    @Param('orderId') orderId: number,
+    @Body() fulfillOrderDto: FulfillOrderDto
+  ): Promise<FulfillOrderResponseInterface> {
+    return this.clientOrderService.fulFillTheOrder(clientId, orderId, fulfillOrderDto);
+  }
+  
 }

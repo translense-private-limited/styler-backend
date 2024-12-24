@@ -11,6 +11,7 @@ import { CreateAppointmentDto } from '../dtos/create-appointment.interface';
 import { AppointmentEntity } from '../entities/appointment.entity';
 import { UpdateAppointmentTimeDto } from '../dtos/update-appointment-time.dto';
 import { TimeSlotDto } from '../dtos/time-slot.dto';
+import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 
 @Injectable()
 export class AppointmentService {
@@ -43,9 +44,11 @@ export class AppointmentService {
   async getAppointmentByOrderIdOrThrow(
     orderId: number,
   ): Promise<AppointmentEntity> {
-    return this.appointmentRepository.getRepository().findOne({
+    const appointment = await this.appointmentRepository.getRepository().findOne({
       where: { orderId: orderId },
     });
+    throwIfNotFound(appointment,`appointment with ${orderId} not found`)
+    return appointment;
   }
 
   /**

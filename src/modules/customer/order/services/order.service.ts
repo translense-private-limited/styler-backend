@@ -29,6 +29,7 @@ import { ClientOrderService } from './client-order.service';
 import { ServiceSchema } from '@modules/client/services/schema/service.schema';
 import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
 import { CustomerOrderResponseInterface } from '../interfaces/customer-order-response.interface';
+import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 
 @Injectable()
 export class OrderService {
@@ -410,9 +411,13 @@ export class OrderService {
   }
 
   async getOrderByIdOrThrow(orderId: number): Promise<OrderEntity> {
-    return await this.orderRepository
+    const order = await this.orderRepository
       .getRepository()
       .findOne({ where: { orderId } });
+      
+    throwIfNotFound(order,`order with ${orderId} not found`)
+    return order;
+
   }
 
   async getUpcomingOrdersForCustomer(customerId: number): Promise<CustomerOrderResponseInterface[]> {
