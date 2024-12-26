@@ -47,6 +47,7 @@
     "eslint-plugin-check-file": "^2.8.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-unicorn": "^56.0.0",
+    "firebase-admin": "^13.0.2",
     "handlebars": "^4.7.8",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",

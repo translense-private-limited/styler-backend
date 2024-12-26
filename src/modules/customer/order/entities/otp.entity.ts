@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { OtpTypeEnum } from "../enums/otp-type.enum";
 import { OtpRepository } from "@modules/authentication/repositories/otp.repository";
 
-@Entity('otp_verification')
+@Entity('order_fulfillment_otp')
 export class OrderFulfillmentOtpEntity extends OtpRepository{
 
     @PrimaryGeneratedColumn()

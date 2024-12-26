@@ -3,11 +3,16 @@ import { AddressRepository } from "./repositories/address.repository";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AddressEntity } from "./entities/address.entity";
 import { getMysqlDataSource } from "@modules/database/data-source";
+import { DeviceTokenRepository } from "./repositories/device-token.repository";
+import { PushNotificationBuilderService } from "./services/push-notification-builder.service";
+import { PushNotificationService } from "./services/push-notification.service";
+import { DeviceTokenEntity } from "./entities/device-token.entity";
+import { PushNotificationController } from "./controllers/push-notification.controller";
 
 @Module({
-    imports:[TypeOrmModule.forFeature([AddressEntity],getMysqlDataSource())],
-    controllers:[],
-    providers:[AddressRepository],
+    imports:[TypeOrmModule.forFeature([AddressEntity,DeviceTokenEntity],getMysqlDataSource())],
+    controllers:[PushNotificationController],
+    providers:[AddressRepository,DeviceTokenRepository,PushNotificationBuilderService,PushNotificationService],
     exports:[AddressRepository],
 })
 
