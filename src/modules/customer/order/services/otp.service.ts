@@ -1,9 +1,8 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { LessThan } from 'typeorm';
 import { OrderFulfillmentOtpEntity } from '../entities/otp.entity';
 import { OtpTypeEnum } from '../enums/otp-type.enum';
 import {  OrderFulfillmentOtpRepository} from '../repositories/otp.repository';
-import { Interval } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 
 @Injectable()
@@ -60,14 +59,39 @@ export class OtpService {
     // console.log(`OTP validated successfully for type ${type}.`);
   }
 
-  async cleanUpExpiredOtps(): Promise<void> {
+
+  private async cleanUpExpiredOtpsInBatches(batchSize: number): Promise<void> {
     const now = new Date();
-    await this.orderFulfillmentOtpRepository.getRepository().delete({ expirationTime: LessThan(now) });
+    let deletedCount: number;
+
+    do {
+      // Fetch expired OTPs in batches
+      const expiredOtps = await this.orderFulfillmentOtpRepository
+        .getRepository()
+        .createQueryBuilder('otp')
+        .where('otp.expirationTime < :now', { now })
+        .limit(batchSize)
+        .getMany();
+
+      deletedCount = expiredOtps.length;
+
+      if (deletedCount > 0) {
+        const ids = expiredOtps.map((otp) => otp.id);
+
+        // Delete fetched OTPs using their IDs
+        await this.orderFulfillmentOtpRepository
+          .getRepository()
+          .createQueryBuilder()
+          .delete()
+          .whereInIds(ids)
+          .execute();
+      }
+    } while (deletedCount > 0);
   }
 
-  // Periodic cleanup using @Interval
-  @Interval(1000 * 60 * 60 * 24) 
-  async periodicOtpCleanup(): Promise<void> {
-    await this.cleanUpExpiredOtps();
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async scheduledOtpCleanup(): Promise<void> {
+    const batchSize = 100; // Adjust the batch size as needed
+    await this.cleanUpExpiredOtpsInBatches(batchSize);
   }
 }
