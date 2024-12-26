@@ -2,12 +2,12 @@ import { BaseRepository } from '@src/utils/repositories/base-repository';
 import { getMysqlDataSource } from '@modules/database/data-source';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OtpVerificationEntity } from '../entities/otp.entity';
+import { OrderFulfillmentOtpEntity } from '../entities/otp.entity';
 
-export class OtpVerificationRepository extends BaseRepository<OtpVerificationEntity> {
+export class OrderFulfillmentOtpRepository extends BaseRepository<OrderFulfillmentOtpEntity> {
   constructor(
-    @InjectRepository(OtpVerificationEntity, getMysqlDataSource())
-    protected repository: Repository<OtpVerificationEntity>,
+    @InjectRepository(OrderFulfillmentOtpEntity, getMysqlDataSource())
+    protected repository: Repository<OrderFulfillmentOtpEntity>,
   ) {
     super(repository);
   }

@@ -19,13 +19,13 @@ import { ClientOrderService } from './services/client-order.service';
 import { CustomerModule } from '../customer.module';
 import { ClientModule } from '@modules/client/client/client.module';
 import { OtpService } from './services/otp.service';
-import { OtpVerificationRepository } from './repositories/otp.repository';
-import { OtpVerificationEntity } from './entities/otp.entity';
+import { OrderFulfillmentOtpEntity } from './entities/otp.entity';
+import { OrderFulfillmentOtpRepository } from './repositories/otp.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [OrderEntity, OrderItemEntity, AppointmentEntity,OtpVerificationEntity],
+      [OrderEntity, OrderItemEntity, AppointmentEntity,OrderFulfillmentOtpEntity],
       getMysqlDataSource(),
     ),
     OutletModule,
@@ -43,7 +43,7 @@ import { OtpVerificationEntity } from './entities/otp.entity';
     AppointmentService,
     ClientOrderService,
     OtpService,
-    OtpVerificationRepository
+    OrderFulfillmentOtpRepository
     ],
   exports: [],
 })

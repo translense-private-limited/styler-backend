@@ -3,7 +3,7 @@ import { OtpTypeEnum } from "../enums/otp-type.enum";
 import { OtpRepository } from "@modules/authentication/repositories/otp.repository";
 
 @Entity('otp_verification')
-export class OtpVerificationEntity extends OtpRepository{
+export class OrderFulfillmentOtpEntity extends OtpRepository{
 
     @PrimaryGeneratedColumn()
     id: number;
