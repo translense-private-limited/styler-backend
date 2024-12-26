@@ -1,14 +1,14 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { LessThan } from 'typeorm';
-import { OtpEntity } from '../entities/otp.entity';
+import { OtpVerificationEntity } from '../entities/otp.entity';
 import { OtpTypeEnum } from '../enums/otp-type.enum';
-import { OtpRepository } from '../repositories/otp.repository';
+import { OtpVerificationRepository } from '../repositories/otp.repository';
 import { Interval } from '@nestjs/schedule';
 
 
 @Injectable()
 export class OtpService {
-  constructor(private readonly otpRepository: OtpRepository) {}
+  constructor(private readonly otpVerificationRepository: OtpVerificationRepository) {}
 
   private generateRandomOtp(): number {
     return Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
@@ -20,14 +20,14 @@ export class OtpService {
     orderId: number,
     orderFulfillmentTime: Date,
     type: OtpTypeEnum,
-  ): Promise<OtpEntity> {
+  ): Promise<OtpVerificationEntity> {
     const otp = this.generateRandomOtp();
 
     // Calculate expiration time: 6 hours after order fulfillment time
     const expirationTime = new Date(orderFulfillmentTime);
     expirationTime.setHours(expirationTime.getHours() + 6);
 
-    const otpEntity = this.otpRepository.getRepository().create({
+    const otpEntity = this.otpVerificationRepository.getRepository().create({
       clientId,
       customerId,
       orderId,
@@ -36,7 +36,7 @@ export class OtpService {
       expirationTime,
     });
     
-    await this.otpRepository.getRepository().save(otpEntity);
+    await this.otpVerificationRepository.getRepository().save(otpEntity);
 
     // Simulate sending OTP to the customer (e.g., SMS/Email)
     // console.log(`OTP ${otp} sent to customer ${customerId}.`);
@@ -45,7 +45,7 @@ export class OtpService {
   }
 
   async validateOtp(otp: number, type: OtpTypeEnum): Promise<void> {
-    const otpEntity = await this.otpRepository.getRepository().findOne({ where: { otp, type } });
+    const otpEntity = await this.otpVerificationRepository.getRepository().findOne({ where: { otp, type } });
 
     if (!otpEntity) {
       throw new BadRequestException('Invalid OTP');
@@ -62,7 +62,7 @@ export class OtpService {
 
   async cleanUpExpiredOtps(): Promise<void> {
     const now = new Date();
-    await this.otpRepository.getRepository().delete({ expirationTime: LessThan(now) });
+    await this.otpVerificationRepository.getRepository().delete({ expirationTime: LessThan(now) });
   }
 
   // Periodic cleanup using @Interval
