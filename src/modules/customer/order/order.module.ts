@@ -18,7 +18,7 @@ import { ClientOrderController } from './controllers/client-order.controller';
 import { ClientOrderService } from './services/client-order.service';
 import { CustomerModule } from '../customer.module';
 import { ClientModule } from '@modules/client/client/client.module';
-import { OtpService } from './services/otp.service';
+import { OrderFulfillmentOtpService } from './services/order-fulfillment-otp.service';
 import { OrderFulfillmentOtpEntity } from './entities/otp.entity';
 import { OrderFulfillmentOtpRepository } from './repositories/otp.repository';
 
@@ -42,7 +42,7 @@ import { OrderFulfillmentOtpRepository } from './repositories/otp.repository';
     AppointmentRepository,
     AppointmentService,
     ClientOrderService,
-    OtpService,
+    OrderFulfillmentOtpService,
     OrderFulfillmentOtpRepository
     ],
   exports: [],

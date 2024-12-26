@@ -6,7 +6,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 
 @Injectable()
-export class OtpService {
+export class OrderFulfillmentOtpService {
   constructor(private readonly orderFulfillmentOtpRepository: OrderFulfillmentOtpRepository) {}
 
   private generateRandomOtp(): number {

@@ -21,7 +21,7 @@ import { OrderEntity } from '../entities/orders.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 import { TimeSlotDto } from '../dtos/time-slot.dto';
-import { OtpService } from './otp.service';
+import { OrderFulfillmentOtpService } from './order-fulfillment-otp.service';
 import { AppointmentEntity } from '../entities/appointment.entity';
 import { OtpTypeEnum } from '../enums/otp-type.enum';
 import { OrderStatusEnum } from '../enums/order-status.enum';
@@ -39,7 +39,7 @@ export class ClientOrderService {
     @Inject(forwardRef(() => OrderService))
     private readonly orderService: OrderService,
     private readonly clientExternalService: ClientExternalService,
-    private readonly otpService:OtpService
+    private readonly orderFulfillmentOtpService:OrderFulfillmentOtpService
   ) {}
 
   async getAllOpenOrders(clientId: number): Promise<OrderResponseInterface[]> {
@@ -256,7 +256,7 @@ export class ClientOrderService {
       // Step 3: Update appointment status
       if (accept && accept.length > 0) {
         const appointment = await this.updateAppointmentStatus(queryRunner, orderId,BookingStatusEnum.CONFIRMED);
-        await this.otpService.generateOtp(clientId,order.customerId,orderId,appointment.endTime,OtpTypeEnum.ORDER)
+        await this.orderFulfillmentOtpService.generateOtp(clientId,order.customerId,orderId,appointment.endTime,OtpTypeEnum.ORDER)
       }
       else{
         await this.updateAppointmentStatus(queryRunner, orderId,BookingStatusEnum.CANCELLED_BY_SALON);
@@ -349,7 +349,7 @@ export class ClientOrderService {
 async fulFillTheOrder(clientId: number, orderId: number, fulfillOrderDto: FulfillOrderDto): Promise<FulfillOrderResponseInterface> {
     const {otp,paymentMode,amountReceived} = fulfillOrderDto;
     // Step 1: Validate the OTP using the existing method
-    await this.otpService.validateOtp(otp, OtpTypeEnum.ORDER);
+    await this.orderFulfillmentOtpService.validateOtp(otp, OtpTypeEnum.ORDER);
 
     // Step 2: Update the order status to "COMPLETED"
     const order = await this.orderService.getOrderByIdOrThrow(orderId)
