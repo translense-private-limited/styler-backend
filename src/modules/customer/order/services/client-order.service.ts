@@ -21,6 +21,12 @@ import { OrderEntity } from '../entities/orders.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 import { TimeSlotDto } from '../dtos/time-slot.dto';
+import { OrderFulfillmentOtpService } from './order-fulfillment-otp.service';
+import { AppointmentEntity } from '../entities/appointment.entity';
+import { OtpTypeEnum } from '../enums/otp-type.enum';
+import { OrderStatusEnum } from '../enums/order-status.enum';
+import { FulfillOrderDto } from '../dtos/order-fulfill.dto';
+import { FulfillOrderResponseInterface } from '../interfaces/order-fulfill-response.interface';
 
 @Injectable()
 export class ClientOrderService {
@@ -33,6 +39,7 @@ export class ClientOrderService {
     @Inject(forwardRef(() => OrderService))
     private readonly orderService: OrderService,
     private readonly clientExternalService: ClientExternalService,
+    private readonly orderFulfillmentOtpService:OrderFulfillmentOtpService
   ) {}
 
   async getAllOpenOrders(clientId: number): Promise<OrderResponseInterface[]> {
@@ -234,7 +241,7 @@ export class ClientOrderService {
 
     try {
       // Step 1: Validate the order and update the reason if any service is rejected
-      await this.getAndUpdateOrderDetails(
+      const order = await this.getAndUpdateOrderDetails(
         queryRunner,
         orderId,
         reject,
@@ -248,7 +255,8 @@ export class ClientOrderService {
 
       // Step 3: Update appointment status
       if (accept && accept.length > 0) {
-        await this.updateAppointmentStatus(queryRunner, orderId,BookingStatusEnum.CONFIRMED);
+        const appointment = await this.updateAppointmentStatus(queryRunner, orderId,BookingStatusEnum.CONFIRMED);
+        await this.orderFulfillmentOtpService.generateOtp(clientId,order.customerId,orderId,appointment.endTime,OtpTypeEnum.ORDER)
       }
       else{
         await this.updateAppointmentStatus(queryRunner, orderId,BookingStatusEnum.CANCELLED_BY_SALON);
@@ -311,7 +319,7 @@ export class ClientOrderService {
     queryRunner: QueryRunner,
     orderId: number,
     status:BookingStatusEnum
-  ): Promise<void> {
+  ): Promise<AppointmentEntity> {
     const appointment =
       await this.appointmentService.getAppointmentByOrderIdOrThrow(orderId);
     throwIfNotFound(
@@ -320,7 +328,7 @@ export class ClientOrderService {
     );
 
     appointment.status = status;
-    await queryRunner.manager.save(appointment);
+    return await queryRunner.manager.save(appointment);
   }
 
   private async getOutletIdByClientId(clientId: number): Promise<number> {
@@ -337,4 +345,31 @@ export class ClientOrderService {
     await this.appointmentRepository.getRepository().save(appointment)
     return 'rescheduled the order successfully';
  }
+
+async fulFillTheOrder(clientId: number, orderId: number, fulfillOrderDto: FulfillOrderDto): Promise<FulfillOrderResponseInterface> {
+    const {otp,paymentMode,amountReceived} = fulfillOrderDto;
+    // Step 1: Validate the OTP using the existing method
+    await this.orderFulfillmentOtpService.validateOtp(otp, OtpTypeEnum.ORDER);
+
+    // Step 2: Update the order status to "COMPLETED"
+    const order = await this.orderService.getOrderByIdOrThrow(orderId)
+    order.status = OrderStatusEnum.ORDER_COMPLETED;
+
+    await this.orderRepository.getRepository().save(order);
+
+    // Step 3: Update the associated appointment status to "COMPLETED"
+    const appointment = await this.appointmentService.getAppointmentByOrderIdOrThrow(orderId)
+
+    appointment.status = BookingStatusEnum.COMPLETED;
+    await this.appointmentRepository.getRepository().save(appointment);
+
+    return {
+      orderId,
+      otp,
+      paymentMode,
+      amountReceived
+    };
+    //console.log(`Order ${orderId} and its associated appointment have been marked as completed.`);
+  }
+
 }
