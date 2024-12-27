@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { PlatformEnum } from "../enums/platform.enum";
+import { ApplicationPlatformEnum } from "../enums/application-platform.enum";
 import { UserTypeEnum } from "@modules/authorization/enums/usertype.enum";
 
 @Entity('device_token')
@@ -11,7 +11,7 @@ export class DeviceTokenEntity{
     deviceToken:string;
 
     @Column()
-    platform:PlatformEnum;
+    platform:ApplicationPlatformEnum;
 
     @Column()
     userId:number;

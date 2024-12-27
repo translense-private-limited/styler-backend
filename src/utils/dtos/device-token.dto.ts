@@ -1,14 +1,14 @@
 import { IsString, IsNotEmpty, IsBoolean, IsNumber } from 'class-validator';
-import { PlatformEnum } from '../enums/platform.enum';
+import { ApplicationPlatformEnum } from '../enums/application-platform.enum';
 import { UserTypeEnum } from '@modules/authorization/enums/usertype.enum';
 
-export class RegisterDeviceTokenDto {
+export class DeviceTokenDto {
   @IsString()
   @IsNotEmpty()
   deviceToken: string;
 
   @IsNotEmpty()
-  platform: PlatformEnum;
+  platform: ApplicationPlatformEnum;
 
   @IsNumber()
   @IsNotEmpty()

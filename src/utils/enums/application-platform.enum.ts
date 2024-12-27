@@ -1,4 +1,4 @@
-export enum PlatformEnum {
+export enum ApplicationPlatformEnum {
     IOS = 'IOS',
     ANDROID = 'ANDROID',
     WEB = 'WEB',

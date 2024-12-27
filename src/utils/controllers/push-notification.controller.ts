@@ -1,6 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { PushNotificationService } from '../services/push-notification.service'; // Service to handle notification logic
-import { RegisterDeviceTokenDto } from '../dtos/register-device-token.dto';
+import { DeviceTokenDto } from '../dtos/device-token.dto';
 import { EventInterface } from '../interfaces/event.interface';
 import { EventConfigurationInterface } from '../interfaces/event-configuration.interface';
 import { PushNotificationBuilderService } from '../services/push-notification-builder.service';
@@ -14,8 +14,8 @@ export class PushNotificationController {
   ) {}
 
   @Post('/register-token')
-  async registerDeviceToken(@Body() registerDeviceTokenDto: RegisterDeviceTokenDto): Promise<void> {
-    await this.pushNotificationService.registerDeviceToken(registerDeviceTokenDto);
+  async registerDeviceToken(@Body() deviceTokenDto: DeviceTokenDto): Promise<void> {
+    await this.pushNotificationService.registerDeviceToken(deviceTokenDto);
   }
 
   @Post('/send')
