@@ -20,12 +20,12 @@ export class PushNotificationBuilderService {
   async buildAndDispatchNotification(
     event: EventInterface,
     eventConfiguration: EventConfigurationInterface,
-  ): Promise<void> {
+  ): Promise<string> {
     const notificationBuilderDto = await this.getNotificationBuilderDto(
       event,
       eventConfiguration,
     );
-    await this.pushNotificationService.sendNotification(notificationBuilderDto);
+    return await this.pushNotificationService.sendNotification(notificationBuilderDto);
   }
 
   private async getNotificationBuilderDto(

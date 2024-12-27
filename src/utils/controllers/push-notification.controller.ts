@@ -21,8 +21,8 @@ export class PushNotificationController {
   @Post('/send')
   async sendNotification(
     @Body() { event, eventConfiguration }: { event: EventInterface; eventConfiguration: EventConfigurationInterface },
-  ): Promise<void> {
-    await this.pushNotificationBuilderService.buildAndDispatchNotification(event, eventConfiguration);
+  ): Promise<string> {
+    return await this.pushNotificationBuilderService.buildAndDispatchNotification(event, eventConfiguration);
   }
 
 
