@@ -4,11 +4,9 @@ import { DeviceTokenDto } from '../dtos/device-token.dto';
 import { EventInterface } from '../interfaces/event.interface';
 import { EventConfigurationInterface } from '../interfaces/event-configuration.interface';
 import { PushNotificationBuilderService } from '../services/push-notification-builder.service';
-import { Public } from '../decorators/public.decorator';
 
-@Controller('notifications')
-@Public()
-export class PushNotificationController {
+@Controller('customer')
+export class CustomerPushNotificationController {
   constructor(private readonly pushNotificationService: PushNotificationService,
     private readonly pushNotificationBuilderService:PushNotificationBuilderService
   ) {}
@@ -18,12 +16,10 @@ export class PushNotificationController {
     await this.pushNotificationService.registerDeviceToken(deviceTokenDto);
   }
 
-  @Post('/send')
+  @Post('notification/send')
   async sendNotification(
     @Body() { event, eventConfiguration }: { event: EventInterface; eventConfiguration: EventConfigurationInterface },
   ): Promise<string> {
     return await this.pushNotificationBuilderService.buildAndDispatchNotification(event, eventConfiguration);
   }
-
-
 }

@@ -1,8 +1,9 @@
 import { IsString, IsNotEmpty, IsBoolean, IsNumber } from 'class-validator';
 import { ApplicationPlatformEnum } from '../enums/application-platform.enum';
 import { UserTypeEnum } from '@modules/authorization/enums/usertype.enum';
+import { DeviceTokenInterface } from '../interfaces/device-token.interface';
 
-export class DeviceTokenDto {
+export class DeviceTokenDto implements DeviceTokenInterface{
   @IsString()
   @IsNotEmpty()
   deviceToken: string;

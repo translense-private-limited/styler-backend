@@ -22,7 +22,6 @@ export class PushNotificationService {
           clientEmail: "firebase-adminsdk-m4fkv@fir-push-notification-e6947.iam.gserviceaccount.com"
         }),
       });
-      console.log('Firebase Admin SDK initialized successfully.');
     }
   }
 
@@ -53,7 +52,6 @@ export class PushNotificationService {
       await admin.messaging().sendEachForMulticast(message);
       return 'notification was sent successfully';
     } catch (error) {
-      console.error('Error sending notification:', error);
       throw new Error('Error sending notification');
     }
   }

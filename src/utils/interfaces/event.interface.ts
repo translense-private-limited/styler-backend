@@ -7,6 +7,6 @@ export interface EventInterface {
       userId: number; // The user ID associated with the event
       userType: UserTypeEnum; // The type of user (e.g., "admin", "customer")
     };
-    data: Record<string, any>; // Any custom data related to the event (can be any shape)
+    metadata: Record<string, unknown>; // Any custom data related to the event (can be any shape)
   }
   

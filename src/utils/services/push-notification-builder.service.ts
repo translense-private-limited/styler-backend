@@ -5,16 +5,17 @@ import { EventConfigurationInterface } from '../interfaces/event-configuration.i
 import * as Handlebars from 'handlebars';
 import { PushNotificationService } from './push-notification.service';
 import { DeviceTokenRepository } from '../repositories/device-token.repository';
+import { UserTypeEnum } from '@modules/authorization/enums/usertype.enum';
 
 @Injectable()
 export class PushNotificationBuilderService {
   private deviceTokens: string[] = [];
   private title: string = '';
   private body: string = '';
-  private data: Record<string, any> = {};
 
-  constructor(private pushNotificationService: PushNotificationService,
-    private readonly deviceTokenRepository:DeviceTokenRepository
+  constructor(
+    private readonly pushNotificationService: PushNotificationService,
+    private readonly deviceTokenRepository: DeviceTokenRepository,
   ) {}
 
   async buildAndDispatchNotification(
@@ -33,15 +34,13 @@ export class PushNotificationBuilderService {
     eventConfiguration: EventConfigurationInterface,
   ): Promise<PushNotificationBuilderDto> {
     await this.buildDeviceTokens(eventConfiguration, event);
-    await this.buildTitle(eventConfiguration.notificationTemplate, event.data);
-    await this.buildBody(eventConfiguration.notificationTemplate, event.data);
-    await this.buildData(event);
+    this.buildTitle(eventConfiguration.notificationTemplate, event.metadata);
+    this.buildBody(eventConfiguration.notificationTemplate, event.metadata);
 
     const notificationBuilderDto = new PushNotificationBuilderDto();
     notificationBuilderDto.deviceTokens = this.deviceTokens;
     notificationBuilderDto.title = this.title;
     notificationBuilderDto.body = this.body;
-    notificationBuilderDto.data = this.data;
 
     return notificationBuilderDto;
   }
@@ -54,25 +53,23 @@ export class PushNotificationBuilderService {
     const userType = event.identity.userType;
 
     if (targetUser.includes(userType)) {
-      const deviceTokens = await this.getDeviceTokensByUser(event.identity.userId);
+      const deviceTokens = await this.getDeviceTokensByUser(event.identity.userId, userType);
       this.deviceTokens = [...this.deviceTokens, ...deviceTokens];
     }
   }
 
-  async getDeviceTokensByUser(userId: number): Promise<string[]> {
-    // Query the NotificationEntity for the device tokens associated with the userId
+  private async getDeviceTokensByUser(userId: number, userType: UserTypeEnum): Promise<string[]> {
     const notifications = await this.deviceTokenRepository.getRepository().find({
-      where: { userId },  // Filter by userId
-      select: ['deviceToken'], // Only fetch deviceToken field
+      where: { userId, userType },
+      select: ['deviceToken'],
     });
 
-    // Map over the results and return the deviceToken values
-    return notifications.map(notification => notification.deviceToken);
+    return notifications.map((notification) => notification.deviceToken);
   }
 
   private buildTitle(
     notificationTemplate: { title: string },
-    eventData: Record<string, any>,
+    eventData: Record<string, unknown>,
   ): void {
     const titleTemplate = notificationTemplate.title;
     const compiledTitleTemplate = Handlebars.compile(titleTemplate);
@@ -81,18 +78,10 @@ export class PushNotificationBuilderService {
 
   private buildBody(
     notificationTemplate: { body: string },
-    eventData: Record<string, any>,
+    eventData: Record<string, unknown>,
   ): void {
     const bodyTemplate = notificationTemplate.body;
     const compiledBodyTemplate = Handlebars.compile(bodyTemplate);
     this.body = compiledBodyTemplate(eventData);
-  }
-
-  private buildData(event: EventInterface): void {
-    this.data = {
-      eventId: event.id,
-      eventType: event.type,
-      ...event.data, // Add custom event data
-    };
   }
 }
