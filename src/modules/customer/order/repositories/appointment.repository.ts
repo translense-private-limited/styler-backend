@@ -153,12 +153,14 @@ async getUpcomingOrdersForClient(
  async getUpcomingOrdersForCustomer(
   customerId:number,
 ): Promise<OrderDetailsInterface[]> {
+  const currentTime = new Date(); 
   const queryBuilder = this.getRepository().createQueryBuilder('a')
     .innerJoin('orders', 'o', 'a.orderId = o.orderId')
     .leftJoin('order_items', 'oi', 'o.orderId = oi.orderId')
     .innerJoin('customers', 'c', 'o.customerId = c.id')
     .where('a.customerId = :customerId', { customerId })
-    .andWhere('a.status = :status', { status: BookingStatusEnum.CONFIRMED });
+    .andWhere('a.status = :status', { status: BookingStatusEnum.CONFIRMED })
+    .andWhere('a.startTime > :currentTime', { currentTime }); 
 
   const upcomingOrdersForCustomer: OrderDetailsInterface[] = await queryBuilder.select([
     'a.appointmentId AS appointmentId',
