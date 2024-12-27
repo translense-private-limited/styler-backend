@@ -45,7 +45,6 @@ export class PushNotificationService {
           body: pushNotificationBuilderDto.body,
         },
         tokens: pushNotificationBuilderDto.deviceTokens,
-        data: pushNotificationBuilderDto.data,
       };
 
       // Send the notification
