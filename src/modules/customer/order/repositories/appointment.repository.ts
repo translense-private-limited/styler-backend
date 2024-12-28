@@ -192,8 +192,7 @@ async getUpcomingOrdersForClient(
     .innerJoin('orders', 'o', 'a.orderId = o.OrderId')
     .leftJoin('order_items', 'oi', 'o.OrderId = oi.orderId')
     .innerJoin('customers', 'c', 'o.customerId = c.id')
-    .where('a.status != :status', { status: BookingStatusEnum.PENDING }) 
-    .andWhere('a.customerId = :customerId', { customerId })
+    .where('a.customerId = :customerId', { customerId })
 
   const pastOrdersForCustomer: OrderDetailsInterface[] = await queryBuilder.select([
     'a.appointmentId AS appointmentId',

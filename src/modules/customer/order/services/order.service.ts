@@ -423,11 +423,9 @@ export class OrderService {
   async getUpcomingOrdersForCustomer(customerId: number): Promise<CustomerOrderResponseInterface[]> {
     // Fetch upcoming orders based on the startTime from AppointmentEntity
     const upcomingOrders: OrderDetailsInterface[] = await this.appointmentRepository.getUpcomingOrdersForCustomer(customerId);
-  
     // Extract unique serviceIds and outletIds
     const serviceIds = [...new Set(upcomingOrders.map((order) => order.serviceId))];
     const outletIds = [...new Set(upcomingOrders.map((order) => order.outletId))];
-  
     // Use Promise.all to fetch services and outlet details in parallel
     const [services, outletDetails] = await Promise.all([
       this.serviceExternalService.getServicesByServiceIds(serviceIds),
