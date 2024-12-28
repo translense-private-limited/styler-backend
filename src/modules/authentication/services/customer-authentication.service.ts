@@ -71,6 +71,7 @@ export class CustomerAuthenticationService {
     customer: CustomerDto,
   ): Promise<CustomerTokenPayloadInterface> {
     const tokenPayload: CustomerTokenPayloadDto = {
+      customerId:customer.id,
       name: customer.name,
       email: customer.email,
       contactNumber: customer.contactNumber,
@@ -97,7 +98,7 @@ export class CustomerAuthenticationService {
       throw new UnauthorizedException('Invalid Credentials');
     }
     // prepare the jwt and pass in body
-    const tokenPayload = this.constructJwtPayload(customer);
+    const tokenPayload = await this.constructJwtPayload(customer);
 
     // encrypt token
     const token = this.jwtService.generateToken(tokenPayload);

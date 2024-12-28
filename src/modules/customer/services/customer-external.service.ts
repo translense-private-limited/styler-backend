@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CustomerEntity } from '../entities/customer.entity';
-import { CustomerDto } from '../dtos/customer.dto';
+import { CustomerSignupDto } from '@modules/authentication/dtos/customer-signup.dto';
 
 @Injectable()
 export class CustomerExternalService {
@@ -41,8 +41,8 @@ export class CustomerExternalService {
    *
    * @throws {HttpException} - Throws an exception if there is an error during saving.
    */
-  async save(customerDto: CustomerDto): Promise<CustomerEntity> {
-    return this.customerService.createCustomer(customerDto);
+  async save(customerSignUpDto: CustomerSignupDto): Promise<CustomerEntity> {
+    return this.customerService.createCustomer(customerSignUpDto);
   }
 
   async getCustomerByEmailOrContactNumber(
