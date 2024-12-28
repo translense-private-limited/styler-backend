@@ -6,7 +6,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { RoleInterface } from '../interfaces/role.interface';
-import { UserTypeEnum } from '../enums/usertype.enum';
+import { UserTypeEnum } from '../enums/user-type.enum';
 
 export class CreateRoleDto implements RoleInterface {
   @IsNotEmpty()

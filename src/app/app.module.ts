@@ -28,6 +28,7 @@ import { ImageController } from './image.controller';
 import { ImageService } from './image.service';
 import { CustomerModule } from '@modules/customer/customer.module';
 import { SeedModule } from '@modules/seed/seed.module';
+import { NotificationModule } from '@src/utils/notification/notification.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { SeedModule } from '@modules/seed/seed.module';
     AdminModule,
     CustomerModule,
     SeedModule,
+    NotificationModule,
   ],
   controllers: [AppController, ImageController],
   providers: [

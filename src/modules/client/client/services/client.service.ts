@@ -1,3 +1,4 @@
+import { TeamMember } from './../dtos/team-member.dto';
 import {
   BadRequestException,
   Injectable,
@@ -13,13 +14,12 @@ import { SellerLoginDto } from '@modules/authentication/dtos/seller-login.dto';
 import { ClientEntity } from '../entities/client.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
-import { TeamMember } from '../dtos/team-member.dto';
+
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { ResetClientPasswordDto } from '@modules/authentication/dtos/admin-reset-client-password.dto';
 import { RegisterClientDto } from '../dtos/register-client.dto';
 import { RoleExternalService } from '@modules/authorization/services/role-external.service';
 import { ClientOutletMappingEntity } from '@modules/admin/client-outlet-mapping/entities/client-outlet-mapping.entity';
-
 
 @Injectable()
 export class ClientService {
@@ -27,8 +27,7 @@ export class ClientService {
     private clientRepository: ClientRepository,
     private roleClientService: RoleClientService,
     private bcryptEncryptionService: BcryptEncryptionService,
-    private readonly roleExternalService:RoleExternalService
-    
+    private readonly roleExternalService: RoleExternalService,
   ) {}
 
   async getTeamMemberById(
@@ -48,7 +47,6 @@ export class ClientService {
       );
       return { ...teamMember, role };
     } catch (error) {
-
       throw new HttpException(
         'An unexpected error occurred.',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -162,23 +160,28 @@ export class ClientService {
     return this.getClientByIdOrThrow(clientId);
   }
 
-
   async getClientByEmailOrThrow(email: string): Promise<ClientEntity | null> {
     return this.clientRepository.getRepository().findOneBy({ email });
   }
 
-  async getClientByContactNumber(contactNumber: string): Promise<ClientEntity | null> {
+  async getClientByContactNumber(
+    contactNumber: string,
+  ): Promise<ClientEntity | null> {
     return this.clientRepository.getRepository().findOneBy({ contactNumber });
   }
 
-  async resetClientPassword(clientId: number, resetPasswordDto: ResetClientPasswordDto):Promise<String> {
+  async resetClientPassword(
+    clientId: number,
+    resetPasswordDto: ResetClientPasswordDto,
+  ): Promise<String> {
     const { password } = resetPasswordDto;
 
-    const encryptedPassword = await this.bcryptEncryptionService.encrypt(password);
+    const encryptedPassword =
+      await this.bcryptEncryptionService.encrypt(password);
 
-    const client = await this.getClientById(clientId)
+    const client = await this.getClientById(clientId);
 
-    throwIfNotFound(client,'client not found')
+    throwIfNotFound(client, 'client not found');
 
     client.password = encryptedPassword;
 
@@ -190,49 +193,59 @@ export class ClientService {
 
   async createClient(clientDto: RegisterClientDto): Promise<ClientEntity> {
     const queryRunner = this.clientRepository
-    .getRepository()
-    .manager.connection.createQueryRunner();  
+      .getRepository()
+      .manager.connection.createQueryRunner();
 
     await queryRunner.startTransaction();
-  
+
     try {
       // Check if a client with the provided email already exists
-      const getClientWithProvidedEmail = await this.getClientByEmailOrThrow(clientDto.email);
+      const getClientWithProvidedEmail = await this.getClientByEmailOrThrow(
+        clientDto.email,
+      );
       if (getClientWithProvidedEmail) {
         throw new Error('Client with given email already exists');
       }
-  
+
       // Check if a client with the provided contact number already exists
-      const getClientWithContactNumber = await this.getClientByContactNumber(clientDto.contactNumber);
+      const getClientWithContactNumber = await this.getClientByContactNumber(
+        clientDto.contactNumber,
+      );
       if (getClientWithContactNumber) {
         throw new Error('Client with given contact number already exists');
       }
-  
+
       // Encrypt the password if it is provided, or use a default encrypted password (e.g., encrypted name)
       const encryptedPassword = clientDto.password
         ? await this.bcryptEncryptionService.encrypt(clientDto.password)
         : await this.bcryptEncryptionService.encrypt(clientDto.name);
-  
+
       // Prepare the client data to be saved
       const clientDataToSave = {
         ...clientDto,
         password: encryptedPassword,
       };
-  
+
       // Save the client data in the database
-      const newClient = await queryRunner.manager.save(ClientEntity, clientDataToSave);
-  
+      const newClient = await queryRunner.manager.save(
+        ClientEntity,
+        clientDataToSave,
+      );
+
       // Create client-outlet mapping
       const clientOutletMapping = {
         clientId: newClient.id,
-        outletId: clientDto.outletId, 
+        outletId: clientDto.outletId,
       };
-  
-      await queryRunner.manager.save(ClientOutletMappingEntity, clientOutletMapping);
-  
+
+      await queryRunner.manager.save(
+        ClientOutletMappingEntity,
+        clientOutletMapping,
+      );
+
       // Commit transaction
       await queryRunner.commitTransaction();
-  
+
       return newClient;
     } catch (error) {
       // Rollback transaction in case of error
@@ -243,6 +256,4 @@ export class ClientService {
       await queryRunner.release();
     }
   }
-  
-     
 }
