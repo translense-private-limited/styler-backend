@@ -9,6 +9,7 @@ import {
 import { AdminInterface } from '../interfaces/admin.interface';
 
 export class AdminDto implements AdminInterface {
+  id:number;
   @IsString()
   @IsNotEmpty({ message: 'Name is required' })
   name: string;

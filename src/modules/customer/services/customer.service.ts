@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CustomerEntity } from '../entities/customer.entity';
 import { CustomerRepository } from '../repositories/customer.repository';
-import { CustomerDto } from '../dtos/customer.dto';
 import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
 import {
   isContactNumber,
   isEmail,
 } from '@src/utils/validators/email-contact.validator';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { CustomerSignupDto } from '@modules/authentication/dtos/customer-signup.dto';
 
 @Injectable()
 export class CustomerService {
@@ -57,24 +57,24 @@ export class CustomerService {
     return customer;
   }
 
-  async createCustomer(customerDto: CustomerDto): Promise<CustomerEntity> {
+  async createCustomer(customerSignUpDto: CustomerSignupDto): Promise<CustomerEntity> {
     const isCustomerExistWithProvidedEmail = await this.getCustomerByEmailId(
-      customerDto.email,
+      customerSignUpDto.email,
     );
     const isCustomerExistWithContactNumber =
-      await this.getCustomerByContactNumber(customerDto.contactNumber);
+      await this.getCustomerByContactNumber(customerSignUpDto.contactNumber);
 
     if (isCustomerExistWithContactNumber || isCustomerExistWithProvidedEmail) {
       throw new BadRequestException(`User already exits with provided details`);
     }
 
     const encryptedPassword = await this.bcryptEncryptionService.encrypt(
-      customerDto.password,
+      customerSignUpDto.password,
     );
 
-    customerDto.password = encryptedPassword;
+    customerSignUpDto.password = encryptedPassword;
 
-    return this.customerRepository.getRepository().save(customerDto);
+    return this.customerRepository.getRepository().save(customerSignUpDto);
   }
 
   async getCustomerByEmailOrContactNumber(

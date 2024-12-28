@@ -83,6 +83,7 @@ export class AdminAuthenticationService {
   ): Promise<AdminTokenPayloadInterface> {
     const role = await this.roleExternalService.getRoleDetails(RoleEnum.ADMIN);
     const tokenPayload: AdminTokenPayloadInterface = {
+      adminId:admin.id,
       name: admin.name,
       email: admin.email,
       contactNumber: admin.contactNumber,
@@ -127,7 +128,7 @@ export class AdminAuthenticationService {
       throw new UnauthorizedException(`Invalid Credentials`);
     }
     // prepare the jwt and pass in body
-    const tokenPayload = this.constructJwtPayload(admin);
+    const tokenPayload = await this.constructJwtPayload(admin);
 
     // encrypt token
     const token = this.jwtService.generateToken(tokenPayload);

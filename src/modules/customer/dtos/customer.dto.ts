@@ -11,6 +11,10 @@ import {
 } from 'class-validator';
 
 export class CustomerDto implements CustomerInterface {
+
+  @IsNotEmpty()
+  id:number;
+  
   @IsString()
   @IsNotEmpty({ message: 'Name is required' })
   name: string;
