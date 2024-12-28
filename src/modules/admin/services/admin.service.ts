@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { AdminEntity } from '../entities/admin.entity';
 import { AdminRepository } from '../Repositories/admin.repository';
-import { AdminDto } from '../dtos/admin.dto';
 import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
 import {
   isContactNumber,
@@ -10,6 +9,7 @@ import {
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { RoleExternalService } from '@modules/authorization/services/role-external.service';
 import { RoleEnum } from '@src/utils/enums/role.enums';
+import { AdminSignupDto } from '@modules/authentication/dtos/admin-signup.dto';
 
 @Injectable()
 export class AdminService {
@@ -19,12 +19,12 @@ export class AdminService {
     private readonly roleExternalService: RoleExternalService,
   ) {}
 
-  async createAdmin(adminDto: AdminDto): Promise<AdminEntity> {
+  async createAdmin(adminSingUpDto: AdminSignupDto): Promise<AdminEntity> {
     const getAdminWithProvidedEmail = await this.getAdminByEmailIdOrThrow(
-      adminDto.email,
+      adminSingUpDto.email,
     );
     const getAdminWithContactNumber = await this.getAdminByContactNumber(
-      adminDto.contactNumber,
+      adminSingUpDto.contactNumber,
     );
 
     if (getAdminWithContactNumber || getAdminWithProvidedEmail) {
@@ -32,14 +32,14 @@ export class AdminService {
     }
 
     const encryptedPassword = await this.bcryptEncryptionService.encrypt(
-      adminDto.password,
+      adminSingUpDto.password,
     );
 
     const role = await this.roleExternalService.getRoleDetails(RoleEnum.ADMIN);
     const roleId = role.id;
 
     const adminDataToSave = {
-      ...adminDto,
+      ...adminSingUpDto,
       password: encryptedPassword,
       roleId,
     };
