@@ -55,7 +55,7 @@ export class SmsService {
       this.logger.log(`SMS sent successfully to ${to}: ${result.sid}`);
     } catch (error) {
       this.logger.error(`Failed to send SMS to ${to}`);
-      console.dir(error);
+      this.logger.error(error);
       throw new Exception('Failed to send SMS');
     }
   }

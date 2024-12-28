@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
 export class SinchSmsService {
+  private logger = new Logger(SinchSmsService.name);
   private readonly SERVICE_PLAN_ID = '1aae746964024adc84f5e4bc075308ba'; // Your servicePlanId
   private readonly API_TOKEN = 'a5cd425860454595936bb8e707782f52'; // Your API token
   private readonly SINCH_NUMBER = '+447418631942'; // Your Sinch virtual number
@@ -25,12 +26,15 @@ export class SinchSmsService {
       const response = await axios.post(this.SINCH_URL, payload, {
         headers: this.headers,
       });
-      console.log('Message sent successfully!', response.data);
+      this.logger.log({
+        message: 'Message sent successfully!',
+        smsResponse: response.data,
+      });
     } catch (error) {
-      console.error(
-        'There was an error sending the SMS!',
-        error.response?.data || error.message,
-      );
+      this.logger.error({
+        message: 'There was an error sending the SMS!',
+        error: error.response?.data || error.message,
+      });
     }
   }
 }

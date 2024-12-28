@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { EventConsumerService } from '../services/event.consumer.service';
-import { EventInterface } from '../interfaces/event.interface';
+
 import { EventNameEnum } from '../enums/event-name.enum';
 import { SmsService } from '../services/sms.service';
 import { EventPublisherService } from '../services/event-publisher.service';

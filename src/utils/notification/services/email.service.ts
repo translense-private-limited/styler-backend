@@ -1,11 +1,7 @@
 import { TransactionalEmailsApi } from './../../../../node_modules/@getbrevo/brevo/api/transactionalEmailsApi';
 import { EmailBuilderDto } from './../dtos/email-builder.dto';
 
-import {
-  Injectable,
-  Logger,
-  ServiceUnavailableException,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { EnvService } from '@modules/configs/env/services/env.service';
 import { NotificationConfigInterface } from '@modules/configs/env/notification.config';
