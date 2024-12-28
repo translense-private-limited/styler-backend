@@ -158,6 +158,7 @@ async getUpcomingOrdersForClient(
     .innerJoin('orders', 'o', 'a.orderId = o.orderId')
     .leftJoin('order_items', 'oi', 'o.orderId = oi.orderId')
     .innerJoin('customers', 'c', 'o.customerId = c.id')
+    .leftJoin('order_fulfillment_otp', 'otp', 'o.orderId = otp.orderId') 
     .where('a.customerId = :customerId', { customerId })
     .andWhere('a.status = :status', { status: BookingStatusEnum.CONFIRMED })
     .andWhere('a.startTime > :currentTime', { currentTime }); 
@@ -172,6 +173,7 @@ async getUpcomingOrdersForClient(
     'o.updatedAt AS updatedAt',
     'o.amountPaid AS amountPaid',
     'o.status AS orderStatus',
+    'otp.otp AS otp',
     'oi.serviceId AS serviceId',
     'oi.quantity AS quantity',
     'oi.discount AS discount',
@@ -181,7 +183,6 @@ async getUpcomingOrdersForClient(
     'c.contactNumber AS customerContact',
     'c.email AS customerEmail',
   ]).getRawMany();
-
   return upcomingOrdersForCustomer;
  }
 

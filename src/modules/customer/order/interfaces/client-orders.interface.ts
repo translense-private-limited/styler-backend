@@ -37,6 +37,7 @@ export interface OrderDetailsInterface extends OrderItemInterface {
   updatedAt: Date;
   amountPaid: number;
   orderStatus: OrderStatusEnum;
+  otp:number;
   customerId:number;
   customerName: string;
   customerContact: string;

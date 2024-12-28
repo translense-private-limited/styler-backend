@@ -431,7 +431,6 @@ export class OrderService {
       this.serviceExternalService.getServicesByServiceIds(serviceIds),
       this.outletExternalService.getOutletDetailsByIds(outletIds),
     ]);
-  
     // Format the results into the desired structure, including outlet details
     return this.formatCustomerOrderResponse(upcomingOrders, services, outletDetails);
   }    
@@ -461,13 +460,13 @@ export class OrderService {
     return orders.reduce((acc, row) => {
       // Find or create an order object
       let order = acc.find((item) => item.orderId === row.orderId);
-  
       if (!order) {
         // Create a new order object if it doesn't exist in the accumulator
         order = {
           orderId: row.orderId,
           amountPaid: row.amountPaid,
           orderStatus: row.orderStatus,
+          otp:row.otp,
           services: [],
           customer: {
             customerId: row.customerId,
