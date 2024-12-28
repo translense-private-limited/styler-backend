@@ -3,7 +3,7 @@ import { AdminTokenPayloadInterface } from '../interfaces/admin-token-payload.in
 
 export class AdminTokenPayloadDto implements AdminTokenPayloadInterface {
   @IsNotEmpty()
-  id:number;
+  adminId:number;
   @IsString()
   @IsNotEmpty()
   name: string;

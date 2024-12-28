@@ -1,5 +1,5 @@
 export interface AdminTokenPayloadInterface {
-    id:number;
+    adminId:number;
     name: string;
     email: string;
     contactNumber: number;

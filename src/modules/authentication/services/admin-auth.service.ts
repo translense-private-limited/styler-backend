@@ -83,7 +83,7 @@ export class AdminAuthenticationService {
   ): Promise<AdminTokenPayloadInterface> {
     const role = await this.roleExternalService.getRoleDetails(RoleEnum.ADMIN);
     const tokenPayload: AdminTokenPayloadInterface = {
-      id:admin.id,
+      adminId:admin.id,
       name: admin.name,
       email: admin.email,
       contactNumber: admin.contactNumber,
