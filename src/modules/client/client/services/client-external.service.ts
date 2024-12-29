@@ -42,7 +42,7 @@ export class ClientExternalService {
   }
 
   async getClientByOutlet(outletId: number): Promise<TeamMember[]> {
-    const clients = await this.clientService.getClientByOutletId(outletId);
+    const clients = await this.clientService.getClientsByOutletId(outletId);
     return clients;
   }
 }

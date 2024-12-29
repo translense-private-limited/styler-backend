@@ -256,4 +256,22 @@ export class ClientService {
       await queryRunner.release();
     }
   }
+
+  async getClientsByOutletId(outletId: number): Promise<TeamMember[]> {
+    const clients = await this.clientRepository
+      .getRepository()
+      .find({ where: { outletId } });
+
+    const roleIds = clients.map((client) => client.roleId);
+
+    const roles = await this.roleClientService.getRoleByRoleIds(roleIds);
+
+    return clients.map((client) => {
+      const teamMemberInstance = new TeamMember();
+      teamMemberInstance.role = roles.find((role) => role.id === client.roleId);
+      delete client.roleId;
+      Object.assign(teamMemberInstance, client);
+      return teamMemberInstance;
+    });
+  }
 }
