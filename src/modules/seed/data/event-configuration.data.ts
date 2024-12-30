@@ -2,8 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { EventConfigurationRepository } from "@src/utils/notification/repositories/event-configuration.repository";
 import { EventConfigurationEntity } from "@src/utils/notification/entities/even-configuration.entity";
 import { EventNameEnum } from "@src/utils/notification/enums/event-name.enum";
-import { UserTypeEnum } from "@modules/authorization/enums/user-type.enum";
-import { NotificationTypeEnum } from "@src/utils/notification/enums/notification-type.enum";
+import { notificationConfig } from "./notification-config.data";
 
 @Injectable()
 export class SeedEventConfigurationData {
@@ -24,16 +23,16 @@ export class SeedEventConfigurationData {
                 {
                     id: 1,
                     eventName: EventNameEnum.ORDER_PLACED,
-                    targetUser: [UserTypeEnum.CUSTOMER],
-                    targetClientRoles: [], // Empty array for `simple-array` column
-                    notificationType: [NotificationTypeEnum.EMAIL, NotificationTypeEnum.SMS],
+                    targetUser: notificationConfig.targetUser,
+                    targetClientRoles: notificationConfig.targetClientRoles, // Empty array for `simple-array` column
+                    notificationType:notificationConfig.notificationType,
                     emailTemplate: {
                         subject: "Order Confirmation", 
                         body: "Hello {{name}}, your order was <h1>placed</h1>",
                     },                    smsTemplate: 'Your order has been placed successfully!',
                     pushNotificationTemplate: null,
-                    createdAt: new Date('2024-12-25 11:33:17.00'),
-                    updatedAt: new Date('2024-12-25 20:20:35.67'),
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
                 },
             ];
 
