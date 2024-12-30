@@ -6,7 +6,6 @@ import { AppointmentEntity } from '../entities/appointment.entity';
 import { OrderDetailsInterface } from '../interfaces/client-orders.interface';
 import { BookingStatusEnum } from '../enums/booking-status.enum';
 import { OrderStatusEnum } from '../enums/order-status.enum';
-import { convertToUtc } from '@src/utils/helpers/timestamp.helper';
 
 export class AppointmentRepository extends BaseRepository<AppointmentEntity> {
   constructor(
