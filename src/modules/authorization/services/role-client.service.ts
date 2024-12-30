@@ -2,7 +2,7 @@ import { In } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { RoleEntity } from '../entities/role.entity';
 import { RoleRepository } from '../repositories/role.repository';
-import { UserTypeEnum } from '../enums/usertype.enum';
+import { UserTypeEnum } from '../enums/user-type.enum';
 import { SystemAndCustomRolesDto } from '../dtos/system-custom-roles.dto';
 
 @Injectable()

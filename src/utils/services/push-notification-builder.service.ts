@@ -5,7 +5,8 @@ import { EventConfigurationInterface } from '../interfaces/event-configuration.i
 import * as Handlebars from 'handlebars';
 import { PushNotificationService } from './push-notification.service';
 import { DeviceTokenRepository } from '../repositories/device-token.repository';
-import { UserTypeEnum } from '@modules/authorization/enums/usertype.enum';
+import { UserTypeEnum } from '@modules/authorization/enums/user-type.enum';
+
 
 @Injectable()
 export class PushNotificationBuilderService {

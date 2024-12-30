@@ -56,6 +56,8 @@ export class CustomerExternalService {
   }
 
   async getCustomerByIdOrThrow(customerId: number): Promise<CustomerEntity> {
-    return this.customerService.getCustomerByIdOrThrow(customerId);
+    const customer =
+      await this.customerService.getCustomerByIdOrThrow(customerId);
+    return customer;
   }
 }
