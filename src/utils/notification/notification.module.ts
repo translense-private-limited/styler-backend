@@ -37,5 +37,6 @@ import { EventPublisherService } from './services/event-publisher.service';
     EventPublisherService,
   ],
   controllers: [NotificationTest],
+  exports:[EventConfigurationRepository]
 })
 export class NotificationModule {}
