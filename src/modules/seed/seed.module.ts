@@ -25,6 +25,8 @@ import { ServiceModule } from '@modules/client/services/service.module';
 import { SeedServiceData } from './data/service.data';
 import { SeedClientOutletMappingData } from './data/client-outlet-mapping.data';
 import { ClientOutletMappingModule } from '@modules/admin/client-outlet-mapping/client-outlet-mapping.module';
+import { SeedEventConfigurationData } from './data/event-configuration.data';
+import { NotificationModule } from '@src/utils/notification/notification.module';
 
 @Module({
   imports: [
@@ -39,8 +41,9 @@ import { ClientOutletMappingModule } from '@modules/admin/client-outlet-mapping/
     UtilsModule,
     ServiceModule,
     ClientOutletMappingModule,
+    NotificationModule,
   ],
   controllers: [SeedController],
-  providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData,SeedAdminData,SeedCustomerData,SeedAddressData,SeedServiceData,SeedClientOutletMappingData],
+  providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData,SeedAdminData,SeedCustomerData,SeedAddressData,SeedServiceData,SeedClientOutletMappingData,SeedEventConfigurationData],
 })
 export class SeedModule {}
