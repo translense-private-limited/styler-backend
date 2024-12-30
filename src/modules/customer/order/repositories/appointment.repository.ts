@@ -6,6 +6,7 @@ import { AppointmentEntity } from '../entities/appointment.entity';
 import { OrderDetailsInterface } from '../interfaces/client-orders.interface';
 import { BookingStatusEnum } from '../enums/booking-status.enum';
 import { OrderStatusEnum } from '../enums/order-status.enum';
+import { convertToUtc } from '@src/utils/helpers/timestamp.helper';
 
 export class AppointmentRepository extends BaseRepository<AppointmentEntity> {
   constructor(
@@ -84,12 +85,13 @@ async getUpcomingOrdersForClient(
   bufferTime: Date,
   endTime: Date
 ): Promise<OrderDetailsInterface[]> {
+  const buffer = convertToUtc(bufferTime)
   const queryBuilder = this.getRepository().createQueryBuilder('a')
     .innerJoin('orders', 'o', 'a.orderId = o.orderId')
     .leftJoin('order_items', 'oi', 'o.orderId = oi.orderId')
     .innerJoin('customers', 'c', 'o.customerId = c.id')
     .where('a.outletId = :outletId', { outletId })
-    .andWhere('a.startTime BETWEEN :bufferTime AND :endTime', { bufferTime, endTime })
+    .andWhere('a.startTime BETWEEN :bufferTime AND :endTime', { bufferTime:buffer, endTime })
     .andWhere('a.status = :status', { status: BookingStatusEnum.CONFIRMED });
 
   const upcomingOrdersForClient: OrderDetailsInterface[] = await queryBuilder.select([
