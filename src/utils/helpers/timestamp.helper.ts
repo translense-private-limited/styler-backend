@@ -15,8 +15,8 @@ export const getIstTimestamp = (): Date =>
 
 // export const convertToUtc = (istTimestamp: Date): Date =>
 //   new Date(istTimestamp.getTime() - 5.5 * 60 * 60 * 1000);
-export function convertToUtc(date: Date | string): Date {
-  // Ensure the input is a valid Date object
+export function convertToUtcFromIst(date: Date | string): Date {
+  // Ensure the input is a valid Date objectbufferTimeInUtc
   const inputDate = new Date(date);
 
   if (isNaN(inputDate.getTime())) {
