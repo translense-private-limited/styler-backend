@@ -50,13 +50,14 @@ export class AppointmentRepository extends BaseRepository<AppointmentEntity> {
     startTime: Date,
     endTime: Date
   ): Promise<OrderDetailsInterface[]> {
+    const startTimeInUtc = convertToUtc(startTime) 
     const queryBuilder = this.getRepository().createQueryBuilder('a')
       .innerJoin('orders', 'o', 'a.orderId = o.OrderId')
       .leftJoin('order_items', 'oi', 'o.OrderId = oi.orderId')
       .innerJoin('customers', 'c', 'o.customerId = c.id')
       .where('a.status != :status', { status: BookingStatusEnum.PENDING }) 
       .andWhere('a.outletId = :outletId', { outletId })
-      .andWhere('a.startTime BETWEEN :startTime AND :endTime', { startTime, endTime });
+      .andWhere('a.startTime BETWEEN :startTime AND :endTime', { startTime:startTimeInUtc, endTime });
 
     const pastOrdersForClient: OrderDetailsInterface[] = await queryBuilder.select([
       'a.appointmentId AS appointmentId',
@@ -85,13 +86,13 @@ async getUpcomingOrdersForClient(
   bufferTime: Date,
   endTime: Date
 ): Promise<OrderDetailsInterface[]> {
-  const buffer = convertToUtc(bufferTime)
+  const bufferTimeInUtc = convertToUtc(bufferTime)
   const queryBuilder = this.getRepository().createQueryBuilder('a')
     .innerJoin('orders', 'o', 'a.orderId = o.orderId')
     .leftJoin('order_items', 'oi', 'o.orderId = oi.orderId')
     .innerJoin('customers', 'c', 'o.customerId = c.id')
     .where('a.outletId = :outletId', { outletId })
-    .andWhere('a.startTime BETWEEN :bufferTime AND :endTime', { bufferTime:buffer, endTime })
+    .andWhere('a.startTime BETWEEN :bufferTime AND :endTime', { bufferTime:bufferTimeInUtc, endTime })
     .andWhere('a.status = :status', { status: BookingStatusEnum.CONFIRMED });
 
   const upcomingOrdersForClient: OrderDetailsInterface[] = await queryBuilder.select([
