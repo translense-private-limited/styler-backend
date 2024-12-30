@@ -55,7 +55,7 @@ export class AppointmentRepository extends BaseRepository<AppointmentEntity> {
       .innerJoin('customers', 'c', 'o.customerId = c.id')
       .where('a.status != :status', { status: BookingStatusEnum.PENDING }) 
       .andWhere('a.outletId = :outletId', { outletId })
-      .andWhere('a.startTime BETWEEN :startTime AND :endTime', { startTime, endTime });
+      .andWhere('a.startTime BETWEEN :startTime AND :endTime', { startTime ,endTime });
 
     const pastOrdersForClient: OrderDetailsInterface[] = await queryBuilder.select([
       'a.appointmentId AS appointmentId',
