@@ -54,30 +54,6 @@ export class ClientService {
     }
   }
 
-  async getAllTeamMembersForOutlet(outletId: number): Promise<TeamMember[]> {
-    try {
-      const teamMembers = await this.clientRepository
-        .getRepository()
-        .find({ where: { outletId } });
-
-      const roleIds = teamMembers.map((teamMember) => teamMember.roleId);
-
-      const roles = await this.roleClientService.getRoleByRoleIds(roleIds);
-
-      return teamMembers.map((teamMember) => {
-        const teamMemberInstance = new TeamMember();
-        teamMemberInstance.role = roles.find(
-          (role) => role.id === teamMember.roleId,
-        );
-        delete teamMember.roleId;
-        Object.assign(teamMemberInstance, teamMember);
-        return teamMemberInstance;
-      });
-    } catch (error) {
-      throw new Error('An error occurred while fetching team members');
-    }
-  }
-
   private async getEncryptedPassword(
     createClientDto: CreateClientDto,
   ): Promise<string> {
@@ -257,27 +233,8 @@ export class ClientService {
     }
   }
 
-  async getClientsByOutletId(outletId: number): Promise<TeamMember[]> {
-    const clients = await this.clientRepository
-      .getRepository()
-      .find({
-        where: { outletId },
-      });
-  
-    if (!clients.length) return [];
-  
-    const roleIds = [...new Set(clients.map((client) => client.roleId))]; // Remove duplicates
-  
-    const roles = await this.roleClientService.getRoleByRoleIds(roleIds);
-    const roleMap = new Map(roles.map((role) => [role.id, role])); // Map roles for faster lookup
-  
-    return clients.map((client) => {
-      const { roleId, ...clientData } = client;
-      return {
-        ...clientData,
-        role: roleMap.get(roleId),
-      } as TeamMember;
-    });
+  async getAllTeamMembersForOutlet(outletId: number): Promise<TeamMember[]> {
+    return await this.clientRepository.getClientsByOutletId(outletId);
   }
   
 }

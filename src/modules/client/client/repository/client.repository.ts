@@ -7,6 +7,7 @@ import { TeamMember } from '../dtos/team-member.dto';
 import { RoleEntity } from '@modules/authorization/entities/role.entity';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { plainToInstance } from 'class-transformer';
+import { cli } from 'winston/lib/winston/config';
 
 export class ClientRepository extends BaseRepository<ClientEntity> {
   constructor(
@@ -65,4 +66,54 @@ export class ClientRepository extends BaseRepository<ClientEntity> {
       };
       return teamMember;
     }
+
+    async getClientsByOutletId(outletId: number): Promise<TeamMember[]> {
+      const clientsWithRoles = await this
+        .getRepository()
+        .createQueryBuilder('client')
+        .leftJoinAndSelect('roles', 'role', 'client.roleId = role.id')
+        .where('client.outletId = :outletId', { outletId })
+        .select([
+          'client.id AS id',
+          'client.name AS name',
+          'client.email AS email',
+          'client.password AS password',
+          'client.contactNumber AS contactNumber',
+          'client.gender AS gender',
+          'client.pastExperience AS pastExperience',
+          'client.about AS about',
+          'client.outletId AS outletId',
+          'role.id AS role_id',
+          'role.name AS role_name',
+          'role.scope AS role_scope',
+          'role.isSystemDefined AS role_isSystemDefined',
+          'role.outletId AS role_outletId',
+        ])
+        .getRawMany();
+    
+      // Transform raw results into TeamMember instances
+      return clientsWithRoles.map((client) => {
+        const role = new RoleEntity();
+        role.id = client.role_id;
+        role.name = client.role_name;
+        role.scope = client.role_scope;
+        role.isSystemDefined = client.role_isSystemDefined;
+        role.outletId = client.role_outletId;
+    
+        const teamMember = new TeamMember();
+        teamMember.id = client.id;
+        teamMember.name = client.name;
+        teamMember.email = client.email;
+        teamMember.password = client.password;
+        teamMember.contactNumber = client.contactNumber;
+        teamMember.gender = client.gender;
+        teamMember.pastExperience = client.pastExperience;
+        teamMember.about = client.about;
+        teamMember.outletId = client.outletId;
+        teamMember.role = role;
+    
+        return teamMember;
+      });
+    }    
+    
 }
