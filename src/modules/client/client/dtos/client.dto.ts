@@ -20,7 +20,7 @@ export class CreateClientDto implements ClientInterface {
   @IsNotEmpty({ message: 'Email should not be empty' })
   email: string;
 
-  // @IsOptional()
+  @IsOptional()
   @IsString()
   password: string;
 
