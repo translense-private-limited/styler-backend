@@ -260,18 +260,24 @@ export class ClientService {
   async getClientsByOutletId(outletId: number): Promise<TeamMember[]> {
     const clients = await this.clientRepository
       .getRepository()
-      .find({ where: { outletId } });
-
-    const roleIds = clients.map((client) => client.roleId);
-
+      .find({
+        where: { outletId },
+      });
+  
+    if (!clients.length) return [];
+  
+    const roleIds = [...new Set(clients.map((client) => client.roleId))]; // Remove duplicates
+  
     const roles = await this.roleClientService.getRoleByRoleIds(roleIds);
-
+    const roleMap = new Map(roles.map((role) => [role.id, role])); // Map roles for faster lookup
+  
     return clients.map((client) => {
-      const teamMemberInstance = new TeamMember();
-      teamMemberInstance.role = roles.find((role) => role.id === client.roleId);
-      delete client.roleId;
-      Object.assign(teamMemberInstance, client);
-      return teamMemberInstance;
+      const { roleId, ...clientData } = client;
+      return {
+        ...clientData,
+        role: roleMap.get(roleId),
+      } as TeamMember;
     });
   }
+  
 }
