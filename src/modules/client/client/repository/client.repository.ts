@@ -7,7 +7,6 @@ import { TeamMember } from '../dtos/team-member.dto';
 import { RoleEntity } from '@modules/authorization/entities/role.entity';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { plainToInstance } from 'class-transformer';
-import { cli } from 'winston/lib/winston/config';
 
 export class ClientRepository extends BaseRepository<ClientEntity> {
   constructor(
