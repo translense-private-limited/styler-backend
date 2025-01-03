@@ -1,8 +1,9 @@
 import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
 @Entity('address')
-export class AddressEntity {
+export class AddressEntity extends BaseEntity{
   @PrimaryGeneratedColumn()
   addressId: number;
 
