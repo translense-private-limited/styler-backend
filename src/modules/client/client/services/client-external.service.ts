@@ -5,10 +5,13 @@ import { ClientEntity } from '../entities/client.entity';
 import { RegisterClientDto } from '../dtos/register-client.dto';
 import { ResetClientPasswordDto } from '@modules/authentication/dtos/admin-reset-client-password.dto';
 import { TeamMember } from '../dtos/team-member.dto';
+import { ClientRepository } from '../repository/client.repository';
 
 @Injectable()
 export class ClientExternalService {
-  constructor(private clientService: ClientService) {}
+  constructor(private clientService: ClientService,
+    private readonly clientRepository:ClientRepository
+  ) {}
 
   async getSellers(loginDto: LoginDto): Promise<ClientEntity> {
     return await this.clientService.getSellerByEmail(loginDto);
@@ -44,6 +47,13 @@ export class ClientExternalService {
   async getClientByOutlet(outletId: number): Promise<TeamMember[]> {
     const clients = await this.clientService.getAllTeamMembersForOutlet(outletId);
     return clients;
+  }
+
+  async saveProfilePhoto(clientId:number,key:string):Promise<void>{
+    await this.clientRepository.getRepository().update(
+      { id: clientId }, 
+      { profilePhoto: [key] } 
+    );
   }
 }
 

@@ -27,7 +27,7 @@ export class AwsS3Service {
       },
     });
 
-    this.bucketName = process.env.AWS_S3_BUCKET || 'your-bucket-name';
+    this.bucketName = process.env.AWS_S3_BUCKET || 'styler-outlet-media';
   }
 
   /**
