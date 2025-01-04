@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { FileTypeEnum } from "../enums/file-type.enum";
+import { MediaTypeEnum } from "@modules/cloud-storage/enums/media-type.enum";
 
 @Entity('file_metadata')
 export class FileMetadataEntity{
@@ -13,5 +13,5 @@ export class FileMetadataEntity{
     key:string;
 
     @Column()
-    fileType:FileTypeEnum;
+    mediaType:MediaTypeEnum;
 }

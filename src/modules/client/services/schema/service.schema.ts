@@ -36,5 +36,11 @@ export class ServiceSchema extends Document {
 
   @Prop({required:true,default:1})
   whitelabelId:number;
+
+  @Prop({required:false})
+  serviceImages:string[];
+
+  @Prop({required:false})
+  serviceVideos:string[];
 }
 export const ServiceModel = SchemaFactory.createForClass(ServiceSchema);

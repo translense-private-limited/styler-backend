@@ -80,4 +80,32 @@ export class ServiceExternalService {
       .lean();
     return services;
   }
+
+  async updateServiceImages(serviceId: string, newImages: string): Promise<void> {
+    // Fetch existing images
+    const service = await this.getServiceByIdOrThrow(serviceId)
+  
+    // Merge existing images with new ones
+    const updatedImages = [...(service.serviceImages || []), ...newImages];
+  
+    await this.serviceRepository.getRepository().updateOne(
+      { serviceId },
+      { serviceImages: updatedImages }
+    );
+  }
+  
+  async updateServiceVideos(serviceId: string, newVideos: string): Promise<void> {
+    // Fetch existing videos
+    const service = await this.getServiceByIdOrThrow(serviceId);
+  
+    // Merge existing videos with new ones
+    const updatedVideos = [...(service.serviceVideos || []), ...newVideos];
+  
+    // Update the database
+    await this.serviceRepository.getRepository().updateOne(
+      { serviceId },
+      { serviceVideos: updatedVideos }
+    );
+  }
+  
 }

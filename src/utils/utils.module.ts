@@ -16,10 +16,10 @@ import { FileMetaDataRepository } from "./repositories/file-metadata.Repository"
 import { FileMetadataEntity } from "./entities/file-metadata.entity";
 
 @Module({
-    imports:[TypeOrmModule.forFeature([AddressEntity,DeviceTokenEntity,FileMetadataEntity],getMysqlDataSource()),ClientModule],
-    controllers:[ClientPushNotificationController,CustomerPushNotificationController,AwsS3Controller],
-    providers:[AddressRepository,DeviceTokenRepository,PushNotificationBuilderService,PushNotificationService,AwsS3Service,FileMetaDataRepository],
-    exports:[AddressRepository],
+    imports:[TypeOrmModule.forFeature([AddressEntity,DeviceTokenEntity,FileMetadataEntity,FileMetadataEntity],getMysqlDataSource()),ClientModule],
+    controllers:[ClientPushNotificationController,CustomerPushNotificationController,AwsS3Controller,AwsS3Controller],
+    providers:[AddressRepository,DeviceTokenRepository,PushNotificationBuilderService,PushNotificationService,AwsS3Service,FileMetaDataRepository,AwsS3Service,FileMetaDataRepository],
+    exports:[AddressRepository,FileMetaDataRepository],
 })
 
 export class UtilsModule{}

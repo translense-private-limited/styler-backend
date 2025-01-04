@@ -1,12 +1,15 @@
-// import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
-// import { UploadController } from './controllers/upload.controller';
+import { UploadController } from './controllers/upload.controller';
 // import { LibsModule } from '@modules/libs/libs.module';
-// import { KeyGeneratorService } from './services/key-generator.service';
+import { KeyGeneratorService } from './services/key-generator.service';
+import { ClientModule } from '@modules/client/client/client.module';
+import { OutletModule } from '@modules/client/outlet/outlet.module';
+import { ServiceModule } from '@modules/client/services/service.module';
 
-// @Module({
-//   providers: [KeyGeneratorService],
-//   controllers: [UploadController],
-//   imports: [LibsModule],
-// })
-// export class CloudStorageModule {}
+@Module({
+  imports: [ClientModule,OutletModule,ServiceModule],
+  providers: [KeyGeneratorService],
+  controllers: [UploadController],
+})
+export class CloudStorageModule {}

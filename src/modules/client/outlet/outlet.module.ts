@@ -16,9 +16,11 @@ import { ClientModule as ClientUserModule } from '../client/client.module';
 import { ClientOutletMappingModule } from '@modules/admin/client-outlet-mapping/client-outlet-mapping.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 import { UtilsModule } from '@src/utils/utils.module';
+import { OutletDocsEntity } from './entities/outlet-docs.entity';
+import { OutletDocsRepository } from './repositories/outlet-docs.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OutletEntity], getMysqlDataSource()),
+  imports: [TypeOrmModule.forFeature([OutletEntity,OutletDocsEntity], getMysqlDataSource()),
   ServiceModule,
   ClientUserModule,
   ClientOutletMappingModule,
@@ -31,6 +33,7 @@ import { UtilsModule } from '@src/utils/utils.module';
     OutletExternalService,
     OutletCustomerService,
     OutletAdminService,
+    OutletDocsRepository
   ],
   controllers: [OutletController, OutletCustomerController,OutletAdminController],
   exports: [OutletExternalService,OutletRepository],
