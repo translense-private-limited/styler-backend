@@ -19,7 +19,7 @@ import { RegisterClientDto } from '@modules/client/client/dtos/register-client.d
 import { ClientEntity } from '@modules/client/client/entities/client.entity';
 import { AddressEntity } from '@src/utils/entities/address.entity';
 
-import { CityInterface, CountryInterface, StateInterface } from '../address.interface';
+import { CityInterface, CountryInterface, StateInterface } from '../interfaces/address.interface';
 import { OutletInterface } from '../interfaces/outlet.interface';
 
 @ApiTags('Admin/Outlets')

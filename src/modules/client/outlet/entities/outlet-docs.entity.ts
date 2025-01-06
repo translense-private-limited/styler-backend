@@ -10,12 +10,12 @@ export class OutletDocsEntity extends BaseEntity{
     outletId:number;
 
     @Column({nullable:true})
-    registration:string;
+    registrationKey:string;
 
     @Column({nullable:true})
-    gst:string;
+    gstKey:string;
 
     @Column({nullable:true})
-    mou:string;
+    mouKey:string;
 
 }

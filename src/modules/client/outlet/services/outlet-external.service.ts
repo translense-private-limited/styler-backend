@@ -8,6 +8,8 @@ import { OutletRepository } from '../repositories/outlet.repository';
 import { In } from 'typeorm';
 import { OutletDocsRepository } from '../repositories/outlet-docs.repository';
 import { OutletDocsEntity } from '../entities/outlet-docs.entity';
+import { OutletAdminService } from './outlet-admin.service';
+import { CreateOutletDto } from '../dtos/outlet.dto';
 
 @Injectable()
 export class OutletExternalService {
@@ -16,6 +18,7 @@ export class OutletExternalService {
     private readonly serviceExternalService: ServiceExternalService,
     private readonly outletRepository:OutletRepository,
     private readonly outletDocsRepository:OutletDocsRepository,
+    private readonly outletAdminService:OutletAdminService
   ) {}
 
   async getOutletById(outletId: number): Promise<OutletEntity> {
@@ -42,33 +45,8 @@ export class OutletExternalService {
       })
   }
 
-  async updateOutletBannerImages(clientId: number, newBannerImageKey: string): Promise<void> {
-    // Fetch existing banner images
-    const outlet = await this.getOutletById(clientId);
-  
-    // Merge existing banner images with the new one
-    const updatedBannerImages = [...(outlet.outletBannerImages || []), newBannerImageKey];
-  
-    // Update the database
-    await this.outletRepository.getRepository().update(
-      { id: clientId },
-      { outletBannerImages: updatedBannerImages }
-    );
-  }
-  
-
-  async updateOutletVideos(clientId: number, newVideoKey: string): Promise<void> {
-    // Fetch existing videos
-    const outlet = await this.getOutletById(clientId);
-  
-    // Merge existing videos with the new one
-    const updatedVideos = [...(outlet.videos || []), newVideoKey];
-  
-    // Update the database
-    await this.outletRepository.getRepository().update(
-      { id: clientId },
-      { videos: updatedVideos }
-    );
+  async updateOutletByIdOrThrow(outletId:number,updatedData:Partial<CreateOutletDto>):Promise<void>{
+    await this.outletAdminService.updateOutletByIdOrThrow(outletId,updatedData)
   }
 
   async getOutletDocsById(outletId:number):Promise<OutletDocsEntity>{
@@ -83,7 +61,7 @@ export class OutletExternalService {
       // Update the existing record with the new key
       await this.outletDocsRepository.getRepository().update(
         { outletId },
-        { registration:key }
+        { registrationKey:key }
       );
     } else {
       // Create a new record for the given outletId with the key
@@ -102,7 +80,7 @@ export class OutletExternalService {
       // Update the existing record with the new key
       await this.outletDocsRepository.getRepository().update(
         { outletId },
-        { mou:key }
+        { mouKey:key }
       );
     } else {
       // Create a new record for the given outletId with the key
@@ -121,7 +99,7 @@ export class OutletExternalService {
       // Update the existing record with the new key
       await this.outletDocsRepository.getRepository().update(
         { outletId },
-        { gst:key }
+        { gstKey:key }
       );
     } else {
       // Create a new record for the given outletId with the key
@@ -131,6 +109,16 @@ export class OutletExternalService {
       });
     }
   }
-  
+  async getOutletBannerIMagesCountById(outletId:number):Promise<number>{
+    const outlet = await this.outletService.getOutletByIdOrThrow(outletId)
+    const count = outlet.outletBannerImages.length ==0?1:outlet.outletBannerImages.length+1;
+    return count;
+  }
+
+  async getOutletVideosCountById(outletId:number):Promise<number>{
+    const outlet = await this.outletService.getOutletByIdOrThrow(outletId)
+    const count = outlet.outletVideos.length ==0?1:outlet.outletVideos.length+1;
+    return count;
+  }
   
 }

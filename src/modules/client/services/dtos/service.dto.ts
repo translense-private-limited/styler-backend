@@ -50,4 +50,10 @@ export class ServiceDto implements ServiceInterface {
 
   @IsNumber()
   outletId: number;
+
+  @IsOptional()
+  serviceImages?:string[];
+
+  @IsOptional()
+  serviceVideos?:string[];
 }

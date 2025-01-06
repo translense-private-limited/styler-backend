@@ -1,60 +1,79 @@
-// import { Controller, Get } from '@nestjs/common';
-
 import { Body, Controller, Put } from "@nestjs/common";
-import { UploadUrlResponseInterface } from "@src/utils/interfaces/upload-r-url-response.interface";
-import { KeyGeneratorService } from "../services/key-generator.service";
 import { KeyGeneratorDto } from "../dtos/key-generator.dto";
-import { AwsS3Service } from "@src/utils/aws/aws-s3.service";
+import { UploadFilesService } from "../services/upload-files.service";
 
-// import { ApiTags } from '@nestjs/swagger';
-// import { GcpService } from '@modules/libs/gcp/services/gcp.service';
-// import { KeyGeneratorService } from '../services/key-generator.service';
-
-// @Controller('upload/gcp')
-// @ApiTags('Upload')
-// export class UploadController {
-//   constructor(
-//     private keyGeneratorService: KeyGeneratorService,
-//     private gcpService: GcpService,
-//   ) {}
-
-//   @Get()
-//   getV4SignedUrl() {
-//     const key = this.keyGeneratorService.getClientProfileKey(123, 2);
-//     this.gcpService.configureBucketCors();
-//     const url = this.gcpService.getSignedUrl(key);
-//     return url;
-//   }
-
-//   @Get('plicy')
-//   getV4SignedPolicy() {
-//     const key = this.keyGeneratorService.getClientProfileKey(123, 2);
-//     this.gcpService.configureBucketCors();
-//     const url = this.gcpService.generateV4SignedPolicy(key);
-//     return url;
-//   }
-// }
 @Controller('s3')
-export class UploadController{
+export class UploadFilesController{
     constructor(
-        private readonly keyGeneratorService:KeyGeneratorService,
-        private readonly awsS3Service: AwsS3Service
+      private readonly uploadFilesService:UploadFilesService
     ){}
-    @Put('generate-url')
-    async generateUploadUrl(
+    @Put('client/profile-photo/generate-upload-url')
+    async generateUploadUrlForClientProfilePhoto(
       @Body() keyGeneratorDto: KeyGeneratorDto,
-    ): Promise<UploadUrlResponseInterface> {
-      const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-      const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key, keyGeneratorDto.mediaType);
-    //   await this.fileMetadataRepository.getRepository().save({
-    //     outletId,
-    //     key: key,
-    //     fileType,
-    //   });
-    //   await this.clientExternalService.saveProfilePhoto(clientId,key)
-      return {
-        signedUrl,
-        key,
-      };
+    ): Promise<string> {
+      return await this.uploadFilesService.getSignedUrlForClientProfilePhotoUpload(keyGeneratorDto);
     }
-}
+
+    @Put('client/pan/generate-upload-url')
+    async generateUploadUrlForClientPan(
+      @Body() keyGeneratorDto: KeyGeneratorDto,
+    ): Promise<string> {
+      return await this.uploadFilesService.getSignedUrlForClientPanUpload(keyGeneratorDto);
+    }
+
+    @Put('client/aadhar/generate-upload-url')
+    async generateUploadUrlForClientAadhar(
+      @Body() keyGeneratorDto: KeyGeneratorDto,
+    ): Promise<string> {
+      return await this.uploadFilesService.getSignedUrlForClientAadharUpload(keyGeneratorDto);
+    }
+
+    @Put('service/service-image/generate-upload-url')
+    async generateUploadUrlForServiceImage(
+      @Body() keyGeneratorDto: KeyGeneratorDto,
+    ): Promise<string> {
+      return await this.uploadFilesService.getSignedUrlForServiceImageUpload(keyGeneratorDto);
+    }
+
+    @Put('service/service-video/generate-upload-url')
+    async generateUploadUrlForServiceVideo(
+      @Body() keyGeneratorDto: KeyGeneratorDto,
+    ): Promise<string> {
+      return await this.uploadFilesService.getSignedUrlForServiceVideoUpload(keyGeneratorDto);
+    }
+
+    @Put('outlet/outlet-banner-image/generate-upload-url')
+    async generateUploadUrlForOutletBannerImage(
+      @Body() keyGeneratorDto: KeyGeneratorDto,
+    ): Promise<string> {
+      return await this.uploadFilesService.getSignedUrlForOutletBannerImageUpload(keyGeneratorDto);
+    }
+
+    @Put('outlet/outlet-video/generate-upload-url')
+    async generateUploadUrlForOutletVideo(
+      @Body() keyGeneratorDto: KeyGeneratorDto,
+    ): Promise<string> {
+      return await this.uploadFilesService.getSignedUrlForOutletVideoUpload(keyGeneratorDto);
+    }
+
+    @Put('outlet/gst/generate-upload-url')
+    async generateUploadUrlForOutletGst(
+      @Body() keyGeneratorDto: KeyGeneratorDto,
+    ): Promise<string> {
+      return await this.uploadFilesService.getSignedUrlForOutletGstUpload(keyGeneratorDto);
+    }
+
+    @Put('outlet/registration/generate-upload-url')
+    async generateUploadUrlForOutletRegistration(
+      @Body() keyGeneratorDto: KeyGeneratorDto,
+    ): Promise<string> {
+      return await this.uploadFilesService.getSignedUrlForOutletRegistrationUpload(keyGeneratorDto);
+    }
+
+    @Put('outlet/mou/generate-upload-url')
+    async generateUploadUrlForOutletMou(
+      @Body() keyGeneratorDto: KeyGeneratorDto,
+    ): Promise<string> {
+      return await this.uploadFilesService.getSignedUrlForOutletMouUpload(keyGeneratorDto);
+    }
+}  

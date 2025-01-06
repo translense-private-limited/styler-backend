@@ -13,7 +13,7 @@ import { OmitType } from '@nestjs/mapped-types';
 /**
  * The `X` class extends `ClientEntity` but excludes the `roleId` field and adds a `role` field.
  */
-export class TeamMember extends OmitType(ClientEntity, ['roleId','profilePhoto'] as const) {
+export class TeamMember extends OmitType(ClientEntity, ['roleId','profilePhotos'] as const) {
   /**
    * The role entity assigned to the client, representing the client's role within the application.
    */

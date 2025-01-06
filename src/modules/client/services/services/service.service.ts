@@ -3,6 +3,7 @@ import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
 import { ServiceDto } from '../dtos/service.dto';
 import { CategoryExternal } from '@modules/admin/category/services/category-external';
+import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 
 @Injectable()
 export class ServiceService {
@@ -31,9 +32,7 @@ export class ServiceService {
     const service = await this.serviceRepository
       .getRepository()
       .findById(serviceId);
-    if (!service) {
-      throw new NotFoundException('no service exist with provided Id');
-    }
+    throwIfNotFound(service,'no service exist with provided Id')
     return service;
   }
 
@@ -55,6 +54,22 @@ export class ServiceService {
     serviceId: string,
     updateServiceDto: Partial<ServiceDto>,
   ): Promise<ServiceSchema> {
+    const service = await this.getServiceByIdOrThrow(serviceId)
+    // Dynamically handle service images update
+    if (updateServiceDto.serviceImages) {
+      updateServiceDto.serviceImages = [
+        ...(service.serviceImages || []),
+        ...updateServiceDto.serviceImages,
+      ];
+    }
+
+    // Dynamically handle service videos update
+    if (updateServiceDto.serviceVideos) {
+      updateServiceDto.serviceVideos = [
+        ...(service.serviceVideos || []),
+        ...updateServiceDto.serviceVideos,
+      ];
+    }
     const updatedService = await this.serviceRepository
       .getRepository()
       .findByIdAndUpdate(
@@ -62,11 +77,6 @@ export class ServiceService {
         { $set: updateServiceDto },
         { new: true, omitUndefined: true },
       );
-
-    if (!updatedService) {
-      throw new NotFoundException(`Service with ID ${serviceId} not found.`);
-    }
-
     return updatedService;
   }
 

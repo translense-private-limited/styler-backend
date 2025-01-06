@@ -12,14 +12,12 @@ import { ClientPushNotificationController } from "./controllers/client-push-noti
 import { ClientModule } from "@modules/client/client/client.module";
 import { AwsS3Controller } from "./aws/aws-s3.controller";
 import { AwsS3Service } from "./aws/aws-s3.service";
-import { FileMetaDataRepository } from "./repositories/file-metadata.Repository";
-import { FileMetadataEntity } from "./entities/file-metadata.entity";
 
 @Module({
-    imports:[TypeOrmModule.forFeature([AddressEntity,DeviceTokenEntity,FileMetadataEntity,FileMetadataEntity],getMysqlDataSource()),ClientModule],
+    imports:[TypeOrmModule.forFeature([AddressEntity,DeviceTokenEntity],getMysqlDataSource()),ClientModule],
     controllers:[ClientPushNotificationController,CustomerPushNotificationController,AwsS3Controller,AwsS3Controller],
-    providers:[AddressRepository,DeviceTokenRepository,PushNotificationBuilderService,PushNotificationService,AwsS3Service,FileMetaDataRepository,AwsS3Service,FileMetaDataRepository],
-    exports:[AddressRepository,FileMetaDataRepository],
+    providers:[AddressRepository,DeviceTokenRepository,PushNotificationBuilderService,PushNotificationService,AwsS3Service],
+    exports:[AddressRepository],
 })
 
 export class UtilsModule{}

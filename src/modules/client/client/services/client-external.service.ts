@@ -57,21 +57,21 @@ export class ClientExternalService {
     const client = await this.getClientById(clientId);
   
     // Merge existing profile photo with the new one
-    const updatedPhotos = [...(client.profilePhoto || []), newPhotoKey];
+    const updatedPhotos = [...(client.profilePhotos || []), newPhotoKey];
   
     // Update the database
     await this.clientRepository.getRepository().update(
       { id: clientId },
-      { profilePhoto: updatedPhotos }
+      { profilePhotos: updatedPhotos }
     );
   }
 
-  async getClientDocsById(clientId:number):Promise<ClientDocsEntity>{
+  async getClientDocsByClientId(clientId:number):Promise<ClientDocsEntity>{
     return await this.clientDocsRepository.getRepository().findOne({where:{clientId}});
   }
   async saveClientPAN(clientId: number, key: string): Promise<void> {
     // Check if a record exists for the given clientId
-    const existingRecord = await this.getClientDocsById(clientId);
+    const existingRecord = await this.getClientDocsByClientId(clientId);
   
     if (existingRecord) {
       // Update the existing record with the new key
@@ -90,7 +90,7 @@ export class ClientExternalService {
 
   async saveClientAadhaar(clientId: number, key: string): Promise<void> {
     // Check if a record exists for the given clientId
-    const existingRecord = await this.getClientDocsById(clientId);
+    const existingRecord = await this.getClientDocsByClientId(clientId);
   
     if (existingRecord) {
       // Update the existing record with the new key

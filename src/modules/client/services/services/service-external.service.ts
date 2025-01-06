@@ -3,6 +3,7 @@ import { ServiceService } from './service.service';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
+import { ServiceDto } from '../dtos/service.dto';
 
 @Injectable()
 export class ServiceExternalService {
@@ -81,31 +82,20 @@ export class ServiceExternalService {
     return services;
   }
 
-  async updateServiceImages(serviceId: string, newImages: string): Promise<void> {
-    // Fetch existing images
-    const service = await this.getServiceByIdOrThrow(serviceId)
-  
-    // Merge existing images with new ones
-    const updatedImages = [...(service.serviceImages || []), ...newImages];
-  
-    await this.serviceRepository.getRepository().updateOne(
-      { serviceId },
-      { serviceImages: updatedImages }
-    );
+  async updateServiceByIdOrThrow(serviceId:string,updateServiceDto:Partial<ServiceDto>):Promise<void>{
+    await this.serviceService.updateServiceById(serviceId,updateServiceDto);
   }
-  
-  async updateServiceVideos(serviceId: string, newVideos: string): Promise<void> {
-    // Fetch existing videos
-    const service = await this.getServiceByIdOrThrow(serviceId);
-  
-    // Merge existing videos with new ones
-    const updatedVideos = [...(service.serviceVideos || []), ...newVideos];
-  
-    // Update the database
-    await this.serviceRepository.getRepository().updateOne(
-      { serviceId },
-      { serviceVideos: updatedVideos }
-    );
+
+  async getServiceImagesCountById(serviceId:string):Promise<number>{
+    const service = await this.serviceService.getServiceByIdOrThrow(serviceId)
+    const count = service.serviceImages.length ==0?1:service.serviceImages.length+1;
+    return count;
+  }
+
+  async getServiceVideosCountById(serviceId:string):Promise<number>{
+    const service = await this.serviceService.getServiceByIdOrThrow(serviceId)
+    const count = service.serviceVideos.length ==0?1:service.serviceVideos.length+1;
+    return count;
   }
   
 }

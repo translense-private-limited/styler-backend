@@ -1,7 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { AwsS3Service } from './aws-s3.service';
 // import { UploadUrlResponseInterface } from '../interfaces/upload-r-url-response.interface';
- import { FileMetaDataRepository } from '../repositories/file-metadata.Repository';
 // import { FileUploadInfoDto } from '../dtos/file-upload-info.dto';
 // import { ClientIdDecorator } from '../decorators/client-id.decorator';
 //import { ClientIdDto } from '../dtos/client-id.dto';
@@ -12,7 +11,6 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('aws/upload')
 export class AwsS3Controller {
   constructor(private readonly awsS3Service: AwsS3Service,
-    private readonly fileMetadataRepository:FileMetaDataRepository,
     private readonly clientExternalService:ClientExternalService
   ) {}
 
