@@ -20,10 +20,4 @@ export class AdminUploadFilesController{
       return await this.uploadFilesService.generatePreSignedUrlToUpload(keyGeneratorDto);
     }
 
-     // this is temp
-  @Get('signed-url')
-  async getSignedUrl(@Param('key') key: string): Promise<string> {
-    const url = await this.uploadFilesService.getSignedUrl(key);
-    return url;
-  }
 }
