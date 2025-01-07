@@ -11,7 +11,7 @@ export class AdminUploadFilesController{
     ){}
     @ApiOperation({
       description:"Give outletId and mediaType and should send clientId or serviceId while trying to upload respective media",
-      summary:"Admin to get presigned url to upload"
+      summary:"Admin to get presigned url to upload "
     })
     @Put('generate-upload-url')
     async generateUploadUrl(
