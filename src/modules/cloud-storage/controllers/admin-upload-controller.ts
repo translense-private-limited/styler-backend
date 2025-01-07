@@ -1,3 +1,4 @@
+
 import { Body, Controller, Put } from "@nestjs/common";
 import { KeyGeneratorDto } from "../dtos/key-generator.dto";
 import { UploadFilesService } from "../services/upload-files.service";
@@ -19,5 +20,11 @@ export class AdminUploadFilesController{
     ):Promise<string>{
       return await this.uploadFilesService.generatePreSignedUrlToUpload(keyGeneratorDto);
     }
-
+  // this is temp
+  @Get('signed-url')
+  async getSignedUrl(@Param('key') key: string): Promise<string> {
+    const url = await this.uploadFilesService.getSignedUrl(key);
+    return url;
+  }
 }
+
