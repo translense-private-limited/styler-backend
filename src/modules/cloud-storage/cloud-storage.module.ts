@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
 
-import { UploadFilesController } from './controllers/upload.controller';
+import { ClientUploadFilesController } from './controllers/client-upload.controller';
 // import { LibsModule } from '@modules/libs/libs.module';
 import { KeyGeneratorService } from './services/key-generator.service';
 import { ClientModule } from '@modules/client/client/client.module';
 import { OutletModule } from '@modules/client/outlet/outlet.module';
 import { ServiceModule } from '@modules/client/services/service.module';
+import { UploadFilesService } from './services/upload-files.service';
 
 @Module({
   imports: [ClientModule,OutletModule,ServiceModule],
-  providers: [KeyGeneratorService],
-  controllers: [UploadFilesController],
+  providers: [KeyGeneratorService,UploadFilesService],
+  controllers: [ClientUploadFilesController],
 })
 export class CloudStorageModule {}

@@ -233,19 +233,6 @@ export class OutletAdminService {
         .getRepository()
         .save(updatedAddress);
     }
-    // Handle outletBannerImages and outletVideos dynamically
-    if (updateData.outletBannerImages) {
-      outlet.outletBannerImages = [
-      ...(outlet.outletBannerImages || []),
-      ...updateData.outletBannerImages,
-      ];
-    }
-     if (updateData.outletVideos) {
-    outlet.outletVideos = [
-      ...(outlet.outletVideos || []),
-      ...updateData.outletVideos,
-      ];
-    }
     // Merge other updateData fields with the outlet entity
     const updatedOutlet = Object.assign(outlet, updateData);
 

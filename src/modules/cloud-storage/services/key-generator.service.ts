@@ -11,7 +11,7 @@ export class KeyGeneratorService {
     private readonly outletExternalService:OutletExternalService
   ){}
   async generateKey(
-    keyGeneratorDto:KeyGeneratorDto 
+    keyGeneratorDto:KeyGeneratorDto
   ):Promise<string>{
     const method = await  this.mediaTypeMethodMapper(keyGeneratorDto.mediaType);
     const key =  await method(keyGeneratorDto)
@@ -35,112 +35,62 @@ export class KeyGeneratorService {
   }
   
   private async generateKeyForClientPAN(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-
-    if (!keyGeneratorDto.clientId) {
-      throw new Error("Client ID is required to generate key.");
-    }
-    if (!keyGeneratorDto.outletId) {
-      throw new Error("Outlet ID is required to generate key.");
-    }
     const { outletId, clientId } = keyGeneratorDto;
     const key = `${outletId}/clients/${clientId}/documents/PAN`;
     return key;
   }
 
   private async generateKeyForClientAadhaar(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-
-    if (!keyGeneratorDto.clientId) {
-      throw new Error("Client ID is required to generate key.");
-    }
-    if (!keyGeneratorDto.outletId) {
-      throw new Error("Outlet ID is required to generate key.");
-    }
     const { outletId, clientId } = keyGeneratorDto;
     const key = `${outletId}/clients/${clientId}/documents/Aadhar`;
     return key;
   }
 
   private async generateKeyForClientProfilePhoto(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-
-    if (!keyGeneratorDto.clientId) {
-      throw new Error("Client ID is required to generate key.");
-    }
-    if (!keyGeneratorDto.outletId) {
-      throw new Error("Outlet ID is required to generate key.");
-    }
     const { outletId, clientId,count } = keyGeneratorDto;
     const key = `${outletId}/clients/${clientId}/images/${clientId}-${count}.jpeg`;
     return key;
   }
 
   private async generateKeyForServiceImage(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-
-    if (!keyGeneratorDto.serviceId) {
-      throw new Error("Service ID is required to generate key.");
-    }
-    if (!keyGeneratorDto.outletId) {
-      throw new Error("Outlet ID is required to generate key.");
-    }
     const { outletId, serviceId } = keyGeneratorDto;
-    const count = await this.serviceExternalService.getServiceImagesCountById(serviceId);
+    const count = (await this.serviceExternalService.getServiceImagesCountById(serviceId))+1;
     const key = `${outletId}/services/${serviceId}/images/${serviceId}-${count}.jpeg`;
     return key;
   }
 
   private async generateKeyForServiceVideo(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-
-    if (!keyGeneratorDto.serviceId) {
-      throw new Error("Service ID is required to generate key.");
-    }
-    if (!keyGeneratorDto.outletId) {
-      throw new Error("Outlet ID is required to generate key.");
-    }
     const { outletId, serviceId } = keyGeneratorDto;
-    const count = await this.serviceExternalService.getServiceVideosCountById(serviceId);
+    const count = (await this.serviceExternalService.getServiceVideosCountById(serviceId))+1;
     const key = `${outletId}/services/${serviceId}/videos/${serviceId}-${count}.mp4`;
     return key;
   }
 
   private async generateKeyForOutletImage(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      throw new Error("Outlet ID is required to generate key.");
-    }
     const { outletId } = keyGeneratorDto;
-    const count = await this.outletExternalService.getOutletBannerIMagesCountById(outletId);
+    const count = (await this.outletExternalService.getOutletBannerIMagesCountById(outletId))+1;
     const key = `${outletId}/outlets/${outletId}/images/${outletId}-${count}.jpeg`;
     return key;
   }
 
   private async generateKeyForOutletVideo(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      throw new Error("Outlet ID is required to generate key.");
-    }
     const { outletId } = keyGeneratorDto;
-    const count = await this.outletExternalService.getOutletVideosCountById(outletId);
+    const count = (await this.outletExternalService.getOutletVideosCountById(outletId))+1;
     const key = `${outletId}/outlets/${outletId}/videos/${outletId}-${count}.mp4`;
     return key;
   }
 
   private async generateKeyForOutletGST(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      throw new Error("Outlet ID is required to generate key.");
-    }
     const { outletId } = keyGeneratorDto;
     const key = `${outletId}/outlets/${outletId}/documents/gst`;
     return key;
   }
   private async generateKeyForOutletRegistration(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      throw new Error("Outlet ID is required to generate key.");
-    }
     const { outletId } = keyGeneratorDto;
     const key = `${outletId}/outlets/${outletId}/documents/registration`;
     return key;
   }
   private async generateKeyForOutletMoU(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      throw new Error("Outlet ID is required to generate key.");
-    }
     const { outletId } = keyGeneratorDto;
     const key = `${outletId}/outlets/${outletId}/documents/MoU`;
     return key;

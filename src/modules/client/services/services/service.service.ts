@@ -53,23 +53,7 @@ export class ServiceService {
   async updateServiceById(
     serviceId: string,
     updateServiceDto: Partial<ServiceDto>,
-  ): Promise<ServiceSchema> {
-    const service = await this.getServiceByIdOrThrow(serviceId)
-    // Dynamically handle service images update
-    if (updateServiceDto.serviceImages) {
-      updateServiceDto.serviceImages = [
-        ...(service.serviceImages || []),
-        ...updateServiceDto.serviceImages,
-      ];
-    }
-
-    // Dynamically handle service videos update
-    if (updateServiceDto.serviceVideos) {
-      updateServiceDto.serviceVideos = [
-        ...(service.serviceVideos || []),
-        ...updateServiceDto.serviceVideos,
-      ];
-    }
+  ): Promise<ServiceSchema> {    
     const updatedService = await this.serviceRepository
       .getRepository()
       .findByIdAndUpdate(
@@ -95,5 +79,15 @@ export class ServiceService {
   async deleteAll(): Promise<ServiceSchema[]> {
     await this.serviceRepository.getRepository().deleteMany({});
     return this.getServices();
+  }
+
+  async getServicesByServiceIds(
+    serviceIds: string[],
+  ): Promise<ServiceSchema[]> {
+    const services = await this.serviceRepository
+      .getRepository()
+      .find({ _id: { $in: serviceIds } })
+      .lean();
+    return services;
   }
 }

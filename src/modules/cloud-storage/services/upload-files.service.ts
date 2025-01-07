@@ -7,6 +7,8 @@ import { ServiceExternalService } from "@modules/client/services/services/servic
 import { OutletExternalService } from "@modules/client/outlet/services/outlet-external.service";
 import { CreateOutletDto } from "@modules/client/outlet/dtos/outlet.dto";
 import { ServiceDto } from "@modules/client/services/dtos/service.dto";
+import { MediaTypeEnum } from "../enums/media-type.enum";
+import { badRequest } from "@src/utils/exceptions/common.exception";
 
 @Injectable()
 export class UploadFilesService{
@@ -17,18 +19,53 @@ export class UploadFilesService{
         private readonly serviceExternalService:ServiceExternalService,
         private readonly outletExternalService:OutletExternalService
     ){}
-    async getSignedUrlForClientProfilePhotoUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+
+    async generatePreSignedUrlToUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+      const method = await this.mediaTypeMethodMapper(keyGeneratorDto.mediaType);
+      return await method(keyGeneratorDto);
+    }
+
+    private async mediaTypeMethodMapper(mediaType: MediaTypeEnum): Promise<(keyGeneratorDto: KeyGeneratorDto) => Promise<string>> {
+      const mediaTypeMethodMap: Map<MediaTypeEnum, (keyGeneratorDto: KeyGeneratorDto) => Promise<string>> = new Map([
+        [MediaTypeEnum.PAN, this.getPresignedUrlToUploadPan.bind(this)], 
+        [MediaTypeEnum.AADHAR, this.getPresignedUrlToUploadAadhar.bind(this)],
+        [MediaTypeEnum.PROFILE_PHOTO, this.getPresignedUrlToUploadProfilePhoto.bind(this)],
+        [MediaTypeEnum.SERVICE_IMAGE, this.getPresignedUrlToUploadServiceImage.bind(this)],
+        [MediaTypeEnum.SERVICE_VIDEO, this.getPresignedUrlToUploadServiceVideo.bind(this)],
+        [MediaTypeEnum.OUTLET_BANNER, this.getPresignedUrlToUploadOutletBannerImage.bind(this)],
+        [MediaTypeEnum.OUTLET_VIDEO, this.getPresignedUrlToUploadOutletVideo.bind(this)],
+        [MediaTypeEnum.OUTLET_GST, this.getPresignedUrlToUploadGst.bind(this)],
+        [MediaTypeEnum.OUTLET_REGISTRATION, this.getPresignedUrlToUploadRegistration.bind(this)],
+        [MediaTypeEnum.OUTLET_MOU, this.getPresignedUrlToUploadMou.bind(this)],
+      ]);
+    
+      return mediaTypeMethodMap.get(mediaType);
+    }
+
+    async getPresignedUrlToUploadProfilePhoto(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+        if (!keyGeneratorDto.clientId) {
+          badRequest('ClientId is required')
+        }
+        if (!keyGeneratorDto.outletId) {
+          badRequest('OutletId is required')
+        }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
         const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
         try {
-            await this.clientExternalService.updateProfilePhoto(keyGeneratorDto.clientId, key);
-         } catch (error) {
-           throw new Error(`Failed to save the profile photo for client with given ClientId`);
-         }
+          // await this.clientExternalService.updateProfilePhoto(keyGeneratorDto.clientId, key);
+        } catch (error) {
+            throw new Error(`Failed to save the profile photo for client with given ClientId`);
+        }
         return signedUrl;
     }
 
-    async getSignedUrlForClientPanUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+    async getPresignedUrlToUploadPan(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+        if (!keyGeneratorDto.clientId) {
+          badRequest('ClientId is required')
+        }
+        if (!keyGeneratorDto.outletId) {
+          badRequest('OutletId is required')
+        }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
         const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
         try {
@@ -39,7 +76,13 @@ export class UploadFilesService{
         return signedUrl;
     }
 
-    async getSignedUrlForClientAadharUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+    async getPresignedUrlToUploadAadhar(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+        if (!keyGeneratorDto.clientId) {
+          badRequest('ClientId is required')
+        }
+        if (!keyGeneratorDto.outletId) {
+          badRequest('OutletId is required')
+        }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
         const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
         try {
@@ -49,7 +92,13 @@ export class UploadFilesService{
          }
         return signedUrl;
     }
-    async getSignedUrlForServiceImageUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+    async getPresignedUrlToUploadServiceImage(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+        if (!keyGeneratorDto.clientId) {
+          badRequest('Service is required')
+        }
+        if (!keyGeneratorDto.outletId) {
+          badRequest('OutletId is required')
+        }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
         const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
         try {
@@ -62,7 +111,13 @@ export class UploadFilesService{
         return signedUrl;
     }
 
-    async getSignedUrlForServiceVideoUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+    async getPresignedUrlToUploadServiceVideo(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+        if (!keyGeneratorDto.clientId) {
+          badRequest('ServiceId is required')
+        }
+        if (!keyGeneratorDto.outletId) {
+          badRequest('OutletId is required')
+        }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
         const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
         try {
@@ -75,7 +130,10 @@ export class UploadFilesService{
         return signedUrl;
     }  
 
-    async getSignedUrlForOutletBannerImageUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+    async getPresignedUrlToUploadOutletBannerImage(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+        if (!keyGeneratorDto.outletId) {
+          badRequest('OutletId is required')
+        }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
         const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
         try {
@@ -88,7 +146,10 @@ export class UploadFilesService{
         return signedUrl;
     }
     
-    async getSignedUrlForOutletVideoUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+    async getPresignedUrlToUploadOutletVideo(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+        if (!keyGeneratorDto.outletId) {
+          badRequest('OutletId is required')
+        }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
         const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
         try {
@@ -101,7 +162,10 @@ export class UploadFilesService{
         return signedUrl;
     }
     
-    async getSignedUrlForOutletGstUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+    async getPresignedUrlToUploadGst(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+        if (!keyGeneratorDto.outletId) {
+          badRequest('OutletId is required')
+        }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
         const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
         try {
@@ -113,7 +177,10 @@ export class UploadFilesService{
         return signedUrl;
     }
 
-    async getSignedUrlForOutletRegistrationUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+    async getPresignedUrlToUploadRegistration(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+        if (!keyGeneratorDto.outletId) {
+          badRequest('OutletId is required')
+        }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
         const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
         try {
@@ -125,7 +192,10 @@ export class UploadFilesService{
         return signedUrl;
     }
 
-    async getSignedUrlForOutletMouUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+    async getPresignedUrlToUploadMou(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+        if (!keyGeneratorDto.outletId) {
+          badRequest('OutletId is required')
+        }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
         const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
         try {

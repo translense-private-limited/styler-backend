@@ -10,8 +10,8 @@ export class ClientDocsEntity extends BaseEntity{
     clientId:number;
 
     @Column()
-    pan:string;
+    panKey:string;
 
     @Column()
-    aadhaar:string;
+    aadhaarKey:string;
 }
