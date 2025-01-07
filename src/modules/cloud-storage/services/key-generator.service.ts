@@ -47,7 +47,8 @@ export class KeyGeneratorService {
   }
 
   private async generateKeyForClientProfilePhoto(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
-    const { outletId, clientId,count } = keyGeneratorDto;
+    const { outletId, clientId } = keyGeneratorDto;
+    const count = 1;
     const key = `${outletId}/clients/${clientId}/images/${clientId}-${count}.jpeg`;
     return key;
   }

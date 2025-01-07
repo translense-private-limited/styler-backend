@@ -8,9 +8,10 @@ import { OutletModule } from '@modules/client/outlet/outlet.module';
 import { ServiceModule } from '@modules/client/services/service.module';
 import { UploadFilesService } from './services/upload-files.service';
 import { AdminUploadFilesController } from './controllers/admin-upload-controller';
+import { UtilsModule } from '@src/utils/utils.module';
 
 @Module({
-  imports: [ClientModule,OutletModule,ServiceModule],
+  imports: [ClientModule,OutletModule,ServiceModule,UtilsModule],
   providers: [KeyGeneratorService,UploadFilesService],
   controllers: [ClientUploadFilesController,AdminUploadFilesController],
 })

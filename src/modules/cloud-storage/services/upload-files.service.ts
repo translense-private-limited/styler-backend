@@ -220,4 +220,7 @@ export class UploadFilesService{
         return signedUrl;
     }
 
+    async getSignedUrl(key:string):Promise<string>{
+      return await this.awsS3Service.generateSignedUrlForDownload(key);
+    }
 }

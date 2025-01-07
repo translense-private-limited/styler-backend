@@ -16,7 +16,4 @@ export class KeyGeneratorDto{
 
     @IsOptional()
     count?:number;
-
-    @IsOptional()
-    fileSize?:number; //in bytes
 }
