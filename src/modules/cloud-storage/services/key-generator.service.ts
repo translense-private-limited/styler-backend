@@ -68,7 +68,7 @@ export class KeyGeneratorService {
 
   private async generateKeyForOutletImage(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId } = keyGeneratorDto;
-    const count = (await this.outletExternalService.getOutletBannerIMagesCountById(outletId))+1;
+    const count = (await this.outletExternalService.getOutletBannerImagesCountById(outletId))+1;
     const key = `${outletId}/outlets/${outletId}/images/${outletId}-${count}.jpeg`;
     return key;
   }

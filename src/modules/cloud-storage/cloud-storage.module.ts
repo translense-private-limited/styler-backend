@@ -7,10 +7,11 @@ import { ClientModule } from '@modules/client/client/client.module';
 import { OutletModule } from '@modules/client/outlet/outlet.module';
 import { ServiceModule } from '@modules/client/services/service.module';
 import { UploadFilesService } from './services/upload-files.service';
+import { AdminUploadFilesController } from './controllers/admin-upload-controller';
 
 @Module({
   imports: [ClientModule,OutletModule,ServiceModule],
   providers: [KeyGeneratorService,UploadFilesService],
-  controllers: [ClientUploadFilesController],
+  controllers: [ClientUploadFilesController,AdminUploadFilesController],
 })
 export class CloudStorageModule {}

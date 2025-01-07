@@ -5,10 +5,9 @@ import { AwsS3Service } from "@src/utils/aws/aws-s3.service";
 import { ClientExternalService } from "@modules/client/client/services/client-external.service";
 import { ServiceExternalService } from "@modules/client/services/services/service-external.service";
 import { OutletExternalService } from "@modules/client/outlet/services/outlet-external.service";
-import { CreateOutletDto } from "@modules/client/outlet/dtos/outlet.dto";
-import { ServiceDto } from "@modules/client/services/dtos/service.dto";
 import { MediaTypeEnum } from "../enums/media-type.enum";
 import { badRequest } from "@src/utils/exceptions/common.exception";
+import { ContentTypeEnum } from "../enums/content-type.enum";
 
 @Injectable()
 export class UploadFilesService{
@@ -20,7 +19,33 @@ export class UploadFilesService{
         private readonly outletExternalService:OutletExternalService
     ){}
 
+    private readonly MEDIA_FILE_SIZE_LIMIT_MB: { [key in MediaTypeEnum]: number } = {
+      [MediaTypeEnum.PAN]: 5,
+      [MediaTypeEnum.AADHAR]: 5,
+      [MediaTypeEnum.PROFILE_PHOTO]: 2,
+      [MediaTypeEnum.SERVICE_IMAGE]: 3,
+      [MediaTypeEnum.OUTLET_BANNER]: 3,
+      [MediaTypeEnum.SERVICE_VIDEO]: 50,
+      [MediaTypeEnum.OUTLET_VIDEO]: 50,
+      [MediaTypeEnum.OUTLET_GST]: 10,
+      [MediaTypeEnum.OUTLET_REGISTRATION]: 10,
+      [MediaTypeEnum.OUTLET_MOU]: 10
+    };
+  
+    private validateFileSize(fileSize: number, mediaType: MediaTypeEnum): void {
+      const maxFileSizeMB = this.MEDIA_FILE_SIZE_LIMIT_MB[mediaType];
+      if (!maxFileSizeMB) {
+          badRequest(`Unsupported media type: ${mediaType}`);
+      }
+  
+      const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024; // Convert MB to Bytes
+      if (fileSize > maxFileSizeBytes) {
+          badRequest(`File size exceeds the maximum limit of ${maxFileSizeMB} MB for ${mediaType}.`);
+      }
+    }
+  
     async generatePreSignedUrlToUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
+      this.validateFileSize(keyGeneratorDto.fileSize,keyGeneratorDto.mediaType);
       const method = await this.mediaTypeMethodMapper(keyGeneratorDto.mediaType);
       return await method(keyGeneratorDto);
     }
@@ -50,7 +75,7 @@ export class UploadFilesService{
           badRequest('OutletId is required')
         }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.IMAGE_JPEG)
         try {
           // await this.clientExternalService.updateProfilePhoto(keyGeneratorDto.clientId, key);
         } catch (error) {
@@ -67,7 +92,7 @@ export class UploadFilesService{
           badRequest('OutletId is required')
         }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF)
         try {
             await this.clientExternalService.saveClientPAN(keyGeneratorDto.clientId, key);
          } catch (error) {
@@ -84,7 +109,7 @@ export class UploadFilesService{
           badRequest('OutletId is required')
         }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF)
         try {
             await this.clientExternalService.saveClientAadhaar(keyGeneratorDto.clientId, key);
          } catch (error) {
@@ -100,10 +125,9 @@ export class UploadFilesService{
           badRequest('OutletId is required')
         }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.IMAGE_JPEG)
         try {
-            const updateServiceDto:Partial<ServiceDto> = {serviceImages:[key]}
-            await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
+            // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
             }
             catch (error) {
             throw new Error(`Failed to save service images with the given serviceId`);
@@ -119,10 +143,9 @@ export class UploadFilesService{
           badRequest('OutletId is required')
         }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.VIDEO_MP4)
         try {
-            const updateServiceDto:Partial<ServiceDto> = {serviceVideos:[key]}
-            await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
+            // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
             }
             catch (error) {
             throw new Error(`Failed to save service videos with the given ServiceId`);
@@ -135,10 +158,9 @@ export class UploadFilesService{
           badRequest('OutletId is required')
         }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.IMAGE_JPEG)
         try {
-            const updatedData: Partial<CreateOutletDto> = { outletBannerImages: [key] }
-            await this.outletExternalService.updateOutletByIdOrThrow(keyGeneratorDto.outletId,updatedData);
+            // await this.outletExternalService.updateOutletByIdOrThrow(keyGeneratorDto.outletId,updatedData);
             }
             catch (error) {
             throw new Error(`Failed to save the profile photo for outlet with the given outletId`);
@@ -151,10 +173,9 @@ export class UploadFilesService{
           badRequest('OutletId is required')
         }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.VIDEO_MP4)
         try {
-            const updatedData: Partial<CreateOutletDto> = { outletVideos: [key] }
-            await this.outletExternalService.updateOutletByIdOrThrow(keyGeneratorDto.outletId, updatedData);
+            // await this.outletExternalService.updateOutletByIdOrThrow(keyGeneratorDto.outletId, updatedData);
           }
           catch (error) {
             throw new Error(`Failed to save the video for outlet with the given outletId.`);
@@ -167,7 +188,7 @@ export class UploadFilesService{
           badRequest('OutletId is required')
         }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF)
         try {
             await this.outletExternalService.saveOutletGst(keyGeneratorDto.outletId, key);
           }
@@ -182,7 +203,7 @@ export class UploadFilesService{
           badRequest('OutletId is required')
         }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF)
         try {
             await this.outletExternalService.saveOutletRegistration(keyGeneratorDto.outletId, key);
           }
@@ -197,7 +218,7 @@ export class UploadFilesService{
           badRequest('OutletId is required')
         }
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,keyGeneratorDto.mediaType)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF)
         try {
             await this.outletExternalService.saveOutletMou(keyGeneratorDto.outletId, key);
           }

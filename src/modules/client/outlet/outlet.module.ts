@@ -18,6 +18,7 @@ import { AuthorizationModule } from '@modules/authorization/authorization.module
 import { UtilsModule } from '@src/utils/utils.module';
 import { OutletDocsEntity } from './entities/outlet-docs.entity';
 import { OutletDocsRepository } from './repositories/outlet-docs.repository';
+import { OutletDocsService } from './services/outlet-docs-service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OutletEntity,OutletDocsEntity], getMysqlDataSource()),
@@ -33,7 +34,8 @@ import { OutletDocsRepository } from './repositories/outlet-docs.repository';
     OutletExternalService,
     OutletCustomerService,
     OutletAdminService,
-    OutletDocsRepository
+    OutletDocsRepository,
+    OutletDocsService
   ],
   controllers: [OutletController, OutletCustomerController,OutletAdminController],
   exports: [OutletExternalService,OutletRepository],

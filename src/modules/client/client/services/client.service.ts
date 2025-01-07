@@ -20,8 +20,6 @@ import { ResetClientPasswordDto } from '@modules/authentication/dtos/admin-reset
 import { RegisterClientDto } from '../dtos/register-client.dto';
 import { RoleExternalService } from '@modules/authorization/services/role-external.service';
 import { ClientOutletMappingEntity } from '@modules/admin/client-outlet-mapping/entities/client-outlet-mapping.entity';
-import { ClientDocsRepository } from '../repository/client-docs.repository';
-import { ClientDocsEntity } from '../entities/client-docs.entity';
 
 @Injectable()
 export class ClientService {
@@ -30,7 +28,6 @@ export class ClientService {
     private roleClientService: RoleClientService,
     private bcryptEncryptionService: BcryptEncryptionService,
     private readonly roleExternalService: RoleExternalService,
-    private readonly clientDocsRepository:ClientDocsRepository
   ) {}
 
   async getTeamMemberById(
@@ -238,80 +235,6 @@ export class ClientService {
 
   async getAllTeamMembersForOutlet(outletId: number): Promise<TeamMember[]> {
     return await this.clientRepository.getClientsByOutletId(outletId);
-  }
-
-  async getClientDocsByClientId(clientId:number):Promise<ClientDocsEntity>{
-    return await this.clientDocsRepository.getRepository().findOne({where:{clientId}});
-  }
-
-  async saveClientAadhaar(clientId: number, key: string): Promise<void> {
-    const queryRunner = this.clientDocsRepository.getRepository().manager.connection.createQueryRunner();
-    await queryRunner.startTransaction();
-
-    try {
-      // Check if the record exists
-      const existingRecord = await this.getClientDocsByClientId(clientId);
-
-      if (existingRecord) {
-        // Update the existing record
-        await queryRunner.manager.update(
-          ClientDocsEntity,
-          { clientId },
-          { aadhaarKey: key },
-        );
-      } else {
-        const newRecord = queryRunner.manager.create(ClientDocsEntity, {
-          clientId,
-          aadhaarKey: key,
-        });
-        await queryRunner.manager.save(newRecord);
-      }
-
-      // Commit the transaction
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      // Rollback the transaction in case of errors
-      await queryRunner.rollbackTransaction();
-      throw error; // Rethrow the error to handle it elsewhere
-    } finally {
-      // Release the query runner
-      await queryRunner.release();
-    }
-  }
-
-  async saveClientPan(clientId: number, panKey: string): Promise<void> {
-    const queryRunner = this.clientDocsRepository.getRepository().manager.connection.createQueryRunner();
-    await queryRunner.startTransaction();
-
-    try {
-        // Check if the record exists
-        const existingRecord = await this.getClientDocsByClientId(clientId);
-
-        if (existingRecord) {
-            // Update the existing record
-            await queryRunner.manager.update(
-                ClientDocsEntity,
-                { clientId },
-                { panKey },
-            );
-        } else {
-            const newRecord = queryRunner.manager.create(ClientDocsEntity, {
-                clientId,
-                panKey,
-            });
-            await queryRunner.manager.save(newRecord);
-        }
-
-        // Commit the transaction
-        await queryRunner.commitTransaction();
-    } catch (error) {
-        // Rollback the transaction in case of errors
-        await queryRunner.rollbackTransaction();
-        throw error; // Rethrow the error to handle it elsewhere
-    } finally {
-        // Release the query runner
-        await queryRunner.release();
-    }
   }
 
 }

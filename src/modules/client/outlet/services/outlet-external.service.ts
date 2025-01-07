@@ -6,13 +6,15 @@ import { ServiceExternalService } from '@modules/client/services/services/servic
 import { ServiceSchema } from '@modules/client/services/schema/service.schema';
 import { OutletAdminService } from './outlet-admin.service';
 import { CreateOutletDto } from '../dtos/outlet.dto';
+import { OutletDocsService } from './outlet-docs-service';
 
 @Injectable()
 export class OutletExternalService {
   constructor(
     private readonly outletService: OutletService,
     private readonly serviceExternalService: ServiceExternalService,
-    private readonly outletAdminService:OutletAdminService
+    private readonly outletAdminService:OutletAdminService,
+    private readonly outletDocsService:OutletDocsService
   ) {}
 
   async getOutletById(outletId: number): Promise<OutletEntity> {
@@ -42,17 +44,17 @@ export class OutletExternalService {
 
 
   async saveOutletRegistration(outletId: number, key: string): Promise<void> {
-    await this.outletService.saveOutletRegistration(outletId,key);
+    await this.outletDocsService.saveOutletRegistration(outletId,key);
   }
 
     async saveOutletMou(outletId: number, key: string): Promise<void> {
-      await this.outletService.saveOutletMou(outletId,key);
+      await this.outletDocsService.saveOutletMou(outletId,key);
   }
 
     async saveOutletGst(outletId: number, key: string): Promise<void> {
-      await this.outletService.saveOutletGst(outletId,key);
+      await this.outletDocsService.saveOutletGst(outletId,key);
   }
-  async getOutletBannerIMagesCountById(outletId:number):Promise<number>{
+  async getOutletBannerImagesCountById(outletId:number):Promise<number>{
     const outlet = await this.outletService.getOutletByIdOrThrow(outletId)
     const count = outlet.outletBannerImages.length;
     return count;

@@ -13,7 +13,7 @@ import { ClientAdminController } from './controllers/client-admin.controller';
 import { ClientAdminService } from './services/client-admin.service';
 import { ClientDocsEntity } from './entities/client-docs.entity';
 import { ClientDocsRepository } from './repository/client-docs.repository';
-// import { AdminModule } from '@modules/admin/admin.module';
+import { ClientDocsService } from './services/client-docs-service';
 
 @Module({
   imports: [
@@ -27,7 +27,8 @@ import { ClientDocsRepository } from './repository/client-docs.repository';
     ClientExternalService,
     TeamMemberService,
     ClientAdminService,
-    ClientDocsRepository
+    ClientDocsRepository,
+    ClientDocsService,
   ],
   controllers: [TeamController,ClientAdminController],
   exports: [ClientExternalService,ClientRepository],
