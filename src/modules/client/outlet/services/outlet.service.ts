@@ -6,10 +6,14 @@ import { OutletEntity } from '../entities/outlet.entity';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { DeleteOutletDto } from '../dtos/delete-outlet.dto';
 import { OutletInterface } from '../interfaces/outlet.interface';
+import { In } from 'typeorm';
 
 @Injectable()
 export class OutletService {
-  constructor(private outletRepository: OutletRepository) {}
+  constructor(
+    private outletRepository: OutletRepository,
+
+  ) {}
 
   async createOutlet(createAddressDto: CreateOutletDto): Promise<OutletEntity> {
     const outlet = await this.outletRepository
@@ -57,5 +61,12 @@ export class OutletService {
     return await this.outletRepository.getRepository().findOne({where:{phoneNumber:contactNumber}})
   }
 
+  async getOutletDetailsByIds(outletIds:number[]):Promise<OutletEntity[]>{
+    return this.outletRepository.getRepository().find({
+      where:{id:In(outletIds)},
+      relations:['address']
+    })
+  }
 }
+
 

@@ -5,10 +5,13 @@ import { ClientEntity } from '../entities/client.entity';
 import { RegisterClientDto } from '../dtos/register-client.dto';
 import { ResetClientPasswordDto } from '@modules/authentication/dtos/admin-reset-client-password.dto';
 import { TeamMember } from '../dtos/team-member.dto';
+import { ClientDocsService } from './client-docs-service';
 
 @Injectable()
 export class ClientExternalService {
-  constructor(private clientService: ClientService) {}
+  constructor(private clientService: ClientService,
+    private readonly clientDocsService:ClientDocsService
+  ) {}
 
   async getSellers(loginDto: LoginDto): Promise<ClientEntity> {
     return await this.clientService.getSellerByEmail(loginDto);
@@ -45,5 +48,28 @@ export class ClientExternalService {
     const clients = await this.clientService.getAllTeamMembersForOutlet(outletId);
     return clients;
   }
+
+  // async updateProfilePhoto(clientId: number, newPhotoKey: string): Promise<void> {
+  //   // // Fetch existing profile photo
+  //   // const client = await this.getClientById(clientId);
+  
+  //   // // Merge existing profile photo with the new one
+  //   // const updatedPhotos = [...(client.profilePhotos || []), newPhotoKey];
+  
+  //   // // Update the database
+  //   // await this.clientRepository.getRepository().update(
+  //   //   { id: clientId },
+  //   //   { profilePhotos: updatedPhotos }
+  //   // );
+  // }
+
+  async saveClientPAN(clientId: number, key: string): Promise<void> {
+    await this.clientDocsService.saveClientPan(clientId,key)
+  }  
+
+  async saveClientAadhaar(clientId: number, key: string): Promise<void> {
+    await this.clientDocsService.saveClientAadhaar(clientId,key);
+  }
+
 }
 

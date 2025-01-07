@@ -11,11 +11,13 @@ import { TeamController } from './controllers/team.controller';
 import { TeamMemberService } from './services/team-member.service';
 import { ClientAdminController } from './controllers/client-admin.controller';
 import { ClientAdminService } from './services/client-admin.service';
-// import { AdminModule } from '@modules/admin/admin.module';
+import { ClientDocsEntity } from './entities/client-docs.entity';
+import { ClientDocsRepository } from './repository/client-docs.repository';
+import { ClientDocsService } from './services/client-docs-service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ClientEntity], getMysqlDataSource()),
+    TypeOrmModule.forFeature([ClientEntity,ClientDocsEntity], getMysqlDataSource()),
     EncryptionModule,
     AuthorizationModule,
   ],
@@ -25,6 +27,8 @@ import { ClientAdminService } from './services/client-admin.service';
     ClientExternalService,
     TeamMemberService,
     ClientAdminService,
+    ClientDocsRepository,
+    ClientDocsService,
   ],
   controllers: [TeamController,ClientAdminController],
   exports: [ClientExternalService,ClientRepository],

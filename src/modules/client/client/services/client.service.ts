@@ -236,5 +236,5 @@ export class ClientService {
   async getAllTeamMembersForOutlet(outletId: number): Promise<TeamMember[]> {
     return await this.clientRepository.getClientsByOutletId(outletId);
   }
-  
+
 }

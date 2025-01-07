@@ -34,4 +34,6 @@ export class ClientEntity extends BaseEntity {
   @Column({ default: null })
   outletId: number;
 
+  @Column('simple-array', { nullable: true })
+  profilePhotos: string[]; 
 }

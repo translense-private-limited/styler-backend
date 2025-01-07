@@ -39,4 +39,10 @@ export class CreateOutletDto {
   @IsNotEmpty()
   address:AddressDto;
 
+  @IsOptional()
+  outletBannerImages?:string[];
+
+  @IsOptional()
+  outletVideos?:string[];
+
 }

@@ -3,6 +3,7 @@ import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
 import { ServiceDto } from '../dtos/service.dto';
 import { CategoryExternal } from '@modules/admin/category/services/category-external';
+import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 
 @Injectable()
 export class ServiceService {
@@ -31,9 +32,7 @@ export class ServiceService {
     const service = await this.serviceRepository
       .getRepository()
       .findById(serviceId);
-    if (!service) {
-      throw new NotFoundException('no service exist with provided Id');
-    }
+    throwIfNotFound(service,'no service exist with provided Id')
     return service;
   }
 
@@ -54,7 +53,7 @@ export class ServiceService {
   async updateServiceById(
     serviceId: string,
     updateServiceDto: Partial<ServiceDto>,
-  ): Promise<ServiceSchema> {
+  ): Promise<ServiceSchema> {    
     const updatedService = await this.serviceRepository
       .getRepository()
       .findByIdAndUpdate(
@@ -62,11 +61,6 @@ export class ServiceService {
         { $set: updateServiceDto },
         { new: true, omitUndefined: true },
       );
-
-    if (!updatedService) {
-      throw new NotFoundException(`Service with ID ${serviceId} not found.`);
-    }
-
     return updatedService;
   }
 
@@ -85,5 +79,15 @@ export class ServiceService {
   async deleteAll(): Promise<ServiceSchema[]> {
     await this.serviceRepository.getRepository().deleteMany({});
     return this.getServices();
+  }
+
+  async getServicesByServiceIds(
+    serviceIds: string[],
+  ): Promise<ServiceSchema[]> {
+    const services = await this.serviceRepository
+      .getRepository()
+      .find({ _id: { $in: serviceIds } })
+      .lean();
+    return services;
   }
 }

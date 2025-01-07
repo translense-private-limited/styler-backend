@@ -43,4 +43,10 @@ export class OutletEntity extends BaseEntity {
 
   @Column({nullable:true})
   addressId:number
+
+  @Column('simple-array',{nullable:true})
+  outletBannerImages:string[];
+
+  @Column('simple-array',{nullable:true})
+  outletVideos: string[];
 }

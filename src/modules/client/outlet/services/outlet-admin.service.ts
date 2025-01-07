@@ -19,7 +19,7 @@ import { AddressEntity } from '@src/utils/entities/address.entity';
 import { CreateOutletDto } from '../dtos/outlet.dto';
 import { AddressRepository } from '@src/utils/repositories/address.repository';
 import * as csc from 'country-state-city';
-import { CityInterface, CountryInterface, StateInterface } from '../address.interface';
+import { CityInterface, CountryInterface, StateInterface } from '../interfaces/address.interface';
 import { OutletInterface } from '../interfaces/outlet.interface';
 
 
@@ -233,7 +233,6 @@ export class OutletAdminService {
         .getRepository()
         .save(updatedAddress);
     }
-
     // Merge other updateData fields with the outlet entity
     const updatedOutlet = Object.assign(outlet, updateData);
 

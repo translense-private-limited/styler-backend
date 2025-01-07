@@ -1,14 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ServiceService } from './service.service';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
-import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
+import { ServiceDto } from '../dtos/service.dto';
 
 @Injectable()
 export class ServiceExternalService {
   constructor(
     private readonly serviceService: ServiceService,
-    private readonly serviceRepository: ServiceRepository,
   ) {}
 
   async getAllServicesForAnOutlet(outletId: number): Promise<ServiceSchema[]> {
@@ -16,12 +15,7 @@ export class ServiceExternalService {
   }
 
   async getServiceByIdOrThrow(serviceId: string): Promise<ServiceSchema> {
-    const service = await this.serviceRepository
-      .getRepository()
-      .findById(serviceId);
-    if (!service) {
-      throw new NotFoundException('no service exist with provided Id');
-    }
+    const service = await this.serviceService.getServiceByIdOrThrow(serviceId);
     return service;
   }
 
@@ -74,10 +68,23 @@ export class ServiceExternalService {
   async getServicesByServiceIds(
     serviceIds: string[],
   ): Promise<ServiceSchema[]> {
-    const services = await this.serviceRepository
-      .getRepository()
-      .find({ _id: { $in: serviceIds } })
-      .lean();
-    return services;
+    return await this.serviceService.getServicesByServiceIds(serviceIds);
   }
+
+  async updateServiceByIdOrThrow(serviceId:string,updateServiceDto:Partial<ServiceDto>):Promise<void>{
+    await this.serviceService.updateServiceById(serviceId,updateServiceDto);
+  }
+
+  async getServiceImagesCountById(serviceId:string):Promise<number>{
+    const service = await this.serviceService.getServiceByIdOrThrow(serviceId)
+    const count = service.serviceImages.length;
+    return count;
+  }
+
+  async getServiceVideosCountById(serviceId:string):Promise<number>{
+    const service = await this.serviceService.getServiceByIdOrThrow(serviceId)
+    const count = service.serviceVideos.length;
+    return count;
+  }
+  
 }
