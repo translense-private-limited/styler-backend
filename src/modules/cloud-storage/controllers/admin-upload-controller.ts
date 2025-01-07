@@ -1,5 +1,4 @@
-
-import { Body, Controller, Put } from "@nestjs/common";
+import { Body, Controller, Put,Get,Param } from "@nestjs/common";
 import { KeyGeneratorDto } from "../dtos/key-generator.dto";
 import { UploadFilesService } from "../services/upload-files.service";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
