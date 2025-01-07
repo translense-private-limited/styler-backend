@@ -3,7 +3,6 @@ import { KeyGeneratorService } from "./key-generator.service";
 import { KeyGeneratorDto } from "../dtos/key-generator.dto";
 import { AwsS3Service } from "@src/utils/aws/aws-s3.service";
 import { ClientExternalService } from "@modules/client/client/services/client-external.service";
-import { ServiceExternalService } from "@modules/client/services/services/service-external.service";
 import { OutletExternalService } from "@modules/client/outlet/services/outlet-external.service";
 import { MediaTypeEnum } from "../enums/media-type.enum";
 import { badRequest } from "@src/utils/exceptions/common.exception";
@@ -15,37 +14,10 @@ export class UploadFilesService{
         private readonly keyGeneratorService:KeyGeneratorService,
         private readonly awsS3Service:AwsS3Service,
         private readonly clientExternalService:ClientExternalService,
-        private readonly serviceExternalService:ServiceExternalService,
         private readonly outletExternalService:OutletExternalService
     ){}
 
-    private readonly MEDIA_FILE_SIZE_LIMIT_MB: { [key in MediaTypeEnum]: number } = {
-      [MediaTypeEnum.PAN]: 5,
-      [MediaTypeEnum.AADHAR]: 5,
-      [MediaTypeEnum.PROFILE_PHOTO]: 2,
-      [MediaTypeEnum.SERVICE_IMAGE]: 3,
-      [MediaTypeEnum.OUTLET_BANNER]: 3,
-      [MediaTypeEnum.SERVICE_VIDEO]: 50,
-      [MediaTypeEnum.OUTLET_VIDEO]: 50,
-      [MediaTypeEnum.OUTLET_GST]: 10,
-      [MediaTypeEnum.OUTLET_REGISTRATION]: 10,
-      [MediaTypeEnum.OUTLET_MOU]: 10
-    };
-  
-    private validateFileSize(fileSize: number, mediaType: MediaTypeEnum): void {
-      const maxFileSizeMB = this.MEDIA_FILE_SIZE_LIMIT_MB[mediaType];
-      if (!maxFileSizeMB) {
-          badRequest(`Unsupported media type: ${mediaType}`);
-      }
-  
-      const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024; // Convert MB to Bytes
-      if (fileSize > maxFileSizeBytes) {
-          badRequest(`File size exceeds the maximum limit of ${maxFileSizeMB} MB for ${mediaType}.`);
-      }
-    }
-  
     async generatePreSignedUrlToUpload(keyGeneratorDto:KeyGeneratorDto):Promise<string>{
-      this.validateFileSize(keyGeneratorDto.fileSize,keyGeneratorDto.mediaType);
       const method = await this.mediaTypeMethodMapper(keyGeneratorDto.mediaType);
       return await method(keyGeneratorDto);
     }
@@ -74,8 +46,10 @@ export class UploadFilesService{
         if (!keyGeneratorDto.outletId) {
           badRequest('OutletId is required')
         }
+        const maxFileSize = 1 // in MB
+        const allowedTypes = [ContentTypeEnum.IMAGE_JPEG,ContentTypeEnum.IMAGE_PNG]
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.IMAGE_JPEG)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key, ContentTypeEnum.IMAGE_JPEG, maxFileSize, allowedTypes);
         try {
           // await this.clientExternalService.updateProfilePhoto(keyGeneratorDto.clientId, key);
         } catch (error) {
@@ -91,8 +65,10 @@ export class UploadFilesService{
         if (!keyGeneratorDto.outletId) {
           badRequest('OutletId is required')
         }
+        const maxFileSize = 3;
+        const allowedTypes = [ContentTypeEnum.APPLICATION_PDF,ContentTypeEnum.APPLICATION_MSWORD]
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF,maxFileSize,allowedTypes)
         try {
             await this.clientExternalService.saveClientPAN(keyGeneratorDto.clientId, key);
          } catch (error) {
@@ -108,8 +84,10 @@ export class UploadFilesService{
         if (!keyGeneratorDto.outletId) {
           badRequest('OutletId is required')
         }
+        const maxFileSize = 3;
+        const allowedTypes = [ContentTypeEnum.APPLICATION_PDF,ContentTypeEnum.APPLICATION_MSWORD]
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF,maxFileSize,allowedTypes)
         try {
             await this.clientExternalService.saveClientAadhaar(keyGeneratorDto.clientId, key);
          } catch (error) {
@@ -124,8 +102,10 @@ export class UploadFilesService{
         if (!keyGeneratorDto.outletId) {
           badRequest('OutletId is required')
         }
+        const maxFileSize = 1 // in MB
+        const allowedTypes = [ContentTypeEnum.IMAGE_JPEG,ContentTypeEnum.IMAGE_PNG]
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.IMAGE_JPEG)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.IMAGE_JPEG,maxFileSize,allowedTypes)
         try {
             // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
             }
@@ -142,8 +122,10 @@ export class UploadFilesService{
         if (!keyGeneratorDto.outletId) {
           badRequest('OutletId is required')
         }
+        const maxFileSize = 8;
+        const allowedTypes = [ContentTypeEnum.VIDEO_MP4]
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.VIDEO_MP4)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.VIDEO_MP4,maxFileSize,allowedTypes)
         try {
             // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
             }
@@ -157,8 +139,10 @@ export class UploadFilesService{
         if (!keyGeneratorDto.outletId) {
           badRequest('OutletId is required')
         }
+        const maxFileSize = 1 // in MB
+        const allowedTypes = [ContentTypeEnum.IMAGE_JPEG,ContentTypeEnum.IMAGE_PNG]
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.IMAGE_JPEG)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.IMAGE_JPEG,maxFileSize,allowedTypes)
         try {
             // await this.outletExternalService.updateOutletByIdOrThrow(keyGeneratorDto.outletId,updatedData);
             }
@@ -172,8 +156,10 @@ export class UploadFilesService{
         if (!keyGeneratorDto.outletId) {
           badRequest('OutletId is required')
         }
+        const maxFileSize = 8;
+        const allowedTypes = [ContentTypeEnum.VIDEO_MP4]
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.VIDEO_MP4)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.VIDEO_MP4,maxFileSize,allowedTypes)
         try {
             // await this.outletExternalService.updateOutletByIdOrThrow(keyGeneratorDto.outletId, updatedData);
           }
@@ -187,8 +173,10 @@ export class UploadFilesService{
         if (!keyGeneratorDto.outletId) {
           badRequest('OutletId is required')
         }
+        const maxFileSize = 3;
+        const allowedTypes = [ContentTypeEnum.APPLICATION_PDF,ContentTypeEnum.APPLICATION_MSWORD]
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF,maxFileSize,allowedTypes)
         try {
             await this.outletExternalService.saveOutletGst(keyGeneratorDto.outletId, key);
           }
@@ -202,8 +190,10 @@ export class UploadFilesService{
         if (!keyGeneratorDto.outletId) {
           badRequest('OutletId is required')
         }
+        const maxFileSize = 3;
+        const allowedTypes = [ContentTypeEnum.APPLICATION_PDF,ContentTypeEnum.APPLICATION_MSWORD]
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF,maxFileSize,allowedTypes)
         try {
             await this.outletExternalService.saveOutletRegistration(keyGeneratorDto.outletId, key);
           }
@@ -217,8 +207,10 @@ export class UploadFilesService{
         if (!keyGeneratorDto.outletId) {
           badRequest('OutletId is required')
         }
+        const maxFileSize = 3;
+        const allowedTypes = [ContentTypeEnum.APPLICATION_PDF,ContentTypeEnum.APPLICATION_MSWORD]
         const key = await this.keyGeneratorService.generateKey(keyGeneratorDto)
-        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF)
+        const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(key,ContentTypeEnum.APPLICATION_PDF,maxFileSize,allowedTypes)
         try {
             await this.outletExternalService.saveOutletMou(keyGeneratorDto.outletId, key);
           }

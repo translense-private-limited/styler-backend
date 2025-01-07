@@ -163,12 +163,26 @@ export class AwsS3Service {
   async generateSignedUrlForUpload(
     key: string,
     contentType: string,
+    maxFileSize: number,
+    allowedTypes:string[],
     expiresInSeconds = 900,
   ): Promise<string> {
+    const maxFileSizeBytes = maxFileSize * 1024 * 1024;
+
+    if (!allowedTypes.includes(contentType)) {
+      throw new HttpException(
+        'Invalid file type. Allowed types are: ' + allowedTypes.join(', '),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  
     const params = {
       Bucket: this.bucketName,
       Key: key,
       ContentType: contentType,
+      Conditions: [
+        ['content-length-range', 0, maxFileSizeBytes],  // Min size 0, max size in bytes
+      ],
     };
 
     try {
