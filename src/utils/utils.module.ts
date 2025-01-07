@@ -16,7 +16,7 @@ import { AwsS3Service } from "./aws/aws-s3.service";
     imports:[TypeOrmModule.forFeature([AddressEntity,DeviceTokenEntity],getMysqlDataSource()),ClientModule],
     controllers:[ClientPushNotificationController,CustomerPushNotificationController],
     providers:[AddressRepository,DeviceTokenRepository,PushNotificationBuilderService,PushNotificationService,AwsS3Service],
-    exports:[AddressRepository],
+    exports:[AddressRepository,AwsS3Service],
 })
 
 export class UtilsModule{}

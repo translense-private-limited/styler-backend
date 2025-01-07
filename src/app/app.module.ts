@@ -29,6 +29,7 @@ import { ImageService } from './image.service';
 import { CustomerModule } from '@modules/customer/customer.module';
 import { SeedModule } from '@modules/seed/seed.module';
 import { NotificationModule } from '@src/utils/notification/notification.module';
+import { CloudStorageModule } from '@modules/cloud-storage/cloud-storage.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { NotificationModule } from '@src/utils/notification/notification.module'
     CustomerModule,
     SeedModule,
     NotificationModule,
+    CloudStorageModule
   ],
   controllers: [AppController, ImageController],
   providers: [
