@@ -4,6 +4,7 @@ import { ServiceSchema } from '../schema/service.schema';
 import { ServiceDto } from '../dtos/service.dto';
 import { CategoryExternal } from '@modules/admin/category/services/category-external';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { SubtypeDto } from '../dtos/subtype.dto';
 
 @Injectable()
 export class ServiceService {
@@ -89,5 +90,12 @@ export class ServiceService {
       .find({ _id: { $in: serviceIds } })
       .lean();
     return services;
+  }
+
+  async addSubtypeToAService(serviceId: string, subtype: SubtypeDto): Promise<ServiceSchema> {
+    const service = await this.getServiceByIdOrThrow(serviceId)
+    // Add the subtype to the subtypes array
+    service.subtypes.push(subtype);
+    return service.save();
   }
 }

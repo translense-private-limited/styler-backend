@@ -13,6 +13,7 @@ import { ServiceService } from '../services/service.service';
 import { ServiceDto } from '../dtos/service.dto';
 import { ServiceSchema } from '../schema/service.schema';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { SubtypeDto } from '../dtos/subtype.dto';
 
 @Controller('client')
 @ApiBearerAuth('jwt')
@@ -57,5 +58,13 @@ export class ServiceController {
   @Delete('services')
   async deleteServices(): Promise<ServiceSchema[]> {
     return this.serviceService.deleteAll();
+  }
+
+  @Post('service/:serviceId/subtype')
+  async addSubtypeToAService(
+    @Param('serviceId') serviceId: string,
+    @Body() subtype: SubtypeDto
+  ): Promise<ServiceSchema> {
+    return this.serviceService.addSubtypeToAService(serviceId, subtype);
   }
 }

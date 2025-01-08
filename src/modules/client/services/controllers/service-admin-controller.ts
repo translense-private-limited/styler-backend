@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs
 import { ServiceSchema } from "../schema/service.schema";
 import { ServiceDto } from "../dtos/service.dto";
 import { ServiceService } from "../services/service.service";
+import { SubtypeDto } from "../dtos/subtype.dto";
 
 @Controller('admin')
 export class ServiceAdminController{
@@ -37,4 +38,11 @@ export class ServiceAdminController{
       return this.serviceService.updateServiceById(serviceId, UpdateServiceDto);
     }
 
+    @Post('service/:serviceId/subtype')
+    async addSubtypeToAService(
+      @Param('serviceId') serviceId: string,
+      @Body() subtype: SubtypeDto
+    ): Promise<ServiceSchema> {
+      return this.serviceService.addSubtypeToAService(serviceId, subtype);
+    }
 }

@@ -42,5 +42,13 @@ export class ServiceSchema extends Document {
 
   @Prop({required:false})
   serviceVideos:string[];
+
+  @Prop({ required: false, type: [Object], default: [] })
+  subtypes: {
+    price?: number;
+    timeTaken?: number;
+    discount?: number;
+    description?: string;
+  }[];
 }
 export const ServiceModel = SchemaFactory.createForClass(ServiceSchema);
