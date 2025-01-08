@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import {
   S3Client,
   PutObjectCommand,
@@ -12,11 +12,13 @@ import { Buffer } from 'buffer';
 
 @Injectable()
 export class AwsS3Service {
+  private readonly logger = new Logger(AwsS3Service.name)
   private s3Client: S3Client;
   private bucketName: string;
 
   constructor() {
     // Initialize the S3 client
+    this.logger.log('Initializing S3 client...');
     this.s3Client = new S3Client({
       region: process.env.AWS_REGION || 'ap-south-1',
       endpoint: process.env.AWS_S3_ENDPOINT || 'http://localhost:9000',
@@ -28,6 +30,7 @@ export class AwsS3Service {
     });
 
     this.bucketName = process.env.AWS_S3_BUCKET || 'styler-outlet-media';
+    this.logger.log('S3 client initialized successfully.');
   }
 
   /**
@@ -49,10 +52,13 @@ export class AwsS3Service {
       ContentType: contentType,
     };
 
+    this.logger.log(`Uploading file with key: ${key}`);
     try {
       await this.s3Client.send(new PutObjectCommand(uploadParams));
+      this.logger.log(`File uploaded successfully: ${key}`);
       return key;
     } catch (error) {
+      this.logger.error(`Error uploading file: ${key}`, error.stack);
       throw new HttpException(
         'Error uploading file to S3',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -71,10 +77,13 @@ export class AwsS3Service {
       Key: key,
     };
 
+    this.logger.log(`Downloading file with key: ${key}`);
     try {
       const data = await this.s3Client.send(new GetObjectCommand(getParams));
+      this.logger.log(`File downloaded successfully: ${key}`);
       return await this.streamToBuffer(data.Body as Readable);
     } catch (error) {
+      this.logger.error(`Error downloading file: ${key}`, error.stack);
       throw new HttpException(
         'Error downloading file from S3',
         HttpStatus.NOT_FOUND,
@@ -92,9 +101,12 @@ export class AwsS3Service {
       Key: key,
     };
 
+    this.logger.log(`Deleting file with key: ${key}`);
     try {
       await this.s3Client.send(new DeleteObjectCommand(deleteParams));
+      this.logger.log(`File deleted successfully: ${key}`);
     } catch (error) {
+      this.logger.error(`Error deleting file: ${key}`, error.stack);
       throw new HttpException(
         'Error deleting file from S3',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -113,12 +125,16 @@ export class AwsS3Service {
       Prefix: prefix,
     };
 
+    this.logger.log(`Listing files with prefix: ${prefix}`);
     try {
       const data = await this.s3Client.send(
         new ListObjectsV2Command(listParams),
       );
+
+      this.logger.log(`Found files with prefix: ${prefix}`);
       return data.Contents ? data.Contents.map((item) => item.Key) : [];
     } catch (error) {
+      this.logger.error(`Error listing files with prefix: ${prefix}`, error.stack);
       throw new HttpException(
         'Error listing files in S3',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -136,16 +152,19 @@ export class AwsS3Service {
     key: string,
     expiresInSeconds = 900,
   ): Promise<string> {
+    this.logger.log(`Generating signed URL for download: ${key}`);
     const params = {
       Bucket: this.bucketName,
       Key: key,
     };
 
     try {
+      this.logger.log(`Signed URL generated successfully: ${key}`);
       return await getSignedUrl(this.s3Client, new GetObjectCommand(params), {
         expiresIn: expiresInSeconds,
       });
     } catch (error) {
+      this.logger.error(`Error generating signed URL for download: ${key}`, error.stack);
       throw new HttpException(
         'Error generating signed URL for download',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -170,12 +189,14 @@ export class AwsS3Service {
     const maxFileSizeBytes = maxFileSize * 1024 * 1024;
 
     if (!allowedTypes.includes(contentType)) {
+      this.logger.warn(`Invalid file type: ${contentType}`);
       throw new HttpException(
         'Invalid file type. Allowed types are: ' + allowedTypes.join(', '),
         HttpStatus.BAD_REQUEST,
       );
     }
-  
+    
+    this.logger.log(`Generating signed URL for upload: ${key}`);
     const params = {
       Bucket: this.bucketName,
       Key: key,
@@ -186,10 +207,13 @@ export class AwsS3Service {
     };
 
     try {
-      return await getSignedUrl(this.s3Client, new PutObjectCommand(params), {
+      const signedUrl =  await getSignedUrl(this.s3Client, new PutObjectCommand(params), {
         expiresIn: expiresInSeconds,
       });
+      this.logger.log(`Signed URL generated successfully for upload: ${key}`);
+      return signedUrl;
     } catch (error) {
+      this.logger.error(`Error generating signed URL for upload: ${key}`, error.stack);
       throw new HttpException(
         'Error generating signed URL for upload',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -203,6 +227,7 @@ export class AwsS3Service {
    * @returns The Buffer.
    */
   private async streamToBuffer(stream: Readable): Promise<Buffer> {
+    this.logger.log('Converting stream to buffer...');
     return new Promise((resolve, reject) => {
       const chunks: Buffer[] = [];
       stream.on('data', (chunk) => chunks.push(chunk));
