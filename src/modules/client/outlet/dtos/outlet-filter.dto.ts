@@ -1,5 +1,5 @@
-import { IsOptional, IsString, IsEnum, IsInt, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsEnum, IsInt, Min, IsArray } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 import { OutletStatusEnum } from '../enums/outlet-status.enum';
 
 
@@ -9,10 +9,13 @@ export class OutletFilterDto {
   city?: string;
 
   @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.split(',') : value))
+  @IsArray()
   @IsEnum(OutletStatusEnum, {
+    each:true,
     message: `Status must be one of: ${Object.values(OutletStatusEnum).join(', ')}`,
   })
-  status?: OutletStatusEnum;
+  status?: OutletStatusEnum[];
 
   @IsOptional()
   @IsString()

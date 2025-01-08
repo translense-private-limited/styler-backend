@@ -47,7 +47,7 @@ export class OutletRepository extends BaseRepository<OutletEntity> {
     const filterConditions = {
       city: { condition: 'address.city LIKE :city COLLATE utf8mb4_general_ci', wrap: true },
       name: { condition: 'outlet.name LIKE :name COLLATE utf8mb4_general_ci', wrap: true },
-      status: { condition: 'outlet.status = :status', wrap: false },
+      status: { condition: 'outlet.status IN (:...status)', wrap: false },
     };
     const queryBuilder = await this.repository
       .createQueryBuilder('outlet')
