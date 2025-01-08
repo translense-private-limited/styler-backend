@@ -43,7 +43,12 @@ export class OutletRepository extends BaseRepository<OutletEntity> {
   }
 
   async getAllOutletsWithOwner(filterDto:OutletFilterDto): Promise<OutletInterface[]> {
-    const { city, status, name, limit, offset } = filterDto;
+    const { limit, offset } = filterDto;
+    const filterConditions = {
+      city: { condition: 'address.city LIKE :city COLLATE utf8mb4_general_ci', wrap: true },
+      name: { condition: 'outlet.name LIKE :name COLLATE utf8mb4_general_ci', wrap: true },
+      status: { condition: 'outlet.status = :status', wrap: false },
+    };
     const queryBuilder = await this.repository
       .createQueryBuilder('outlet')
       .leftJoinAndSelect('outlet.address', 'address')
@@ -73,17 +78,15 @@ export class OutletRepository extends BaseRepository<OutletEntity> {
         'client.name AS clientName',
       ]);
       // Apply filters if provided
-      if (city) {
-        queryBuilder.andWhere('address.city LIKE :city COLLATE utf8mb4_general_ci', { city: `%${city}%` });
-      }
-      
-      if (name) {
-        queryBuilder.andWhere('outlet.name LIKE :name COLLATE utf8mb4_general_ci', { name: `%${name}%` });
-      }
-      
-      if (status) {
-        queryBuilder.andWhere('outlet.status = :status', { status });
-      }
+      Object.keys(filterConditions).forEach(key => {
+        const { condition, wrap } = filterConditions[key];
+        const parameter = filterDto[key];
+    
+        if (parameter) {
+          const value = wrap ? `%${parameter}%` : parameter;
+          queryBuilder.andWhere(condition, { [key]: value });
+        }
+      });
       // Apply pagination
       queryBuilder.skip(offset).take(limit);
       try{
