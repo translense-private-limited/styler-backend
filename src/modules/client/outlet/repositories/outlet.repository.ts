@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { BaseRepository } from '@src/utils/repositories/base-repository';
 import { ClientEntity } from '@modules/client/client/entities/client.entity';
 import { OutletInterface } from '../interfaces/outlet.interface';
+import { OutletFilterDto } from '../dtos/outlet-filter.dto';
+import { badRequest } from '@src/utils/exceptions/common.exception';
 
 export class OutletRepository extends BaseRepository<OutletEntity> {
   constructor(
@@ -40,8 +42,9 @@ export class OutletRepository extends BaseRepository<OutletEntity> {
       .getMany();
   }
 
-  async getAllOutletsWithOwner(): Promise<OutletInterface[]> {
-    const outletData = await this.repository
+  async getAllOutletsWithOwner(filterDto:OutletFilterDto): Promise<OutletInterface[]> {
+    const { city, status, name, limit, offset } = filterDto;
+    const queryBuilder = await this.repository
       .createQueryBuilder('outlet')
       .leftJoinAndSelect('outlet.address', 'address')
       .leftJoin(ClientEntity, 'client', 'outlet.clientId = client.id') 
@@ -68,37 +71,56 @@ export class OutletRepository extends BaseRepository<OutletEntity> {
         'address.landmark AS landmark',
         'address.outletId AS outletId',
         'client.name AS clientName',
-      ])
-      .getRawMany();
-      const outlet = outletData.map((outlet) => ({
-      outlet: {
-        id: outlet.id,
-        name: outlet.name,
-        description: outlet.description,
-        status: outlet.status,
-        latitude: outlet.latitude,
-        longitude: outlet.longitude,
-        phoneNumber: outlet.phoneNumber,
-        email: outlet.email,
-        website: outlet.website,
-        clientId: outlet.clientId,
-        addressId:outlet.addressId,
-        address: {
-          addressId: outlet.addressId,
-          propertyNumber: outlet.propertyNumber,
-          country: outlet.country,
-          state: outlet.state,
-          district: outlet.district,
-          city: outlet.city,
-          pincode: outlet.pincode,
-          street: outlet.street,
-          landmark: outlet.landmark,
-          outletId:outlet.outletId
+      ]);
+      // Apply filters if provided
+      if (city) {
+        queryBuilder.andWhere('address.city LIKE :city COLLATE utf8mb4_general_ci', { city: `%${city}%` });
+      }
+      
+      if (name) {
+        queryBuilder.andWhere('outlet.name LIKE :name COLLATE utf8mb4_general_ci', { name: `%${name}%` });
+      }
+      
+      if (status) {
+        queryBuilder.andWhere('outlet.status = :status', { status });
+      }
+      // Apply pagination
+      queryBuilder.skip(offset).take(limit);
+      try{
+        const outletData = await queryBuilder.getRawMany();
+        const outlet = outletData.map((outlet) => ({
+        outlet: {
+          id: outlet.id,
+          name: outlet.name,
+          description: outlet.description,
+          status: outlet.status,
+          latitude: outlet.latitude,
+          longitude: outlet.longitude,
+          phoneNumber: outlet.phoneNumber,
+          email: outlet.email,
+          website: outlet.website,
+          clientId: outlet.clientId,
+          addressId:outlet.addressId,
+          address: {
+            addressId: outlet.addressId,
+            propertyNumber: outlet.propertyNumber,
+            country: outlet.country,
+            state: outlet.state,
+            district: outlet.district,
+            city: outlet.city,
+            pincode: outlet.pincode,
+            street: outlet.street,
+            landmark: outlet.landmark,
+            outletId:outlet.outletId
+          },
         },
-      },
-      clientName: outlet.clientName, 
+        clientName: outlet.clientName, 
 
-    }));
-    return outlet;
+      }));
+      return outlet;
+    }
+    catch(error){
+      badRequest('Failed to fetch outlets with the provided filters.')
+    }
   }
 }
