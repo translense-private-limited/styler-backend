@@ -7,6 +7,7 @@ import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { DeleteOutletDto } from '../dtos/delete-outlet.dto';
 import { OutletInterface } from '../interfaces/outlet.interface';
 import { In } from 'typeorm';
+import { OutletFilterDto } from '../dtos/outlet-filter.dto';
 
 @Injectable()
 export class OutletService {
@@ -23,8 +24,8 @@ export class OutletService {
   }
 
   // Fetch all outlets
-  async getAllOutlets(): Promise<OutletInterface[]> {
-    return this.outletRepository.getAllOutletsWithOwner();
+  async getAllOutlets(filterDto:OutletFilterDto): Promise<OutletInterface[]> {
+    return this.outletRepository.getAllOutletsWithOwner(filterDto);
   }
 
   async getOutletByIdOrThrow(outletId: number): Promise<OutletEntity> {

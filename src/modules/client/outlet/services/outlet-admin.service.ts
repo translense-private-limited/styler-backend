@@ -21,6 +21,7 @@ import { AddressRepository } from '@src/utils/repositories/address.repository';
 import * as csc from 'country-state-city';
 import { CityInterface, CountryInterface, StateInterface } from '../interfaces/address.interface';
 import { OutletInterface } from '../interfaces/outlet.interface';
+import { OutletFilterDto } from '../dtos/outlet-filter.dto';
 
 
 @Injectable()
@@ -190,8 +191,8 @@ export class OutletAdminService {
     return 'Outlet and associated clients deleted successfully';
   }
 
-  async getAllOutlets(): Promise<OutletInterface[]> {
-    return this.outletService.getAllOutlets();
+  async getAllOutlets(filterDto:OutletFilterDto): Promise<OutletInterface[]> {
+    return this.outletService.getAllOutlets(filterDto);
   }
 
   async updateOutletByIdOrThrow(

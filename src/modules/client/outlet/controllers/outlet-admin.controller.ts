@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { OutletService } from '../services/outlet.service';
@@ -21,6 +22,7 @@ import { AddressEntity } from '@src/utils/entities/address.entity';
 
 import { CityInterface, CountryInterface, StateInterface } from '../interfaces/address.interface';
 import { OutletInterface } from '../interfaces/outlet.interface';
+import { OutletFilterDto } from '../dtos/outlet-filter.dto';
 
 @ApiTags('Admin/Outlets')
 @Controller('admin')
@@ -50,9 +52,11 @@ export class OutletAdminController {
   @ApiOperation({
     summary: 'list out all the existing outlets',
   })
-  @Get('outlets')
-  async getAllOutlets(): Promise<OutletInterface[]> {
-    return this.outletAdminService.getAllOutlets();
+  @Get('outlets') // GET /outlets
+  async getAllOutlets(
+    @Query() filterDto: OutletFilterDto,
+  ): Promise<OutletInterface[]> {
+    return this.outletService.getAllOutlets(filterDto); 
   }
 
   @ApiOperation({
