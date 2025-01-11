@@ -35,9 +35,9 @@ export class ExtendedClientController {
   }
 
   @ApiBearerAuth('jwt')
-  @Get('extended-client/:extended-clientId')
+  @Get('extended-client/:clientId')
   async getExtendedClientById(
-    @Param('ExtendedClientId', ParseIntPipe) clientId: number,
+    @Param('clientId', ParseIntPipe) clientId: number,
     @ClientIdDecorator() clientIdDto: ClientIdDto,
   ): Promise<ExtendedClient> {
     return this.clientService.getExtendedClientById(clientId, clientIdDto);
@@ -53,9 +53,9 @@ export class ExtendedClientController {
   }
 
   @ApiBearerAuth('jwt')
-  @Patch('extended-clients/:extended-clientId')
+  @Patch('extended-client/:clientId')
   async updateExtendedClient(
-    @Param('extendedClientId', ParseIntPipe) extendedClientId: number,
+    @Param('clientId', ParseIntPipe) extendedClientId: number,
     @Body() updateExtendedClientDto: Partial<ExtendedClient>,
   ): Promise<ExtendedClient> {
     return await this.extendedClientService.updateExtendedClient(
@@ -65,13 +65,13 @@ export class ExtendedClientController {
   }
 
   @ApiBearerAuth('jwt')
-  @Delete('extended-client/:extended-clientId')
+  @Delete('extended-client/:clientId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteExtendedClient(
-    @Param('ExtendedClientId', ParseIntPipe) ExtendedClientId: number,
+    @Param('clientId', ParseIntPipe) extendedClientId: number,
     @ClientIdDecorator() clientIdDto: ClientIdDto,
   ): Promise<String> {
-    await this.extendedClientService.deleteExtendedClient(ExtendedClientId, clientIdDto);
+    await this.extendedClientService.deleteExtendedClient(extendedClientId, clientIdDto);
     return;
   }
 }

@@ -24,10 +24,10 @@ export class ExtendedClientService {
   ) {}
 
   async updateExtendedClient(
-    ExtendedClientId: number,
+    extendedClientId: number,
     updateDto: Partial<ClientEntity>,
   ): Promise<ExtendedClient> {
-    const extendedClient = await this.getExtendedClientByIdOrThrow(ExtendedClientId);
+    const extendedClient = await this.getExtendedClientByIdOrThrow(extendedClientId);
 
     // make sure password will not be updated
     delete updateDto.password;
@@ -51,7 +51,7 @@ export class ExtendedClientService {
       role = await this.roleClientService.getRoleByIdOrThrow(updateDto.roleId);
     }
 
-    const updateClientInstance = Object.assign(ExtendedClient, updateDto);
+    const updateClientInstance = Object.assign(extendedClient, updateDto);
 
     const updatedExtendedClient = await this.clientRepository
       .getRepository()
@@ -61,22 +61,22 @@ export class ExtendedClientService {
   }
 
   async deleteExtendedClient(
-    ExtendedClientId: number,
+    extendedClientId: number,
     clientIdDto: ClientIdDto,
   ): Promise<DeleteResult> {
-    const extendedClient = await this.getExtendedClientByIdOrThrow(ExtendedClientId);
+    const extendedClient = await this.getExtendedClientByIdOrThrow(extendedClientId);
 
     if (!clientIdDto.outletIds.includes(extendedClient.outletId)) {
-      throw new UnauthorizedException('You are not allowed the team member');
+      throw new UnauthorizedException('You are not allowed to delete the extended-client');
     }
 
-    return this.clientRepository.getRepository().delete({ id: ExtendedClientId });
+    return this.clientRepository.getRepository().delete({ id: extendedClientId });
   }
 
-  async getExtendedClientByIdOrThrow(ExtendedClientId: number): Promise<ClientEntity> {
+  async getExtendedClientByIdOrThrow(extendedClientId: number): Promise<ClientEntity> {
     const extendedClient = await this.clientRepository.getRepository().findOne({
       where: {
-        id: ExtendedClientId,
+        id: extendedClientId,
       },
     });
     if (!extendedClient) {
