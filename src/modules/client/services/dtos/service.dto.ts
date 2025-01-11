@@ -5,11 +5,14 @@ import {
   IsOptional,
   IsString,
   Validate,
+  ValidateNested,
 } from 'class-validator';
 import { ServiceInterface } from '../interfaces/service.interface';
 import { GenderEnum } from '@src/utils/enums/gender.enums';
 import { Types } from 'mongoose';
 import { IsObjectId } from '@src/utils/validators/is-object-id.validator';
+import { SubtypeDto } from './subtype.dto';
+import { Type } from 'class-transformer';
 
 export class ServiceDto implements ServiceInterface {
   @Validate(IsObjectId) // Custom validator to check ObjectId format
@@ -56,4 +59,9 @@ export class ServiceDto implements ServiceInterface {
 
   @IsOptional()
   serviceVideos?:string[];
+
+  @ValidateNested({ each: true })
+  @Type(() => SubtypeDto)
+  @IsOptional()
+  subtypes?: SubtypeDto[];
 }

@@ -61,10 +61,27 @@ export class ServiceController {
   }
 
   @Post('service/:serviceId/subtype')
-  async addSubtypeToAService(
+  async addSubtypeToExistingService(
     @Param('serviceId') serviceId: string,
     @Body() subtype: SubtypeDto
   ): Promise<ServiceSchema> {
-    return this.serviceService.addSubtypeToAService(serviceId, subtype);
+    return this.serviceService.addSubtypeToExistingService(serviceId, subtype);
   }
+
+  @Patch('service/:serviceId/subtype/:subtypeId')
+    async updateSubtype(
+      @Param('serviceId') serviceId: string,
+      @Param('subtypeId') subtypeId: string,
+      @Body() updatedSubtype: Partial<SubtypeDto>
+    ): Promise<ServiceSchema> {
+      return this.serviceService.updateSubtype(serviceId, subtypeId, updatedSubtype);
+    }
+
+    @Delete('service/:serviceId/subtype/:subtypeId')
+    async deleteSubtype(
+      @Param('serviceId') serviceId: string,
+      @Param('subtypeId') subtypeId: string
+    ): Promise<ServiceSchema> {
+      return this.serviceService.deleteSubtype(serviceId, subtypeId);
+    }
 }
