@@ -12,8 +12,8 @@
 
 //   @ApiBearerAuth('jwt')
 //   @Get('teams/:outletId') 
-//   async getAllTeamMembersForOutlet(@Param('outletId',ParseIntPipe) outletId: number) {
-//     return this.clientService.getAllTeamMembersForOutlet(outletId);
+//   async getAllExtendedClientsForOutlet(@Param('outletId',ParseIntPipe) outletId: number) {
+//     return this.clientService.getAllExtendedClientsForOutlet(outletId);
 //   }
 
 //   @Get(':clientId/outlet/:outletId')
@@ -28,6 +28,6 @@
 //   @Post('team')
 //   async createClient(@Body() createClientDto: CreateClientDto, @ClientIdDecorator() clientIdDto: ClientIdDto) {
 //     console.log('create seller called ');
-//     return this.clientService.createTeamMember(createClientDto,clientIdDto);
+//     return this.clientService.createExtendedClient(createClientDto,clientIdDto);
 //   }
 // }

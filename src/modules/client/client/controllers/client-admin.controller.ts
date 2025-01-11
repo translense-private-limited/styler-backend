@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Patch } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { TeamMember } from "../dtos/team-member.dto";
+import { ExtendedClient } from "../dtos/extended-client.dto";
 import { ClientAdminService } from "../services/client-admin.service";
 
 @ApiTags('Admin/Client')
@@ -13,22 +13,22 @@ export class ClientAdminController{
     @Get('/outlet/:outletId/employees')
     async getAllEmployeesForOutlet(
         @Param('outletId',ParseIntPipe) outletId:number
-    ):Promise<TeamMember[]>{
+    ):Promise<ExtendedClient[]>{
         return this.clientAdminService.getAllEmployeesForOutlet(outletId)
     }
 
     @Get('employees/:employeeId')
     async getEmployeeDetailsById(
         @Param('employeeId',ParseIntPipe) employeeId:number
-    ):Promise<TeamMember>{
+    ):Promise<ExtendedClient>{
         return this.clientAdminService.getEmployeeDetailsByIdOrThrow(employeeId);
     }
 
     @Patch('employees/:employeeId')
     async updateEmployeeDetails(
       @Param('employeeId', ParseIntPipe) employeeId: number,
-      @Body() updateEmployeeDto: Partial<TeamMember>,
-    ): Promise<TeamMember> {
+      @Body() updateEmployeeDto: Partial<ExtendedClient>,
+    ): Promise<ExtendedClient> {
       return await this.clientAdminService.updateEmployeeDetails(
         employeeId,
         updateEmployeeDto,

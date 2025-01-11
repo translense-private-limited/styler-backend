@@ -3,7 +3,7 @@ import { ClientEntity } from '../entities/client.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
 import { Repository } from 'typeorm';
 import { BaseRepository } from '@src/utils/repositories/base-repository';
-import { TeamMember } from '../dtos/team-member.dto';
+import { ExtendedClient } from '../dtos/extended-client.dto';
 import { RoleEntity } from '@modules/authorization/entities/role.entity';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { plainToInstance } from 'class-transformer';
@@ -16,7 +16,7 @@ export class ClientRepository extends BaseRepository<ClientEntity> {
     super(repository);
   }
 
-  async getClientDetails(clientId: number): Promise<TeamMember> {
+  async getClientDetails(clientId: number): Promise<ExtendedClient> {
       const clientWithRole = await this.repository
         .createQueryBuilder('client')
         .leftJoin('roles', 'role', 'role.id = client.roleId') // Join roles table based on the roleId
@@ -49,7 +49,7 @@ export class ClientRepository extends BaseRepository<ClientEntity> {
         outletId: clientWithRole.roleOutletId,
       });
   
-      const teamMember = {
+      const extendedClient = {
         createdAt:clientWithRole.createdAt,
         updatedAt:clientWithRole.updatedAt,
         id: clientWithRole.clientId,
@@ -63,10 +63,10 @@ export class ClientRepository extends BaseRepository<ClientEntity> {
         outletId: clientWithRole.clientOutletId,
         role,
       };
-      return teamMember;
+      return extendedClient;
     }
 
-    async getClientsByOutletId(outletId: number): Promise<TeamMember[]> {
+    async getClientsByOutletId(outletId: number): Promise<ExtendedClient[]> {
       const clientsWithRoles = await this
         .getRepository()
         .createQueryBuilder('client')
@@ -90,7 +90,7 @@ export class ClientRepository extends BaseRepository<ClientEntity> {
         ])
         .getRawMany();
     
-      // Transform raw results into TeamMember instances
+      // Transform raw results into ExtendedClient instances
       return clientsWithRoles.map((client) => {
         const role = new RoleEntity();
         role.id = client.role_id;
@@ -99,19 +99,19 @@ export class ClientRepository extends BaseRepository<ClientEntity> {
         role.isSystemDefined = client.role_isSystemDefined;
         role.outletId = client.role_outletId;
     
-        const teamMember = new TeamMember();
-        teamMember.id = client.id;
-        teamMember.name = client.name;
-        teamMember.email = client.email;
-        teamMember.password = client.password;
-        teamMember.contactNumber = client.contactNumber;
-        teamMember.gender = client.gender;
-        teamMember.pastExperience = client.pastExperience;
-        teamMember.about = client.about;
-        teamMember.outletId = client.outletId;
-        teamMember.role = role;
+        const extendedClient = new ExtendedClient();
+        extendedClient.id = client.id;
+        extendedClient.name = client.name;
+        extendedClient.email = client.email;
+        extendedClient.password = client.password;
+        extendedClient.contactNumber = client.contactNumber;
+        extendedClient.gender = client.gender;
+        extendedClient.pastExperience = client.pastExperience;
+        extendedClient.about = client.about;
+        extendedClient.outletId = client.outletId;
+        extendedClient.role = role;
     
-        return teamMember;
+        return extendedClient;
       });
     }    
     
