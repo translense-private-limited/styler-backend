@@ -1,4 +1,4 @@
-import { TeamMember } from './../dtos/team-member.dto';
+import { ExtendedClient } from '../dtos/extended-client.dto';
 import {
   BadRequestException,
   Injectable,
@@ -30,22 +30,22 @@ export class ClientService {
     private readonly roleExternalService: RoleExternalService,
   ) {}
 
-  async getTeamMemberById(
+  async getExtendedClientById(
     clientId: number,
     clientIdDto: ClientIdDto,
-  ): Promise<TeamMember> {
+  ): Promise<ExtendedClient> {
     try {
       const { outletIds } = clientIdDto;
-      const teamMember = await this.getClientByIdOrThrow(clientId);
+      const extendedClient = await this.getClientByIdOrThrow(clientId);
 
-      if (!outletIds.includes(teamMember.outletId)) {
+      if (!outletIds.includes(extendedClient.outletId)) {
         throw new UnauthorizedException('You are not authorized');
       }
 
       const role = await this.roleClientService.getRoleByIdOrThrow(
-        teamMember.roleId,
+        extendedClient.roleId,
       );
-      return { ...teamMember, role };
+      return { ...extendedClient, role };
     } catch (error) {
       throw new HttpException(
         'An unexpected error occurred.',
@@ -74,10 +74,10 @@ export class ClientService {
     }
   }
 
-  async createTeamMember(
+  async createExtendedClient(
     createClientDto: CreateClientDto,
     clientIdDto: ClientIdDto,
-  ): Promise<TeamMember> {
+  ): Promise<ExtendedClient> {
     await this.checkSellerUniqueness(createClientDto);
 
     if (!clientIdDto.outletIds.includes(createClientDto.outletId)) {
@@ -233,7 +233,7 @@ export class ClientService {
     }
   }
 
-  async getAllTeamMembersForOutlet(outletId: number): Promise<TeamMember[]> {
+  async getAllExtendedClientsForOutlet(outletId: number): Promise<ExtendedClient[]> {
     return await this.clientRepository.getClientsByOutletId(outletId);
   }
 

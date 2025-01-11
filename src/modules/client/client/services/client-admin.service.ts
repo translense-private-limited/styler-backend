@@ -1,27 +1,25 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { TeamMember } from "../dtos/team-member.dto";
-import { RoleClientService } from "@modules/authorization/services/role-client.service";
+import { ExtendedClient } from "../dtos/extended-client.dto";
 import { ClientEntity } from "../entities/client.entity";
-import { TeamMemberService } from "./team-member.service";
+import { ExtendedClientService } from "./extended-client.service";
 import { ClientService } from "./client.service";
 import { ClientRepository } from "../repository/client.repository";
 
 @Injectable()
 export class ClientAdminService{
     constructor(
-        private readonly roleClientService:RoleClientService,
-        private readonly teamMemberService:TeamMemberService,
+        private readonly extendedClientService:ExtendedClientService,
         private readonly clientService:ClientService,
         private readonly clientRepository:ClientRepository
     ){}
 
-    async getAllEmployeesForOutlet(outletId:number):Promise<TeamMember[]>{
-        return this.clientService.getAllTeamMembersForOutlet(outletId);
+    async getAllEmployeesForOutlet(outletId:number):Promise<ExtendedClient[]>{
+        return this.clientService.getAllExtendedClientsForOutlet(outletId);
     }
 
     async getEmployeeDetailsByIdOrThrow(
         employeeId: number,
-      ): Promise<TeamMember> {
+      ): Promise<ExtendedClient> {
         try {
           return await this.clientRepository.getClientDetails(employeeId);
           
@@ -37,8 +35,8 @@ export class ClientAdminService{
     async updateEmployeeDetails(
         employeeId: number,
         updateDto: Partial<ClientEntity>,
-      ): Promise<TeamMember> {
-        return this.teamMemberService.updateTeamMember(employeeId,updateDto);
+      ): Promise<ExtendedClient> {
+        return this.extendedClientService.updateExtendedClient(employeeId,updateDto);
       }
     
 }

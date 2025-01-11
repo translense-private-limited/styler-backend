@@ -12,32 +12,32 @@ import { ClientEntity } from '../entities/client.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
 
-import { TeamMember } from '../dtos/team-member.dto';
+import { ExtendedClient } from '../dtos/extended-client.dto';
 import { DeleteResult } from 'typeorm';
 
 @Injectable()
-export class TeamMemberService {
+export class ExtendedClientService {
   constructor(
     private clientRepository: ClientRepository,
     private roleClientService: RoleClientService,
     private bcryptEncryptionService: BcryptEncryptionService,
   ) {}
 
-  async updateTeamMember(
-    teamMemberId: number,
+  async updateExtendedClient(
+    ExtendedClientId: number,
     updateDto: Partial<ClientEntity>,
-  ): Promise<TeamMember> {
-    const teamMember = await this.getTeamMemberByIdOrThrow(teamMemberId);
+  ): Promise<ExtendedClient> {
+    const extendedClient = await this.getExtendedClientByIdOrThrow(ExtendedClientId);
 
     // make sure password will not be updated
     delete updateDto.password;
 
     // make sure existing email id is not used ,
     if (updateDto.email) {
-      const teamMember = await this.clientRepository
+      const extendedClient = await this.clientRepository
         .getRepository()
         .findOne({ where: { email: updateDto.email } });
-      if (teamMember) {
+      if (extendedClient) {
         throw new BadRequestException(
           `Client registered with ${updateDto.email}, please provide different email`,
         );
@@ -47,41 +47,41 @@ export class TeamMemberService {
     let role;
 
     // check is role going to be updated
-    if (updateDto.roleId !== teamMember.roleId) {
+    if (updateDto.roleId !== extendedClient.roleId) {
       role = await this.roleClientService.getRoleByIdOrThrow(updateDto.roleId);
     }
 
-    const updateClientInstance = Object.assign(teamMember, updateDto);
+    const updateClientInstance = Object.assign(ExtendedClient, updateDto);
 
-    const updatedTeamMember = await this.clientRepository
+    const updatedExtendedClient = await this.clientRepository
       .getRepository()
       .save(updateClientInstance);
 
-    return { ...updatedTeamMember, role: role };
+    return { ...updatedExtendedClient, role: role };
   }
 
-  async deleteTeamMember(
-    teamMemberId: number,
+  async deleteExtendedClient(
+    ExtendedClientId: number,
     clientIdDto: ClientIdDto,
   ): Promise<DeleteResult> {
-    const teamMember = await this.getTeamMemberByIdOrThrow(teamMemberId);
+    const extendedClient = await this.getExtendedClientByIdOrThrow(ExtendedClientId);
 
-    if (!clientIdDto.outletIds.includes(teamMember.outletId)) {
+    if (!clientIdDto.outletIds.includes(extendedClient.outletId)) {
       throw new UnauthorizedException('You are not allowed the team member');
     }
 
-    return this.clientRepository.getRepository().delete({ id: teamMemberId });
+    return this.clientRepository.getRepository().delete({ id: ExtendedClientId });
   }
 
-  async getTeamMemberByIdOrThrow(teamMemberId: number): Promise<ClientEntity> {
-    const teamMember = await this.clientRepository.getRepository().findOne({
+  async getExtendedClientByIdOrThrow(ExtendedClientId: number): Promise<ClientEntity> {
+    const extendedClient = await this.clientRepository.getRepository().findOne({
       where: {
-        id: teamMemberId,
+        id: ExtendedClientId,
       },
     });
-    if (!teamMember) {
+    if (!extendedClient) {
       throw new NotFoundException('No team member exist ');
     }
-    return teamMember;
+    return extendedClient;
   }
 }
