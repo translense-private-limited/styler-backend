@@ -1,4 +1,4 @@
-import { UserTypeEnum } from '../enums/user-type.enum';
+import { UserTypeEnum } from '../../../utils/enums/user-type.enum';
 
 export interface RoleInterface {
   name: string;

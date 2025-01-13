@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RoleRepository } from '@modules/authorization/repositories/role.repository';
-import { UserTypeEnum } from '@modules/authorization/enums/user-type.enum';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 
 @Injectable()
 export class SeedRoleData {
