@@ -81,7 +81,7 @@ export class ServiceController {
     async deleteSubtype(
       @Param('serviceId') serviceId: string,
       @Param('subtypeId') subtypeId: string
-    ): Promise<ServiceSchema> {
+    ): Promise<void> {
       return this.serviceService.deleteSubtype(serviceId, subtypeId);
     }
 }

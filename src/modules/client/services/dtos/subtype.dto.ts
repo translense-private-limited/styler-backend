@@ -9,14 +9,12 @@ export class SubtypeDto {
   gender:GenderEnum;
 
   @IsNumber()
-  @IsOptional()
   @IsPositive()
-  price?: number;
+  price: number;
 
   @IsNumber()
-  @IsOptional()
   @IsPositive()
-  timeTaken?: number;
+  timeTaken: number;
 
   @IsNumber()
   @IsOptional()

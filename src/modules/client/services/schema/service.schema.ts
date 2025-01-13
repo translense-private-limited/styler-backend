@@ -48,8 +48,8 @@ export class ServiceSchema extends Document {
     id:string;
     name:string;
     gender:GenderEnum;
-    price?: number;
-    timeTaken?: number;
+    price: number;
+    timeTaken: number;
     discount?: number;
     description?: string;
     about?:string

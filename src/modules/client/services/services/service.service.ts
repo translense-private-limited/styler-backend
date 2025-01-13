@@ -131,21 +131,26 @@ export class ServiceService {
     return service.save();
   }
   
-  async deleteSubtype(
-    serviceId: string,
-     subtypeId: string
-    ): Promise<ServiceSchema> {
-    const service = await this.getServiceByIdOrThrow(serviceId);
+  async deleteSubtype(serviceId: string, subtypeId: string): Promise<void> {
+    try {
+      // Remove the specific subtype from the service's subtypes array
+      const result = await this.serviceRepository.getRepository().updateOne(
+        { _id: serviceId, "subtypes.id": subtypeId },
+        { $pull: { subtypes: { id: subtypeId } } }   // Remove the subtype by id
+      );
   
-    // Filter out the subtype with the given subtypeId
-    const subtypeExists = service.subtypes.some(subtype => subtype.id === subtypeId);
-    throwIfNotFound(subtypeExists,`Subtype with ID ${subtypeId} not found in service ${serviceId}`)
-  
-    service.subtypes = service.subtypes.filter(subtype => subtype.id !== subtypeId);
-  
-    // Save the updated service
-    return service.save();
+      // Check if the operation was successful
+      if (result.modifiedCount === 0) {
+        throw new Error(
+          `Subtype with ID ${subtypeId} not found in service with ID ${serviceId}`
+        );
+      }
+    } catch (error) {
+      // Log and throw the error for further handling
+      throw new Error(`Failed to delete subtype: ${error.message}`);
+    }
   }
+  
   
   private assignIdsToSubtypes(subtypes?: SubtypeDto[]): void {
   if (subtypes) {
