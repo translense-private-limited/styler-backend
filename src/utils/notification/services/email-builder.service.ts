@@ -4,7 +4,7 @@ import * as Handlebars from 'handlebars';
 
 import { EventConfigurationInterface } from '../interfaces/event.configuration.interface';
 import { EventInterface } from '../interfaces/event.interface';
-import { UserTypeEnum } from '@modules/authorization/enums/user-type.enum';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 import { CustomerExternalService } from '@modules/customer/services/customer-external.service';
 import { EventDataInterface } from '../interfaces/event-data.interface';
 import { EmailTemplateInterface } from '../interfaces/email-template.interface';

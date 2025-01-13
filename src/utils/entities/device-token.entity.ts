@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { ApplicationPlatformEnum } from "../enums/application-platform.enum";
-import { UserTypeEnum } from '@modules/authorization/enums/user-type.enum';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 import { BaseEntity } from "./base.entity";
 
 

@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { BaseEntity } from '@src/utils/entities/base.entity';
 import { EventConfigurationInterface } from '../interfaces/event.configuration.interface';
 import { EventNameEnum } from '../enums/event-name.enum';
-import { UserTypeEnum } from '@modules/authorization/enums/user-type.enum';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 import { NotificationTypeEnum } from '../enums/notification-type.enum';
 import { EmailTemplateInterface } from '../interfaces/email-template.interface';
 

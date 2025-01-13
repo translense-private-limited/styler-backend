@@ -1,4 +1,4 @@
-import { UserEnum } from '@modules/authentication/enums/user.enum';
+import { UserTypeEnum } from '../../../utils/enums/user-type.enum';
 import { BaseEntity } from '@src/utils/entities/base.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -14,5 +14,5 @@ export class ResourceEntity extends BaseEntity {
   label: string;
 
   @Column()
-  user: UserEnum;
+  user: UserTypeEnum;
 }

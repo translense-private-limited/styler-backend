@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EventInterface } from '../interfaces/event.interface';
 import { EventConfigurationInterface } from '../interfaces/event.configuration.interface';
 import { EventDataInterface } from '../interfaces/event-data.interface';
-import { UserTypeEnum } from '@modules/authorization/enums/user-type.enum';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 import { CustomerExternalService } from '@modules/customer/services/customer-external.service';
 import * as Handlebars from 'handlebars';

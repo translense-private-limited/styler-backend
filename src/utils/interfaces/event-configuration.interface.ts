@@ -1,4 +1,4 @@
-import { UserTypeEnum } from '@modules/authorization/enums/user-type.enum';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 
 export interface EventConfigurationInterface {
   targetUser: UserTypeEnum[]; // An array of user types (e.g., ["admin", "customer"]) to whom notifications will be sent

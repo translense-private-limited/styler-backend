@@ -1,4 +1,4 @@
-import { UserTypeEnum } from "@modules/authorization/enums/user-type.enum";
+import { UserTypeEnum } from "@src/utils/enums/user-type.enum";
 import { NotificationTypeEnum } from "@src/utils/notification/enums/notification-type.enum";
 
 export const notificationConfig = {
