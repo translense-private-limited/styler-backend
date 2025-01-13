@@ -27,10 +27,6 @@ export class ServiceDto implements ServiceInterface {
   @IsNotEmpty()
   serviceName: string;
 
-  @IsString()
-  @IsNotEmpty()
-  type: string;
-
   @IsNumber()
   @IsNotEmpty()
   price: number;

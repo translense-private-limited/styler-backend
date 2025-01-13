@@ -4,7 +4,6 @@ export interface ServiceInterface {
   categoryId: Types.ObjectId;
   gender: GenderEnum;
   serviceName: string;
-  type: string;
   price: number;
   timeTaken: number;
   about: string;
