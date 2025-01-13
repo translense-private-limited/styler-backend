@@ -14,9 +14,6 @@ export class ServiceSchema extends Document {
   serviceName: string;
 
   @Prop({ required: true })
-  type: string;
-
-  @Prop({ required: true })
   price: number;
 
   @Prop({required:false,type:Number,default:0})
