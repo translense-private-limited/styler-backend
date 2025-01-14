@@ -42,6 +42,8 @@ async function bootstrap(): Promise<void> {
   await app.listen(port);
 
   app.use(csurf());
-  app.use(helmet());
+  //   app.use(helmet({
+  //   contentSecurityPolicy: false, // Disable the strict content security policy (if needed)
+  // }));
 }
 bootstrap();
