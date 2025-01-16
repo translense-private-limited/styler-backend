@@ -128,6 +128,7 @@ export class ServiceService {
     }
   
     Object.assign(subtype, updatedSubtype);
+    service.markModified('subtypes');
     return service.save();
   }
   
