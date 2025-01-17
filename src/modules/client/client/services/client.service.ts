@@ -15,7 +15,7 @@ import { ClientEntity } from '../entities/client.entity';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { RoleClientService } from '@modules/authorization/services/role-client.service';
 
-import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { throwIfNotFound, unauthorized } from '@src/utils/exceptions/common.exception';
 import { ResetClientPasswordDto } from '@modules/authentication/dtos/admin-reset-client-password.dto';
 import { RegisterClientDto } from '../dtos/register-client.dto';
 import { RoleExternalService } from '@modules/authorization/services/role-external.service';
@@ -115,7 +115,7 @@ export class ClientService {
       .getRepository()
       .findOne({ where: { email: username } });
     if (!seller) {
-      throw new UnauthorizedException('Invalid credentials');
+      unauthorized(`Invalid Credentials`);
     }
 
     return seller;

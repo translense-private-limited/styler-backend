@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AuthServiceInterface } from '../interfaces/auth-service.interface';
 import { SellerLoginDto } from '../dtos/seller-login.dto';
 import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
@@ -7,6 +7,7 @@ import { JwtService } from './jwt.service';
 //import { CreateClientDto } from '@modules/client/client/dtos/client.dto';
 import { ClientEntity } from '@modules/client/client/entities/client.entity';
 import { ClientOutletMappingExternalService } from '@modules/admin/client-outlet-mapping/services/client-outlet-mapping-external.service';
+import { unauthorized } from '@src/utils/exceptions/common.exception';
 
 @Injectable()
 export class SellerAuthService implements AuthServiceInterface {
@@ -45,7 +46,7 @@ export class SellerAuthService implements AuthServiceInterface {
     );
 
     if (!isCredentialValid) {
-      throw new UnauthorizedException('Invalid Credential');
+      unauthorized(`Invalid Credentials`);
     }
     const tokenPayload = await this.addHeaderDataForTokenPayload(seller);
     const jwtToken = await this.jwtService.generateToken(tokenPayload);
