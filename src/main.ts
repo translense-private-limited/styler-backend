@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core';
-import helmet from 'helmet';
 import * as csurf from 'csurf';
 import { AppModule } from './app/app.module';
 import { swaggerSetup } from './modules/configs/swagger/swagger.setup';

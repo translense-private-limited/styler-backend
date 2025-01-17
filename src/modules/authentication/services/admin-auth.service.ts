@@ -9,12 +9,11 @@ import { AdminLoginResponseInterface } from '../interfaces/admin-login-response.
 import {
   ConflictException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { AdminDto } from '@modules/admin/dtos/admin.dto';
 import { AdminTokenPayloadInterface } from '../interfaces/admin-token-payload.interface';
 import { LoginDto } from '../dtos/login.dto';
-import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { unauthorized } from '@src/utils/exceptions/common.exception';
 import { RoleExternalService } from '@modules/authorization/services/role-external.service';
 import { AdminEntity } from '@modules/admin/entities/admin.entity';
 import { RoleEntity } from '@modules/authorization/entities/role.entity';
@@ -119,13 +118,15 @@ export class AdminAuthenticationService {
     const admin =
       await this.adminExternalService.getAdminByEmailOrContactNumber(username);
     // Use the helper function to handle the NotFoundException
-    throwIfNotFound(admin, `No user exists with the provide credentials`);
+    if(!admin){
+      unauthorized(`Invalid Credentials`);
+    }
     const isValid = await this.bcryptEncryptionService.validate(
       password,
       admin.password,
     );
     if (!isValid) {
-      throw new UnauthorizedException(`Invalid Credentials`);
+      unauthorized(`Invalid Credentials`);
     }
     // prepare the jwt and pass in body
     const tokenPayload = await this.constructJwtPayload(admin);

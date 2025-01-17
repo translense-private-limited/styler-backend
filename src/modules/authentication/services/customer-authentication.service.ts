@@ -7,14 +7,13 @@ import { CustomerExternalService } from '../../customer/services/customer-extern
 import {
   ConflictException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDto } from '../dtos/login.dto';
 import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
 import { CustomerDto } from '@modules/customer/dtos/customer.dto';
 import { CustomerTokenPayloadInterface } from '../interfaces/customer-token-payload.interface';
 import { JwtService } from './jwt.service';
-import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { unauthorized } from '@src/utils/exceptions/common.exception';
 
 @Injectable()
 export class CustomerAuthenticationService {
@@ -89,13 +88,15 @@ export class CustomerAuthenticationService {
       );
 
     // Use the helper function to handle the NotFoundException
-    throwIfNotFound(customer, `No user exists with the provided credentials`);
+    if(!customer){
+      unauthorized(`Invalid Credentials`);
+    }
     const isValid = await this.bcryptEncryptionService.validate(
       password,
       customer.password,
     );
     if (!isValid) {
-      throw new UnauthorizedException('Invalid Credentials');
+      unauthorized(`Invalid Credentials`);
     }
     // prepare the jwt and pass in body
     const tokenPayload = await this.constructJwtPayload(customer);
