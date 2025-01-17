@@ -86,5 +86,25 @@ export class ServiceExternalService {
     const count = service.serviceVideos.length;
     return count;
   }
+
+  async getSubtypeImagesCountById(serviceId: string): Promise<number> {
+    const service = await this.serviceService.getServiceByIdOrThrow(serviceId);
+  
+    // Validate that subtypes exist and are an array
+    if (!Array.isArray(service.subtypes)) {
+      return 0; // If no subtypes, return 0
+    }
+  
+    // Calculate the total count of images in subtypes
+    const count = service.subtypes.reduce((total, subtype) => {
+      if (subtype.subtypeImage) {
+        return total + 1; // Increment count if the subtype has an image
+      }
+      return total; // Otherwise, keep the count unchanged
+    }, 0);
+  
+    return count;
+  }
+  
   
 }

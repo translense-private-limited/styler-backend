@@ -15,5 +15,8 @@ export class KeyGeneratorDto{
     serviceId?:string;
 
     @IsOptional()
+    subtypeId:string;
+
+    @IsOptional()
     count?:number;
 }
