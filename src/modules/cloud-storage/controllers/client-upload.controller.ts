@@ -22,7 +22,6 @@ export class ClientUploadFilesController {
     );
   }
 
-  @Get('get-signed-url')
   @Get('signed-url/:key')
   async getSignedUrl(@Param('key') key: string): Promise<string> {
     return await this.uploadFilesService.getSignedUrl(key);
