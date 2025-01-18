@@ -28,4 +28,8 @@ export class SubtypeDto {
   @IsString()
   @IsOptional()
   about?: string;
+
+  @IsOptional()
+  subtypeImage:string;
+  
 }

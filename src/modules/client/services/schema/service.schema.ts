@@ -50,6 +50,7 @@ export class ServiceSchema extends Document {
     discount?: number;
     description?: string;
     about?:string
+    subtypeImage?:string;
   }[];
 }
 export const ServiceModel = SchemaFactory.createForClass(ServiceSchema);

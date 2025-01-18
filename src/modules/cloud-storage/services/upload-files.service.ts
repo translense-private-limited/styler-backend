@@ -48,6 +48,10 @@ export class UploadFilesService {
         this.getPresignedUrlToUploadServiceImage.bind(this),
       ],
       [
+        MediaTypeEnum.SERVICE_SUBTYPE_IMAGE,
+        this.getPresignedUrlToUploadServiceSubtypeImage.bind(this),
+      ],
+      [
         MediaTypeEnum.SERVICE_VIDEO,
         this.getPresignedUrlToUploadServiceVideo.bind(this),
       ],
@@ -171,7 +175,7 @@ export class UploadFilesService {
   async getPresignedUrlToUploadServiceImage(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.clientId) {
+    if (!keyGeneratorDto.serviceId) {
       badRequest('Service is required');
     }
     if (!keyGeneratorDto.outletId) {
@@ -193,6 +197,38 @@ export class UploadFilesService {
       // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
     } catch (error) {
       throw new Error(`Failed to save service images with the given serviceId`);
+    }
+    return signedUrl;
+  }
+
+  async getPresignedUrlToUploadServiceSubtypeImage(
+    keyGeneratorDto: KeyGeneratorDto,
+  ): Promise<string> {
+    if (!keyGeneratorDto.outletId) {
+      badRequest('OutletId is required');
+    }
+    if (!keyGeneratorDto.serviceId) {
+      badRequest('ServiceId is required');
+    }
+    if (!keyGeneratorDto.subtypeId) {
+      badRequest('Service subtypeId is required');
+    }
+    const maxFileSize = 1; // in MB
+    const allowedTypes = [
+      ContentTypeEnum.IMAGE_JPEG,
+      ContentTypeEnum.IMAGE_PNG,
+    ];
+    const key = await this.keyGeneratorService.generateKey(keyGeneratorDto);
+    const signedUrl = await this.awsS3Service.generateSignedUrlForUpload(
+      key,
+      ContentTypeEnum.IMAGE_JPEG,
+      maxFileSize,
+      allowedTypes,
+    );
+    try {
+      // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
+    } catch (error) {
+      throw new Error(`Failed to save service subtype images with the given serviceId and subtypeId`);
     }
     return signedUrl;
   }
