@@ -23,6 +23,7 @@ export class KeyGeneratorService {
       [MediaTypeEnum.AADHAR, this.generateKeyForClientAadhaar.bind(this)],
       [MediaTypeEnum.PROFILE_PHOTO, this.generateKeyForClientProfilePhoto.bind(this)],
       [MediaTypeEnum.SERVICE_IMAGE, this.generateKeyForServiceImage.bind(this)],
+      [MediaTypeEnum.SERVICE_SUBTYPE_IMAGE, this.generateKeyForServiceSubtypeImage.bind(this)],
       [MediaTypeEnum.SERVICE_VIDEO, this.generateKeyForServiceVideo.bind(this)],
       [MediaTypeEnum.OUTLET_BANNER, this.generateKeyForOutletImage.bind(this)],
       [MediaTypeEnum.OUTLET_VIDEO, this.generateKeyForOutletVideo.bind(this)],
@@ -57,6 +58,13 @@ export class KeyGeneratorService {
     const { outletId, serviceId } = keyGeneratorDto;
     const count = (await this.serviceExternalService.getServiceImagesCountById(serviceId))+1;
     const key = `${outletId}/services/${serviceId}/images/${serviceId}-${count}.jpeg`;
+    return key;
+  }
+
+  private async generateKeyForServiceSubtypeImage(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
+    const { outletId, serviceId,subtypeId } = keyGeneratorDto;
+    const count = (await this.serviceExternalService.getSubtypeImagesCountById(serviceId))+1;
+    const key = `${outletId}/services/${serviceId}/subtypes/${subtypeId}/images${subtypeId}-${count}.jpeg`;
     return key;
   }
 
