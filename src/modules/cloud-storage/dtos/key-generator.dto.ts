@@ -5,9 +5,8 @@ export class KeyGeneratorDto{
     @IsNotEmpty()
     mediaType:MediaTypeEnum;
 
-    // @IsNotEmpty()
-    @IsOptional()
-    outletId?:number;
+    @IsNotEmpty()
+    outletId:number;
 
     @IsOptional()
     clientId?:number;

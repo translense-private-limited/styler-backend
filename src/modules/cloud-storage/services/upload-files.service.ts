@@ -78,9 +78,10 @@ export class UploadFilesService {
   async getPresignedUrlToUploadProfilePhoto(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
+    }
     keyGeneratorDto.clientId  = keyGeneratorDto.clientId || uuidv4();
-    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
-
     const maxFileSize = 1; // in MB
     const allowedTypes = [
       ContentTypeEnum.IMAGE_JPEG,
@@ -107,8 +108,10 @@ export class UploadFilesService {
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
 
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
+    }
     keyGeneratorDto.clientId  = keyGeneratorDto.clientId || uuidv4();
-    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -138,8 +141,10 @@ export class UploadFilesService {
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
 
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
+    }
     keyGeneratorDto.clientId  = keyGeneratorDto.clientId || uuidv4();
-    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -250,7 +255,9 @@ export class UploadFilesService {
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
 
-    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
+    }
     const maxFileSize = 1; // in MB
     const allowedTypes = [
       ContentTypeEnum.IMAGE_JPEG,
@@ -277,7 +284,9 @@ export class UploadFilesService {
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
 
-    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
+    }    
     const maxFileSize = 8;
     const allowedTypes = [ContentTypeEnum.VIDEO_MP4];
     const key = await this.keyGeneratorService.generateKey(keyGeneratorDto);
@@ -301,7 +310,9 @@ export class UploadFilesService {
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
 
-    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
+    }
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -331,7 +342,9 @@ export class UploadFilesService {
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
 
-    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
+    }    
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -361,7 +374,9 @@ export class UploadFilesService {
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
 
-    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
+    }    
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
