@@ -4,6 +4,7 @@ import { UploadFilesService } from '../services/upload-files.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UploadUrlResponseInterface } from '../interfaces/upload-url-response.interface';
 
+
 @Controller('client')
 @ApiTags('Client/Upload')
 export class ClientUploadFilesController {
