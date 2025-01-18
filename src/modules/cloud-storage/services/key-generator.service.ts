@@ -56,35 +56,47 @@ export class KeyGeneratorService {
 
   private async generateKeyForServiceImage(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId, serviceId } = keyGeneratorDto;
-    const count = (await this.serviceExternalService.getServiceImagesCountById(serviceId))+1;
+    let count = 1;
+    if(!serviceId.includes('-')){
+     count = (await this.serviceExternalService.getServiceImagesCountById(serviceId))+1;
+    }
     const key = `${outletId}/services/${serviceId}/images/${serviceId}-${count}.jpeg`;
     return key;
   }
 
   private async generateKeyForServiceSubtypeImage(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId, serviceId,subtypeId } = keyGeneratorDto;
-    const count = (await this.serviceExternalService.getSubtypeImagesCountById(serviceId))+1;
-    const key = `${outletId}/services/${serviceId}/subtypes/${subtypeId}/images${subtypeId}-${count}.jpeg`;
+    let count = 1;
+    if(!subtypeId.includes('-')){
+     count = (await this.serviceExternalService.getSubtypeImagesCountById(serviceId))+1;
+    }
+    const key = `${outletId}/services/${serviceId}/subtypes/images/${subtypeId}-${count}.jpeg`;
     return key;
   }
 
   private async generateKeyForServiceVideo(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId, serviceId } = keyGeneratorDto;
-    const count = (await this.serviceExternalService.getServiceVideosCountById(serviceId))+1;
-    const key = `${outletId}/services/${serviceId}/videos/${serviceId}-${count}.mp4`;
+    let count = 1;
+    if(!serviceId.includes('-')){
+     count = (await this.serviceExternalService.getServiceImagesCountById(serviceId))+1;
+    }    const key = `${outletId}/services/${serviceId}/videos/${serviceId}-${count}.mp4`;
     return key;
   }
 
   private async generateKeyForOutletImage(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId } = keyGeneratorDto;
-    const count = (await this.outletExternalService.getOutletBannerImagesCountById(outletId))+1;
+    let count = 1;
+    // if(!outletId.includes('-')){
+    // const count = (await this.outletExternalService.getOutletBannerImagesCountById(outletId))+1;
+    // }
     const key = `${outletId}/outlets/${outletId}/images/${outletId}-${count}.jpeg`;
     return key;
   }
 
   private async generateKeyForOutletVideo(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId } = keyGeneratorDto;
-    const count = (await this.outletExternalService.getOutletVideosCountById(outletId))+1;
+    let count = 1;
+    // const count = (await this.outletExternalService.getOutletVideosCountById(outletId))+1;
     const key = `${outletId}/outlets/${outletId}/videos/${outletId}-${count}.mp4`;
     return key;
   }

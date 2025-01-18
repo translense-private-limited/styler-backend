@@ -5,8 +5,9 @@ import { AwsS3Service } from "@src/utils/aws/aws-s3.service";
 import { ClientExternalService } from "@modules/client/client/services/client-external.service";
 import { OutletExternalService } from "@modules/client/outlet/services/outlet-external.service";
 import { MediaTypeEnum } from "../enums/media-type.enum";
-import { badRequest } from "@src/utils/exceptions/common.exception";
 import { ContentTypeEnum } from "../enums/content-type.enum";
+import { v4 as uuidv4 } from 'uuid';
+import { badRequest } from "@src/utils/exceptions/common.exception";
 
 @Injectable()
 export class UploadFilesService {
@@ -77,12 +78,9 @@ export class UploadFilesService {
   async getPresignedUrlToUploadProfilePhoto(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.clientId) {
-      badRequest('ClientId is required');
-    }
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
-    }
+    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || uuidv4();
+    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
+
     const maxFileSize = 1; // in MB
     const allowedTypes = [
       ContentTypeEnum.IMAGE_JPEG,
@@ -95,25 +93,22 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      // await this.clientExternalService.updateProfilePhoto(keyGeneratorDto.clientId, key);
-    } catch (error) {
-      throw new Error(
-        `Failed to save the profile photo for client with given ClientId`,
-      );
-    }
+    // try {
+    //   // await this.clientExternalService.updateProfilePhoto(keyGeneratorDto.clientId, key);
+    // } catch (error) {
+    //   throw new Error(
+    //     `Failed to save the profile photo for client with given ClientId`,
+    //   );
+    // }
     return signedUrl;
   }
 
   async getPresignedUrlToUploadPan(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.clientId) {
-      badRequest('ClientId is required');
-    }
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
-    }
+
+    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || uuidv4();
+    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -126,28 +121,25 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      await this.clientExternalService.saveClientPAN(
-        keyGeneratorDto.clientId,
-        key,
-      );
-    } catch (error) {
-      throw new Error(
-        `Failed to save the PAN doc for client with the given ClientId`,
-      );
-    }
+    // try {
+    //   await this.clientExternalService.saveClientPAN(
+    //     keyGeneratorDto.clientId,
+    //     key,
+    //   );
+    // } catch (error) {
+    //   throw new Error(
+    //     `Failed to save the PAN doc for client with the given ClientId`,
+    //   );
+    // }
     return signedUrl;
   }
 
   async getPresignedUrlToUploadAadhar(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.clientId) {
-      badRequest('ClientId is required');
-    }
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
-    }
+
+    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || uuidv4();
+    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -160,27 +152,26 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      await this.clientExternalService.saveClientAadhaar(
-        keyGeneratorDto.clientId,
-        key,
-      );
-    } catch (error) {
-      throw new Error(
-        `Failed to save the Aadhar doc for client with the given ClientId`,
-      );
-    }
+    // try {
+    //   await this.clientExternalService.saveClientAadhaar(
+    //     keyGeneratorDto.clientId,
+    //     key,
+    //   );
+    // } catch (error) {
+    //   throw new Error(
+    //     `Failed to save the Aadhar doc for client with the given ClientId`,
+    //   );
+    // }
     return signedUrl;
   }
   async getPresignedUrlToUploadServiceImage(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.serviceId) {
-      badRequest('Service is required');
+
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
     }
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
-    }
+    keyGeneratorDto.serviceId  = keyGeneratorDto.serviceId || uuidv4();
     const maxFileSize = 1; // in MB
     const allowedTypes = [
       ContentTypeEnum.IMAGE_JPEG,
@@ -193,26 +184,23 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
-    } catch (error) {
-      throw new Error(`Failed to save service images with the given serviceId`);
-    }
+    // try {
+    //   // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
+    // } catch (error) {
+    //   throw new Error(`Failed to save service images with the given serviceId`);
+    // }
     return signedUrl;
   }
 
   async getPresignedUrlToUploadServiceSubtypeImage(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
+
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
     }
-    if (!keyGeneratorDto.serviceId) {
-      badRequest('ServiceId is required');
-    }
-    if (!keyGeneratorDto.subtypeId) {
-      badRequest('Service subtypeId is required');
-    }
+    keyGeneratorDto.serviceId  = keyGeneratorDto.serviceId || uuidv4();
+    keyGeneratorDto.subtypeId = keyGeneratorDto.subtypeId || uuidv4();
     const maxFileSize = 1; // in MB
     const allowedTypes = [
       ContentTypeEnum.IMAGE_JPEG,
@@ -225,23 +213,22 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
-    } catch (error) {
-      throw new Error(`Failed to save service subtype images with the given serviceId and subtypeId`);
-    }
+    // try {
+    //   // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
+    // } catch (error) {
+    //   throw new Error(`Failed to save service subtype images with the given serviceId and subtypeId`);
+    // }
     return signedUrl;
   }
 
   async getPresignedUrlToUploadServiceVideo(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.clientId) {
-      badRequest('ServiceId is required');
+
+    if(!keyGeneratorDto.outletId){
+      badRequest(`outletId is required`);
     }
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
-    }
+    keyGeneratorDto.serviceId  = keyGeneratorDto.serviceId || uuidv4();
     const maxFileSize = 8;
     const allowedTypes = [ContentTypeEnum.VIDEO_MP4];
     const key = await this.keyGeneratorService.generateKey(keyGeneratorDto);
@@ -251,20 +238,19 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
-    } catch (error) {
-      throw new Error(`Failed to save service videos with the given ServiceId`);
-    }
+    // try {
+    //   // await this.serviceExternalService.updateServiceByIdOrThrow(keyGeneratorDto.serviceId,updateServiceDto)
+    // } catch (error) {
+    //   throw new Error(`Failed to save service videos with the given ServiceId`);
+    // }
     return signedUrl;
   }
 
   async getPresignedUrlToUploadOutletBannerImage(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
-    }
+
+    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
     const maxFileSize = 1; // in MB
     const allowedTypes = [
       ContentTypeEnum.IMAGE_JPEG,
@@ -277,22 +263,21 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      // await this.outletExternalService.updateOutletByIdOrThrow(keyGeneratorDto.outletId,updatedData);
-    } catch (error) {
-      throw new Error(
-        `Failed to save the profile photo for outlet with the given outletId`,
-      );
-    }
+    // try {
+    //   // await this.outletExternalService.updateOutletByIdOrThrow(keyGeneratorDto.outletId,updatedData);
+    // } catch (error) {
+    //   throw new Error(
+    //     `Failed to save the profile photo for outlet with the given outletId`,
+    //   );
+    // }
     return signedUrl;
   }
 
   async getPresignedUrlToUploadOutletVideo(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
-    }
+
+    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
     const maxFileSize = 8;
     const allowedTypes = [ContentTypeEnum.VIDEO_MP4];
     const key = await this.keyGeneratorService.generateKey(keyGeneratorDto);
@@ -302,22 +287,21 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      // await this.outletExternalService.updateOutletByIdOrThrow(keyGeneratorDto.outletId, updatedData);
-    } catch (error) {
-      throw new Error(
-        `Failed to save the video for outlet with the given outletId.`,
-      );
-    }
+    // try {
+    //   // await this.outletExternalService.updateOutletByIdOrThrow(keyGeneratorDto.outletId, updatedData);
+    // } catch (error) {
+    //   throw new Error(
+    //     `Failed to save the video for outlet with the given outletId.`,
+    //   );
+    // }
     return signedUrl;
   }
 
   async getPresignedUrlToUploadGst(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
-    }
+
+    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -330,25 +314,24 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      await this.outletExternalService.saveOutletGst(
-        keyGeneratorDto.outletId,
-        key,
-      );
-    } catch (error) {
-      throw new Error(
-        `Failed to save the gst doc for outlet with the given outletId.`,
-      );
-    }
+    // try {
+    //   await this.outletExternalService.saveOutletGst(
+    //     keyGeneratorDto.outletId,
+    //     key,
+    //   );
+    // } catch (error) {
+    //   throw new Error(
+    //     `Failed to save the gst doc for outlet with the given outletId.`,
+    //   );
+    // }
     return signedUrl;
   }
 
   async getPresignedUrlToUploadRegistration(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
-    }
+
+    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -361,25 +344,24 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      await this.outletExternalService.saveOutletRegistration(
-        keyGeneratorDto.outletId,
-        key,
-      );
-    } catch (error) {
-      throw new Error(
-        `Failed to save the registration doc for outlet with the given outletId.`,
-      );
-    }
+    // try {
+    //   await this.outletExternalService.saveOutletRegistration(
+    //     keyGeneratorDto.outletId,
+    //     key,
+    //   );
+    // } catch (error) {
+    //   throw new Error(
+    //     `Failed to save the registration doc for outlet with the given outletId.`,
+    //   );
+    // }
     return signedUrl;
   }
 
   async getPresignedUrlToUploadMou(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<string> {
-    if (!keyGeneratorDto.outletId) {
-      badRequest('OutletId is required');
-    }
+
+    keyGeneratorDto.outletId = keyGeneratorDto.outletId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -392,16 +374,16 @@ export class UploadFilesService {
       maxFileSize,
       allowedTypes,
     );
-    try {
-      await this.outletExternalService.saveOutletMou(
-        keyGeneratorDto.outletId,
-        key,
-      );
-    } catch (error) {
-      throw new Error(
-        `Failed to save the MoU doc for outlet with the given outletId.`,
-      );
-    }
+    // try {
+    //   await this.outletExternalService.saveOutletMou(
+    //     keyGeneratorDto.outletId,
+    //     key,
+    //   );
+    // } catch (error) {
+    //   throw new Error(
+    //     `Failed to save the MoU doc for outlet with the given outletId.`,
+    //   );
+    // }
     return signedUrl;
   }
 }
