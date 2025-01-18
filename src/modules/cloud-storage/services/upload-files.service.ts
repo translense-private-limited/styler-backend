@@ -8,6 +8,7 @@ import { MediaTypeEnum } from "../enums/media-type.enum";
 import { ContentTypeEnum } from "../enums/content-type.enum";
 import { v4 as uuidv4 } from 'uuid';
 import { badRequest } from "@src/utils/exceptions/common.exception";
+import { UploadUrlResponseInterface } from "../interfaces/upload-url-response.interface";
 
 @Injectable()
 export class UploadFilesService {
@@ -20,7 +21,7 @@ export class UploadFilesService {
 
   async generatePreSignedUrlToUpload(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
     const method = await this.mediaTypeMethodMapper(keyGeneratorDto.mediaType);
     return await method(keyGeneratorDto);
   }
@@ -33,10 +34,10 @@ export class UploadFilesService {
 
   private async mediaTypeMethodMapper(
     mediaType: MediaTypeEnum,
-  ): Promise<(keyGeneratorDto: KeyGeneratorDto) => Promise<string>> {
+  ): Promise<(keyGeneratorDto: KeyGeneratorDto) => Promise<UploadUrlResponseInterface>> {
     const mediaTypeMethodMap: Map<
       MediaTypeEnum,
-      (keyGeneratorDto: KeyGeneratorDto) => Promise<string>
+      (keyGeneratorDto: KeyGeneratorDto) => Promise<UploadUrlResponseInterface>
     > = new Map([
       [MediaTypeEnum.PAN, this.getPresignedUrlToUploadPan.bind(this)],
       [MediaTypeEnum.AADHAR, this.getPresignedUrlToUploadAadhar.bind(this)],
@@ -77,7 +78,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadProfilePhoto(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
     }
@@ -101,12 +102,12 @@ export class UploadFilesService {
     //     `Failed to save the profile photo for client with given ClientId`,
     //   );
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
 
   async getPresignedUrlToUploadPan(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -134,12 +135,12 @@ export class UploadFilesService {
     //     `Failed to save the PAN doc for client with the given ClientId`,
     //   );
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
 
   async getPresignedUrlToUploadAadhar(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -167,11 +168,11 @@ export class UploadFilesService {
     //     `Failed to save the Aadhar doc for client with the given ClientId`,
     //   );
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
   async getPresignedUrlToUploadServiceImage(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -194,12 +195,12 @@ export class UploadFilesService {
     // } catch (error) {
     //   throw new Error(`Failed to save service images with the given serviceId`);
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
 
   async getPresignedUrlToUploadServiceSubtypeImage(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -223,12 +224,12 @@ export class UploadFilesService {
     // } catch (error) {
     //   throw new Error(`Failed to save service subtype images with the given serviceId and subtypeId`);
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
 
   async getPresignedUrlToUploadServiceVideo(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -248,12 +249,12 @@ export class UploadFilesService {
     // } catch (error) {
     //   throw new Error(`Failed to save service videos with the given ServiceId`);
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
 
   async getPresignedUrlToUploadOutletBannerImage(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -277,12 +278,12 @@ export class UploadFilesService {
     //     `Failed to save the profile photo for outlet with the given outletId`,
     //   );
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
 
   async getPresignedUrlToUploadOutletVideo(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -303,12 +304,12 @@ export class UploadFilesService {
     //     `Failed to save the video for outlet with the given outletId.`,
     //   );
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
 
   async getPresignedUrlToUploadGst(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -335,12 +336,12 @@ export class UploadFilesService {
     //     `Failed to save the gst doc for outlet with the given outletId.`,
     //   );
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
 
   async getPresignedUrlToUploadRegistration(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -367,12 +368,12 @@ export class UploadFilesService {
     //     `Failed to save the registration doc for outlet with the given outletId.`,
     //   );
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
 
   async getPresignedUrlToUploadMou(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<UploadUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -399,6 +400,6 @@ export class UploadFilesService {
     //     `Failed to save the MoU doc for outlet with the given outletId.`,
     //   );
     // }
-    return signedUrl;
+    return {key,signedUrl};
   }
 }
