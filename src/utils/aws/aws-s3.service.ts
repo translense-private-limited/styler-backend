@@ -222,7 +222,7 @@ export class AwsS3Service {
     }
   }
 
-  async migrateFile(sourceKey: string, destinationKey: string): Promise<void> {
+  async copyFile(sourceKey: string, destinationKey: string): Promise<void> {
     const copyParams = {
       Bucket: this.bucketName,
       CopySource: `/${this.bucketName}/${sourceKey}`, // Format: /bucket-name/source-key
@@ -245,6 +245,32 @@ export class AwsS3Service {
       );
     }
   }
+
+  async moveFile(oldKey: string, newKey: string): Promise<void> {
+    // Log the start of the move operation
+    this.logger.log(`Starting move operation: ${oldKey} to ${newKey}`);
+  
+    try {
+      // Step 1: Copy the file to the new location
+      await this.copyFile(oldKey, newKey);
+      this.logger.log(`Successfully copied file from ${oldKey} to ${newKey}`);
+  
+      // Step 2: Delete the original file after the copy
+      await this.deleteFile(oldKey);
+      this.logger.log(`Successfully deleted file from ${oldKey}`);
+  
+    } catch (error) {
+      // Log and handle any errors that occur during the move process
+      this.logger.error(
+        `Error during move operation from ${oldKey} to ${newKey}`,
+        error.stack
+      );
+      throw new HttpException(
+        `Error moving file from ${oldKey} to ${newKey}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }  
   
 
   /**

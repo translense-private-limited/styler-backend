@@ -423,7 +423,7 @@ export class UploadFilesService {
               serviceId: service.id, // Include serviceId
               mediaType: MediaTypeEnum.SERVICE_IMAGE,
             });
-            await this.awsS3Service.migrateFile(oldKey, newKey);
+            await this.awsS3Service.moveFile(oldKey, newKey);
             updatedKeys.serviceImages.push(newKey);
           }
         }
@@ -437,7 +437,7 @@ export class UploadFilesService {
               serviceId: service.id, // Include serviceId
               mediaType: MediaTypeEnum.SERVICE_VIDEO,
             });            
-            await this.awsS3Service.migrateFile(oldKey, newKey);
+            await this.awsS3Service.moveFile(oldKey, newKey);
             updatedKeys.serviceVideos.push(newKey);
           }
         }
@@ -452,7 +452,7 @@ export class UploadFilesService {
                 serviceId: service.id, // Include serviceId
                 mediaType: MediaTypeEnum.SERVICE_SUBTYPE_IMAGE,
               });
-              await this.awsS3Service.migrateFile(oldKey, newKey);
+              await this.awsS3Service.moveFile(oldKey, newKey);
               updatedSubtypes.push({ ...subtype, subtypeImage: newKey });
             } else {
               updatedSubtypes.push(subtype);
