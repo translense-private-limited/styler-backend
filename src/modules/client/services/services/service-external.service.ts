@@ -106,5 +106,8 @@ export class ServiceExternalService {
     return count;
   }
   
+  async updateServiceById(serviceId:string,updateServiceDto:Partial<ServiceDto>):Promise<ServiceSchema>{
+    return await this.serviceService.updateServiceById(serviceId,updateServiceDto);
+  }
   
 }

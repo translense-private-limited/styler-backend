@@ -1,8 +1,9 @@
-import { Body, Controller, Put,Get,Param } from "@nestjs/common";
+import { Body, Controller, Put,Get,Param, Post } from "@nestjs/common";
 import { KeyGeneratorDto } from "../dtos/key-generator.dto";
 import { UploadFilesService } from "../services/upload-files.service";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { PresignedUrlResponseInterface } from "../interfaces/presigned-url-response.interface";
+import { UpdateKeysDto } from "../dtos/update-keys.dto";
 
 @Controller('admin')
 @ApiTags('Admin/Upload')
@@ -20,11 +21,16 @@ export class AdminUploadFilesController{
     ):Promise<PresignedUrlResponseInterface>{
       return await this.uploadFilesService.generatePreSignedUrlToUpload(keyGeneratorDto);
     }
-  // this is temp
-  @Get('signed-url')
+  @Get('signed-url/:key')
   async getSignedUrl(@Param('key') key: string): Promise<string> {
-    const url = await this.uploadFilesService.getSignedUrl(key);
-    return url;
+    return await this.uploadFilesService.getSignedUrl(key);
+  }
+
+  @Post('outlet/update-keys')
+  async updateKeys(
+    @Body() updateKeysDto:UpdateKeysDto
+  ):Promise<void>{
+    await this.uploadFilesService.updateOutletServiceKeys(updateKeysDto.outletId)
   }
 }
 

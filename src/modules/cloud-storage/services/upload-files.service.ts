@@ -9,6 +9,7 @@ import { ContentTypeEnum } from "../enums/content-type.enum";
 import { v4 as uuidv4 } from 'uuid';
 import { badRequest } from "@src/utils/exceptions/common.exception";
 import { PresignedUrlResponseInterface } from "../interfaces/presigned-url-response.interface";
+import { ServiceExternalService } from "@modules/client/services/services/service-external.service";
 
 @Injectable()
 export class UploadFilesService {
@@ -17,6 +18,7 @@ export class UploadFilesService {
     private readonly awsS3Service: AwsS3Service,
     private readonly clientExternalService: ClientExternalService,
     private readonly outletExternalService: OutletExternalService,
+    private readonly serviceExternalService:ServiceExternalService
   ) {}
 
   async generatePreSignedUrlToUpload(
@@ -401,5 +403,78 @@ export class UploadFilesService {
     //   );
     // }
     return {key,signedUrl};
+  }
+
+  async updateOutletServiceKeys(outletId:number):Promise<void>{
+    await this.outletExternalService.getOutletById(outletId);
+    const services = await this.serviceExternalService.getAllServicesForAnOutlet(outletId)
+    const updatedServices = [];
+    const errors = [];
+    for (const service of services) {
+      try {
+        const updatedKeys = { serviceImages: [], serviceVideos: [], subtypes: [] };
+  
+        // Update serviceImages
+        if (service.serviceImages && service.serviceImages.length > 0) {
+          for (const oldKey of service.serviceImages) {
+            // Generate a new key with serviceId included
+            const newKey = await this.keyGeneratorService.generateKey({
+              outletId,
+              serviceId: service.id, // Include serviceId
+              mediaType: MediaTypeEnum.SERVICE_IMAGE,
+            });
+            await this.awsS3Service.migrateFile(oldKey, newKey);
+            updatedKeys.serviceImages.push(newKey);
+          }
+        }
+
+  
+        // Update serviceVideos
+        if (service.serviceVideos && service.serviceVideos.length > 0) {
+          for (const oldKey of service.serviceVideos) {
+            const newKey = await this.keyGeneratorService.generateKey({
+              outletId,
+              serviceId: service.id, // Include serviceId
+              mediaType: MediaTypeEnum.SERVICE_VIDEO,
+            });            
+            await this.awsS3Service.migrateFile(oldKey, newKey);
+            updatedKeys.serviceVideos.push(newKey);
+          }
+        }
+        // Update subtypes
+        if (service.subtypes && service.subtypes.length > 0) {
+          const updatedSubtypes = [];
+          for (const subtype of service.subtypes) {
+            if (subtype.subtypeImage) {
+              const oldKey = subtype.subtypeImage;
+              const newKey = await this.keyGeneratorService.generateKey({
+                outletId,
+                serviceId: service.id, // Include serviceId
+                mediaType: MediaTypeEnum.SERVICE_SUBTYPE_IMAGE,
+              });
+              await this.awsS3Service.migrateFile(oldKey, newKey);
+              updatedSubtypes.push({ ...subtype, subtypeImage: newKey });
+            } else {
+              updatedSubtypes.push(subtype);
+            }
+          }
+          updatedKeys.subtypes = updatedSubtypes;
+        }
+
+  
+        // Update the service in the database
+        await this.serviceExternalService.updateServiceById(service.id, updatedKeys);
+  
+        updatedServices.push({
+          serviceId: service.id,
+          updatedKeys,
+        });
+      } catch (error) {
+        errors.push({
+          serviceId: service.id,
+          error: error.message,
+        });
+      }
+    }
   }
 }

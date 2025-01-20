@@ -5,6 +5,7 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
   ListObjectsV2Command,
+  CopyObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Readable } from 'stream';
@@ -220,6 +221,31 @@ export class AwsS3Service {
       );
     }
   }
+
+  async migrateFile(sourceKey: string, destinationKey: string): Promise<void> {
+    const copyParams = {
+      Bucket: this.bucketName,
+      CopySource: `/${this.bucketName}/${sourceKey}`, // Format: /bucket-name/source-key
+      Key: destinationKey,
+    };
+
+    this.logger.log(`Copying object from ${sourceKey} to ${destinationKey}`);
+
+    try {
+      await this.s3Client.send(new CopyObjectCommand(copyParams));
+      this.logger.log(`Successfully copied ${sourceKey} to ${destinationKey}`);
+    } catch (error) {
+      this.logger.error(
+        `Error copying object from ${sourceKey} to ${destinationKey}`,
+        error.stack,
+      );
+      throw new HttpException(
+        'Error copying object in S3',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+  
 
   /**
    * Helper function to convert a Readable stream to a Buffer.
