@@ -8,7 +8,7 @@ import { MediaTypeEnum } from "../enums/media-type.enum";
 import { ContentTypeEnum } from "../enums/content-type.enum";
 import { v4 as uuidv4 } from 'uuid';
 import { badRequest } from "@src/utils/exceptions/common.exception";
-import { UploadUrlResponseInterface } from "../interfaces/upload-url-response.interface";
+import { PresignedUrlResponseInterface } from "../interfaces/presigned-url-response.interface";
 
 @Injectable()
 export class UploadFilesService {
@@ -21,7 +21,7 @@ export class UploadFilesService {
 
   async generatePreSignedUrlToUpload(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
     const method = await this.mediaTypeMethodMapper(keyGeneratorDto.mediaType);
     return await method(keyGeneratorDto);
   }
@@ -34,10 +34,10 @@ export class UploadFilesService {
 
   private async mediaTypeMethodMapper(
     mediaType: MediaTypeEnum,
-  ): Promise<(keyGeneratorDto: KeyGeneratorDto) => Promise<UploadUrlResponseInterface>> {
+  ): Promise<(keyGeneratorDto: KeyGeneratorDto) => Promise<PresignedUrlResponseInterface>> {
     const mediaTypeMethodMap: Map<
       MediaTypeEnum,
-      (keyGeneratorDto: KeyGeneratorDto) => Promise<UploadUrlResponseInterface>
+      (keyGeneratorDto: KeyGeneratorDto) => Promise<PresignedUrlResponseInterface>
     > = new Map([
       [MediaTypeEnum.PAN, this.getPresignedUrlToUploadPan.bind(this)],
       [MediaTypeEnum.AADHAR, this.getPresignedUrlToUploadAadhar.bind(this)],
@@ -78,7 +78,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadProfilePhoto(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
     }
@@ -107,7 +107,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadPan(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -140,7 +140,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadAadhar(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -172,7 +172,7 @@ export class UploadFilesService {
   }
   async getPresignedUrlToUploadServiceImage(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -200,7 +200,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadServiceSubtypeImage(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -229,7 +229,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadServiceVideo(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -254,7 +254,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadOutletBannerImage(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -283,7 +283,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadOutletVideo(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -309,7 +309,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadGst(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -341,7 +341,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadRegistration(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
@@ -373,7 +373,7 @@ export class UploadFilesService {
 
   async getPresignedUrlToUploadMou(
     keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<UploadUrlResponseInterface> {
+  ): Promise<PresignedUrlResponseInterface> {
 
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
