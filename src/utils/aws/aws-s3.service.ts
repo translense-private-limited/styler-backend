@@ -29,7 +29,7 @@ export class AwsS3Service {
       },
     });
 
-    this.bucketName = process.env.AWS_S3_BUCKET || 'styler-outlet-media';
+    this.bucketName = process.env.AWS_S3_BUCKET || 'styler-media';
     this.logger.log('S3 client initialized successfully.');
   }
 
@@ -186,7 +186,7 @@ export class AwsS3Service {
     allowedTypes:string[],
     expiresInSeconds = 900,
   ): Promise<string> {
-    const maxFileSizeBytes = maxFileSize * 1024 * 1024;
+    const maxFileSizeBytes = maxFileSize * 1024 * 1024 * 90;
 
     if (!allowedTypes.includes(contentType)) {
       this.logger.warn(`Invalid file type: ${contentType}`);
