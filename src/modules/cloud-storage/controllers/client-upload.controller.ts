@@ -2,6 +2,8 @@ import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { KeyGeneratorDto } from '../dtos/key-generator.dto';
 import { UploadFilesService } from '../services/upload-files.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { PresignedUrlResponseInterface } from '../interfaces/presigned-url-response.interface';
+
 
 @Controller('client')
 @ApiTags('Client/Upload')
@@ -16,7 +18,7 @@ export class ClientUploadFilesController {
   @Put('generate-upload-url')
   async generateUploadUrl(
     @Body() keyGeneratorDto: KeyGeneratorDto,
-  ): Promise<string> {
+  ): Promise<PresignedUrlResponseInterface> {
     return await this.uploadFilesService.generatePreSignedUrlToUpload(
       keyGeneratorDto,
     );
