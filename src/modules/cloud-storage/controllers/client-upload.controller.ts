@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Get, Put, Query } from '@nestjs/common';
 import { KeyGeneratorDto } from '../dtos/key-generator.dto';
 import { UploadFilesService } from '../services/upload-files.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Public } from '@src/utils/decorators/public.decorator';
 
 @Controller('client')
 @ApiTags('Client/Upload')
@@ -22,8 +23,8 @@ export class ClientUploadFilesController {
     );
   }
 
-  @Get('signed-url/:key')
-  async getSignedUrl(@Param('key') key: string): Promise<string> {
+  @Get('signed-url')
+  async getSignedUrl(@Query('key') key: string): Promise<string> {
     return await this.uploadFilesService.getSignedUrl(key);
   }
 }
