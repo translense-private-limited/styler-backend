@@ -152,6 +152,15 @@ export class ServiceService {
     }
   }
   
+  async getAllServiceImageKeysForAnOutlet(outletId: number): Promise<Partial<ServiceSchema>[]> {
+    const fields = ['id', 'serviceImages', 'serviceVideos', 'subtypes'];
+  
+    return this.serviceRepository.getRepository().findOne({
+      where: { outletId },
+      select: fields,
+    });
+  }
+  
   
   private assignIdsToSubtypes(subtypes?: SubtypeDto[]): void {
   if (subtypes) {

@@ -87,27 +87,27 @@ export class ServiceExternalService {
     return count;
   }
 
-  async getSubtypeImagesCountById(serviceId: string): Promise<number> {
+  async getSubtypeImagesCountById(serviceId: string, subtypeId: string): Promise<number> {
     const service = await this.serviceService.getServiceByIdOrThrow(serviceId);
   
-    // Validate that subtypes exist and are an array
-    if (!Array.isArray(service.subtypes)) {
-      return 0; // If no subtypes, return 0
+    // Find the specific subtype by subtypeId
+    const subtype = service.subtypes.find(sub => sub.id === subtypeId);
+    
+    // If subtype is not found or subtypeImages is not an array, return 0
+    if (!subtype || !Array.isArray(subtype.subtypeImages)) {
+      return 0;
     }
   
-    // Calculate the total count of images in subtypes
-    const count = service.subtypes.reduce((total, subtype) => {
-      if (subtype.subtypeImage) {
-        return total + 1; // Increment count if the subtype has an image
-      }
-      return total; // Otherwise, keep the count unchanged
-    }, 0);
-  
-    return count;
+    // Return the count of images in that subtype
+    return subtype.subtypeImages.length;
   }
   
-  async updateServiceById(serviceId:string,updateServiceDto:Partial<ServiceDto>):Promise<ServiceSchema>{
+  
+  async updateServiceImageKeysById(serviceId:string,updateServiceDto:Partial<ServiceDto>):Promise<ServiceSchema>{
     return await this.serviceService.updateServiceById(serviceId,updateServiceDto);
   }
   
+  async getAllServiceImageKeysForAnOutlet(outletId:number):Promise<Partial<ServiceSchema>[]>{
+    return await this.serviceService.getAllServiceImageKeysForAnOutlet(outletId)
+  }
 }

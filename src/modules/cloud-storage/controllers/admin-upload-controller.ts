@@ -3,7 +3,6 @@ import { KeyGeneratorDto } from "../dtos/key-generator.dto";
 import { UploadFilesService } from "../services/upload-files.service";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { PresignedUrlResponseInterface } from "../interfaces/presigned-url-response.interface";
-import { UpdateKeysDto } from "../dtos/update-keys.dto";
 
 @Controller('admin')
 @ApiTags('Admin/Upload')
@@ -28,9 +27,9 @@ export class AdminUploadFilesController{
 
   @Post('outlet/update-keys')
   async updateKeys(
-    @Body() updateKeysDto:UpdateKeysDto
+    @Body('outletId') outletId:number
   ):Promise<void>{
-    await this.uploadFilesService.updateOutletServiceKeys(updateKeysDto.outletId)
+    await this.uploadFilesService.updateOutletServiceKeys(outletId)
   }
 }
 

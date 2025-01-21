@@ -68,9 +68,9 @@ export class KeyGeneratorService {
     const { outletId, serviceId,subtypeId } = keyGeneratorDto;
     let count = 1;
     if(!subtypeId.includes('-')){
-     count = (await this.serviceExternalService.getSubtypeImagesCountById(serviceId))+1;
+     count = (await this.serviceExternalService.getSubtypeImagesCountById(serviceId,subtypeId))+1;
     }
-    const key = `${outletId}/services/${serviceId}/subtypes/images/${subtypeId}-${count}.jpeg`;
+    const key = `${outletId}/services/${serviceId}/subtypes/${subtypeId }/images/${subtypeId}-${count}.jpeg`;
     return key;
   }
 

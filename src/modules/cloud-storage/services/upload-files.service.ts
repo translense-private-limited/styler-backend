@@ -10,6 +10,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { badRequest } from "@src/utils/exceptions/common.exception";
 import { PresignedUrlResponseInterface } from "../interfaces/presigned-url-response.interface";
 import { ServiceExternalService } from "@modules/client/services/services/service-external.service";
+import { ServiceSchema } from "@modules/client/services/schema/service.schema";
+import { ServiceDto } from "@modules/client/services/dtos/service.dto";
 
 @Injectable()
 export class UploadFilesService {
@@ -404,66 +406,28 @@ export class UploadFilesService {
     // }
     return {key,signedUrl};
   }
-
-  async updateOutletServiceKeys(outletId:number):Promise<void>{
+  async updateOutletServiceKeys(outletId: number): Promise<void> {
     await this.outletExternalService.getOutletById(outletId);
-    const services = await this.serviceExternalService.getAllServicesForAnOutlet(outletId)
+    const services = await this.serviceExternalService.getAllServicesForAnOutlet(outletId);
+  
     const updatedServices = [];
     const errors = [];
+  
     for (const service of services) {
       try {
-        const updatedKeys = { serviceImages: [], serviceVideos: [], subtypes: [] };
+        const updatedKeys: Partial<ServiceDto> = { 
+          serviceImages: [], 
+          serviceVideos: [], 
+          subtypes: [] 
+        };
   
-        // Update serviceImages
-        if (service.serviceImages && service.serviceImages.length > 0) {
-          for (const oldKey of service.serviceImages) {
-            // Generate a new key with serviceId included
-            const newKey = await this.keyGeneratorService.generateKey({
-              outletId,
-              serviceId: service.id, // Include serviceId
-              mediaType: MediaTypeEnum.SERVICE_IMAGE,
-            });
-            await this.awsS3Service.moveFile(oldKey, newKey);
-            updatedKeys.serviceImages.push(newKey);
-          }
-        }
-
-  
-        // Update serviceVideos
-        if (service.serviceVideos && service.serviceVideos.length > 0) {
-          for (const oldKey of service.serviceVideos) {
-            const newKey = await this.keyGeneratorService.generateKey({
-              outletId,
-              serviceId: service.id, // Include serviceId
-              mediaType: MediaTypeEnum.SERVICE_VIDEO,
-            });            
-            await this.awsS3Service.moveFile(oldKey, newKey);
-            updatedKeys.serviceVideos.push(newKey);
-          }
-        }
-        // Update subtypes
-        if (service.subtypes && service.subtypes.length > 0) {
-          const updatedSubtypes = [];
-          for (const subtype of service.subtypes) {
-            if (subtype.subtypeImage) {
-              const oldKey = subtype.subtypeImage;
-              const newKey = await this.keyGeneratorService.generateKey({
-                outletId,
-                serviceId: service.id, // Include serviceId
-                mediaType: MediaTypeEnum.SERVICE_SUBTYPE_IMAGE,
-              });
-              await this.awsS3Service.moveFile(oldKey, newKey);
-              updatedSubtypes.push({ ...subtype, subtypeImage: newKey });
-            } else {
-              updatedSubtypes.push(subtype);
-            }
-          }
-          updatedKeys.subtypes = updatedSubtypes;
-        }
-
+        // Call separate functions to handle updating images, videos, and subtypes
+        await this.updateServiceImages(service, updatedKeys, outletId);
+        await this.updateServiceVideos(service, updatedKeys, outletId);
+        await this.updateSubtypes(service, updatedKeys, outletId);
   
         // Update the service in the database
-        await this.serviceExternalService.updateServiceById(service.id, updatedKeys);
+        await this.serviceExternalService.updateServiceImageKeysById(service.id, updatedKeys);
   
         updatedServices.push({
           serviceId: service.id,
@@ -477,4 +441,57 @@ export class UploadFilesService {
       }
     }
   }
+  
+  private async updateServiceImages(service: Partial<ServiceSchema>, updatedKeys: Partial<ServiceDto>, outletId: number): Promise<void> {
+    if (service.serviceImages && service.serviceImages.length > 0) {
+      for (const oldKey of service.serviceImages) {
+        const newKey = await this.keyGeneratorService.generateKey({
+          outletId,
+          serviceId: service.id,
+          mediaType: MediaTypeEnum.SERVICE_IMAGE,
+        });
+        await this.awsS3Service.moveFile(oldKey, newKey);
+        updatedKeys.serviceImages.push(newKey);  // Correctly pushing into serviceImages array
+      }
+    }
+  }
+  
+  private async updateServiceVideos(service: Partial<ServiceSchema>, updatedKeys: Partial<ServiceDto>, outletId: number): Promise<void> {
+    if (service.serviceVideos && service.serviceVideos.length > 0) {
+      for (const oldKey of service.serviceVideos) {
+        const newKey = await this.keyGeneratorService.generateKey({
+          outletId,
+          serviceId: service.id,
+          mediaType: MediaTypeEnum.SERVICE_VIDEO,
+        });
+        await this.awsS3Service.moveFile(oldKey, newKey);
+        updatedKeys.serviceVideos.push(newKey);  // Correctly pushing into serviceVideos array
+      }
+    }
+  }
+  
+  private async updateSubtypes(service: Partial<ServiceSchema>, updatedKeys: Partial<ServiceDto>, outletId: number): Promise<void> {
+    if (service.subtypes && service.subtypes.length > 0) {
+      const updatedSubtypes = [];
+      for (const subtype of service.subtypes) {
+        if (subtype.subtypeImages && subtype.subtypeImages.length > 0) {
+          const updatedSubtypeImages = [];
+          for (const oldKey of subtype.subtypeImages) {
+            const newKey = await this.keyGeneratorService.generateKey({
+              outletId,
+              serviceId: service.id,
+              mediaType: MediaTypeEnum.SERVICE_SUBTYPE_IMAGE,
+            });
+            await this.awsS3Service.moveFile(oldKey, newKey);
+            updatedSubtypeImages.push(newKey);  // Adding updated subtype image
+          }
+          updatedSubtypes.push({ ...subtype, subtypeImages: updatedSubtypeImages });
+        } else {
+          updatedSubtypes.push(subtype);  // No images, keep the subtype as is
+        }
+      }
+      updatedKeys.subtypes = updatedSubtypes;  // Assigning the updated subtypes
+    }
+  }  
+  
 }
