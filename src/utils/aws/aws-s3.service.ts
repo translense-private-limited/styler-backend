@@ -224,22 +224,22 @@ export class AwsS3Service {
     }
   }
 
+
   async moveFile(oldKey: string, newKey: string): Promise<void> {
+    // Define the patch operations
     const patchDocument = [
       {
-        op: 'move',
-        from: `/${oldKey}`,
-        to: `/${newKey}`,    
+        op: "move",
+        from: `/${oldKey}`, 
+        to: `/${newKey}`, 
       },
     ];
   
-    // Stringify the patch document
-    const patchDocumentString = JSON.stringify(patchDocument);
-  
+    // Create parameters for the CloudControl update
     const params = {
       TypeName: "AWS::S3::Object", 
-      Identifier: oldKey, 
-      PatchDocument: patchDocumentString,  // The patch document as a string
+      Identifier: `${this.bucketName}/${oldKey}`,
+      PatchDocument: JSON.stringify(patchDocument),
     };
   
     const command = new UpdateResourceCommand(params);
@@ -247,11 +247,10 @@ export class AwsS3Service {
     try {
       // Send the update request to AWS CloudControl API
       await this.cloudControlClient.send(command);
-   
     } catch (error) {
       throw new Error(`Error moving file from ${oldKey} to ${newKey}`);
     }
-  }   
+  }
   
 
   /**
