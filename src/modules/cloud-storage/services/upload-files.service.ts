@@ -86,7 +86,7 @@ export class UploadFilesService {
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
     }
-    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || uuidv4();
+    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || Date.now();
     const maxFileSize = 1; // in MB
     const allowedTypes = [
       ContentTypeEnum.IMAGE_JPEG,
@@ -116,7 +116,7 @@ export class UploadFilesService {
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
     }
-    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || uuidv4();
+    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -149,7 +149,7 @@ export class UploadFilesService {
     if(!keyGeneratorDto.outletId){
       badRequest(`outletId is required`);
     }
-    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || uuidv4();
+    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,

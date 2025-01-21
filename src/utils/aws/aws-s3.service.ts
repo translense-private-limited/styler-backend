@@ -5,16 +5,18 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
   ListObjectsV2Command,
-  CopyObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Readable } from 'stream';
 import { Buffer } from 'buffer';
+import { UpdateResourceCommand,CloudControlClient} from '@aws-sdk/client-cloudcontrol';
+
 
 @Injectable()
 export class AwsS3Service {
   private readonly logger = new Logger(AwsS3Service.name)
   private s3Client: S3Client;
+  private cloudControlClient: CloudControlClient;
   private bucketName: string;
 
   constructor() {
@@ -222,55 +224,34 @@ export class AwsS3Service {
     }
   }
 
-  async copyFile(sourceKey: string, destinationKey: string): Promise<void> {
-    const copyParams = {
-      Bucket: this.bucketName,
-      CopySource: `/${this.bucketName}/${sourceKey}`, // Format: /bucket-name/source-key
-      Key: destinationKey,
-    };
-
-    this.logger.log(`Copying object from ${sourceKey} to ${destinationKey}`);
-
-    try {
-      await this.s3Client.send(new CopyObjectCommand(copyParams));
-      this.logger.log(`Successfully copied ${sourceKey} to ${destinationKey}`);
-    } catch (error) {
-      this.logger.error(
-        `Error copying object from ${sourceKey} to ${destinationKey}`,
-        error.stack,
-      );
-      throw new HttpException(
-        'Error copying object in S3',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
   async moveFile(oldKey: string, newKey: string): Promise<void> {
-    // Log the start of the move operation
-    this.logger.log(`Starting move operation: ${oldKey} to ${newKey}`);
+    const patchDocument = [
+      {
+        op: 'move',
+        from: `/${oldKey}`,
+        to: `/${newKey}`,    
+      },
+    ];
+  
+    // Stringify the patch document
+    const patchDocumentString = JSON.stringify(patchDocument);
+  
+    const params = {
+      TypeName: "AWS::S3::Object", 
+      Identifier: oldKey, 
+      PatchDocument: patchDocumentString,  // The patch document as a string
+    };
+  
+    const command = new UpdateResourceCommand(params);
   
     try {
-      // Step 1: Copy the file to the new location
-      await this.copyFile(oldKey, newKey);
-      this.logger.log(`Successfully copied file from ${oldKey} to ${newKey}`);
-  
-      // Step 2: Delete the original file after the copy
-      await this.deleteFile(oldKey);
-      this.logger.log(`Successfully deleted file from ${oldKey}`);
-  
+      // Send the update request to AWS CloudControl API
+      await this.cloudControlClient.send(command);
+   
     } catch (error) {
-      // Log and handle any errors that occur during the move process
-      this.logger.error(
-        `Error during move operation from ${oldKey} to ${newKey}`,
-        error.stack
-      );
-      throw new HttpException(
-        `Error moving file from ${oldKey} to ${newKey}`,
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
+      throw new Error(`Error moving file from ${oldKey} to ${newKey}`);
     }
-  }  
+  }   
   
 
   /**
