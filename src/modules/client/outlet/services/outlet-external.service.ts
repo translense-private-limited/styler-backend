@@ -42,7 +42,6 @@ export class OutletExternalService {
     await this.outletAdminService.updateOutletByIdOrThrow(outletId,updatedData)
   }
 
-
   async saveOutletRegistration(outletId: number, key: string): Promise<void> {
     await this.outletDocsService.saveOutletRegistration(outletId,key);
   }
@@ -53,17 +52,6 @@ export class OutletExternalService {
 
     async saveOutletGst(outletId: number, key: string): Promise<void> {
       await this.outletDocsService.saveOutletGst(outletId,key);
-  }
-  async getOutletBannerImagesCountById(outletId:number):Promise<number>{
-    const outlet = await this.outletService.getOutletByIdOrThrow(outletId)
-    const count = outlet.outletBannerImages.length;
-    return count;
-  }
-
-  async getOutletVideosCountById(outletId:number):Promise<number>{
-    const outlet = await this.outletService.getOutletByIdOrThrow(outletId)
-    const count = outlet.outletVideos.length;
-    return count;
   }
   
 }
