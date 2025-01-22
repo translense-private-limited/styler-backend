@@ -402,4 +402,8 @@ export class UploadFilesService {
     // }
     return {key,signedUrl};
   }
+
+  async deleteFile(key:string):Promise<void>{
+    return await this.awsS3Service.deleteFile(key);
+  }
 }

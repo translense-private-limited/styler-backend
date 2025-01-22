@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put, Query } from '@nestjs/common';
 import { KeyGeneratorDto } from '../dtos/key-generator.dto';
 import { UploadFilesService } from '../services/upload-files.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -26,5 +26,12 @@ export class ClientUploadFilesController {
   @Get('signed-url')
   async getSignedUrl(@Query('key') key: string): Promise<string> {
     return await this.uploadFilesService.getSignedUrl(key);
+  }
+
+  @Delete('/delete-file/:key')
+  async deleteFile(
+    @Param('key') key:string,
+  ):Promise<void>{
+    return await this.uploadFilesService.deleteFile(key);
   }
 }
