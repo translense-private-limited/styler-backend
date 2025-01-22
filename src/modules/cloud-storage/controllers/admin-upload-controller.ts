@@ -1,8 +1,9 @@
-import { Body, Controller, Put, Get, Query, Delete, Param } from '@nestjs/common';
+import { Body, Controller, Put, Get, Query, Delete } from '@nestjs/common';
 import { KeyGeneratorDto } from '../dtos/key-generator.dto';
 import { UploadFilesService } from '../services/upload-files.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PresignedUrlResponseInterface } from '../interfaces/presigned-url-response.interface';
+import { DeleteFileDto } from '../dtos/delete-file-dto';
 
 @Controller('admin')
 @ApiTags('Admin/Upload')
@@ -28,10 +29,10 @@ export class AdminUploadFilesController {
     return url;
   }
 
-  @Delete('/delete-file/:key')
+  @Delete('delete-file')
   async deleteFile(
-    @Param('key') key:string,
+    @Body() deleteFileDto:DeleteFileDto
   ):Promise<void>{
-    return await this.uploadFilesService.deleteFile(key);
+    return await this.uploadFilesService.deleteFileByKey(deleteFileDto.key,deleteFileDto.mediaType);
   }
 }

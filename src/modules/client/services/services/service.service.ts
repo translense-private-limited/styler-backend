@@ -3,7 +3,7 @@ import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
 import { ServiceDto } from '../dtos/service.dto';
 import { CategoryExternal } from '@modules/admin/category/services/category-external';
-import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { badRequest, throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { SubtypeDto } from '../dtos/subtype.dto';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -151,7 +151,42 @@ export class ServiceService {
       throw new Error(`Failed to delete subtype: ${error.message}`);
     }
   }
+    // Delete from serviceImages
+    async deleteServiceImageKey(key: string): Promise<void> {
+      const service = await this.serviceRepository.getRepository().findOne({ serviceImages: key });
+      if (service) {
+        service.serviceImages = service.serviceImages.filter(image => image !== key);
+        await service.save();
+      } else {
+        badRequest('Service image not found');
+      }
+    }
   
+    // Delete from serviceVideos
+    async deleteServiceVideoKey(key: string): Promise<void> {
+      const service = await this.serviceRepository.getRepository().findOne({ serviceImages: key });
+      if (service) {
+        service.serviceVideos = service.serviceVideos.filter(video => video !== key);
+        await service.save();
+      } else {
+        badRequest('Service video not found');
+      }
+    }
+  
+    // Delete from subtypes (subtypeImage)
+    async deleteServiceSubtypeImageKey(key: string): Promise<void> {
+      const service = await this.serviceRepository.getRepository().findOne({ 'subtypes.subtypeImages': key });
+      if (service) {
+        service.subtypes.forEach(subtype => {
+          if (subtype.subtypeImage === key) {
+            subtype.subtypeImage = undefined; // Remove the subtype image
+          }
+        });
+        await service.save();
+      } else {
+        badRequest('Service subtype image not found');
+      }
+    }
   
   private assignIdsToSubtypes(subtypes?: SubtypeDto[]): void {
   if (subtypes) {

@@ -9,6 +9,7 @@ import { ContentTypeEnum } from "../enums/content-type.enum";
 import { v4 as uuidv4 } from 'uuid';
 import { badRequest } from "@src/utils/exceptions/common.exception";
 import { PresignedUrlResponseInterface } from "../interfaces/presigned-url-response.interface";
+import { ServiceExternalService } from "@modules/client/services/services/service-external.service";
 
 @Injectable()
 export class UploadFilesService {
@@ -17,6 +18,7 @@ export class UploadFilesService {
     private readonly awsS3Service: AwsS3Service,
     private readonly clientExternalService: ClientExternalService,
     private readonly outletExternalService: OutletExternalService,
+    private readonly serviceExternalService:ServiceExternalService
   ) {}
 
   async generatePreSignedUrlToUpload(
@@ -403,7 +405,53 @@ export class UploadFilesService {
     return {key,signedUrl};
   }
 
-  async deleteFile(key:string):Promise<void>{
-    return await this.awsS3Service.deleteFile(key);
+  async deleteFileByKey(key: string, type: MediaTypeEnum): Promise<void> {
+    try {
+      // Step 1: Attempt to delete the file from AWS S3
+      await this.awsS3Service.deleteFile(key); 
+  
+      // Step 2: Perform database deletion only if AWS S3 deletion succeeds
+      switch (type) {
+        case MediaTypeEnum.SERVICE_IMAGE:
+          await this.serviceExternalService.deleteServiceImageKey(key);
+          break;
+        case MediaTypeEnum.SERVICE_VIDEO:
+          await this.serviceExternalService.deleteServiceVideoKey(key);
+          break;
+        case MediaTypeEnum.SERVICE_SUBTYPE_IMAGE:
+          await this.serviceExternalService.deleteServiceSubtypeImageKey(key);
+          break;
+        // case MediaTypeEnum.OUTLET_BANNER:
+        //   await this.deleteOutletBannerKey(key);
+        //   break;
+        // case MediaTypeEnum.OUTLET_VIDEO:
+        //   await this.deleteOutletVideoKey(key);
+        //   break;
+        // case MediaTypeEnum.PAN:
+        //   await this.deleteClientPanKey(key);
+        //   break;
+        // case MediaTypeEnum.AADHAR:
+        //   await this.deleteClientAadharKey(key);
+        //   break;
+        // case MediaTypeEnum.PROFILE_PHOTO:
+        //   await this.deleteClientProfilePhotoKey(key);
+        //   break;
+        // case MediaTypeEnum.OUTLET_GST:
+        //   await this.deleteOutletGstKey(key);
+        //   break;
+        // case MediaTypeEnum.OUTLET_REGISTRATION:
+        //   await this.deleteOutletRegistrationKey(key);
+        //   break;
+        // case MediaTypeEnum.OUTLET_MOU:
+        //   await this.deleteOutletMou(key);
+        //   break;
+        default:
+          badRequest('Unsupported media type');
+      }
+    } catch (error) {
+      // If AWS S3 deletion fails, skip database deletion and throw an error
+      badRequest(`Error deleting the file: ${error.message}`);
+    }
   }
+  
 }
