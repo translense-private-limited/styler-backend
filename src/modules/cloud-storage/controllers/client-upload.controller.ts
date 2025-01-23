@@ -29,10 +29,10 @@ export class ClientUploadFilesController {
     return await this.uploadFilesService.getSignedUrl(key);
   }
 
-  @Delete('delete-file')
-  async deleteFile(
-    @Body() deleteFileDto:DeleteFileDto
+  @Delete('delete-media')
+  async deleteMedia(
+    @Body() deleteFileDto:DeleteFileDto,
   ):Promise<void>{
-    return await this.uploadFilesService.deleteFileByKey(deleteFileDto.key,deleteFileDto.mediaType);
+    return await this.uploadFilesService.deleteMediaByKey(deleteFileDto.key,deleteFileDto.mediaType);
   }
 }

@@ -151,42 +151,43 @@ export class ServiceService {
       throw new Error(`Failed to delete subtype: ${error.message}`);
     }
   }
-    // Delete from serviceImages
-    async deleteServiceImageKey(key: string): Promise<void> {
-      const service = await this.serviceRepository.getRepository().findOne({ serviceImages: key });
-      if (service) {
-        service.serviceImages = service.serviceImages.filter(image => image !== key);
-        await service.save();
-      } else {
-        badRequest('Service image not found');
-      }
+  // Delete from serviceImages
+  async deleteServiceImageKey(key: string): Promise<void> {
+    const result = await this.serviceRepository.getRepository().updateOne(
+      { serviceImages: { $in: [key] } }, 
+      { $pull: { serviceImages: key } }
+    );
+    
+    if (result.modifiedCount === 0) {
+      badRequest('Service image not found');
     }
+  }
+
+  // Delete from serviceVideos
+  async deleteServiceVideoKey(key: string): Promise<void> {
+    const result = await this.serviceRepository.getRepository().updateOne(
+      { serviceVideos: { $in: [key] } }, // Find a document where the array contains the key
+      { $pull: { serviceVideos: key } } // Remove the key from the array
+    );
+    
+    if (result.modifiedCount === 0) {
+      badRequest('Service video not found');
+    }
+  }
+
   
-    // Delete from serviceVideos
-    async deleteServiceVideoKey(key: string): Promise<void> {
-      const service = await this.serviceRepository.getRepository().findOne({ serviceImages: key });
-      if (service) {
-        service.serviceVideos = service.serviceVideos.filter(video => video !== key);
-        await service.save();
-      } else {
-        badRequest('Service video not found');
-      }
+  // Delete from subtypes (subtypeImages)
+  async deleteServiceSubtypeImageKey(key: string): Promise<void> {
+    const result = await this.serviceRepository.getRepository().updateOne(
+      { 'subtypes.subtypeImages': key }, // Find documents where a subtype's subtypeImages array contains the key
+      { $pull: { 'subtypes.$[].subtypeImages': key } } // Remove the key from all subtypeImages arrays
+    );
+
+    if (result.modifiedCount === 0) {
+      badRequest('Service subtype image not found');
     }
-  
-    // Delete from subtypes (subtypeImage)
-    async deleteServiceSubtypeImageKey(key: string): Promise<void> {
-      const service = await this.serviceRepository.getRepository().findOne({ 'subtypes.subtypeImages': key });
-      if (service) {
-        service.subtypes.forEach(subtype => {
-          if (subtype.subtypeImage === key) {
-            subtype.subtypeImage = undefined; // Remove the subtype image
-          }
-        });
-        await service.save();
-      } else {
-        badRequest('Service subtype image not found');
-      }
-    }
+  }
+
   
   private assignIdsToSubtypes(subtypes?: SubtypeDto[]): void {
   if (subtypes) {

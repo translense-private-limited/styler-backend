@@ -29,10 +29,10 @@ export class AdminUploadFilesController {
     return url;
   }
 
-  @Delete('delete-file')
-  async deleteFile(
+  @Delete('delete-media')
+  async deleteMedia(
     @Body() deleteFileDto:DeleteFileDto
   ):Promise<void>{
-    return await this.uploadFilesService.deleteFileByKey(deleteFileDto.key,deleteFileDto.mediaType);
+    return await this.uploadFilesService.deleteMediaByKey(deleteFileDto.key,deleteFileDto.mediaType);
   }
 }
