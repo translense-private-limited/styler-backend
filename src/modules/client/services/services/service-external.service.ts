@@ -67,22 +67,6 @@ export class ServiceExternalService {
   async deleteServiceVideoKey(key: string): Promise<void> {
     return this.serviceService.deleteServiceVideoKey(key);
   }
-
-  async getSubtypeImagesCountById(serviceId: string, subtypeId: string): Promise<number> {
-    const service = await this.serviceService.getServiceByIdOrThrow(serviceId);
-  
-    // Find the specific subtype by subtypeId
-    const subtype = service.subtypes.find(sub => sub.id === subtypeId);
-    
-    // If subtype is not found or subtypeImages is not an array, return 0
-    if (!subtype || !Array.isArray(subtype.subtypeImages)) {
-      return 0;
-    }
-  
-    // Return the count of images in that subtype
-    return subtype.subtypeImages.length;
-  }
-  
   
   async updateServiceImageKeysById(serviceId:string,updateServiceDto:Partial<ServiceDto>):Promise<ServiceSchema>{
     return await this.serviceService.updateServiceById(serviceId,updateServiceDto);
