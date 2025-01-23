@@ -57,5 +57,19 @@ export class ServiceExternalService {
 
   async updateServiceByIdOrThrow(serviceId:string,updateServiceDto:Partial<ServiceDto>):Promise<void>{
     await this.serviceService.updateServiceById(serviceId,updateServiceDto);
-  }  
+  }
+  
+  async deleteServiceImageKey(key: string): Promise<void> {
+    return this.serviceService.deleteServiceImageKey(key);
+  }
+
+  // Delete from serviceVideos
+  async deleteServiceVideoKey(key: string): Promise<void> {
+    return this.serviceService.deleteServiceVideoKey(key);
+  }
+
+  // Delete from subtypes (subtypeImage)
+  async deleteServiceSubtypeImageKey(key: string): Promise<void> {
+    return this.serviceService.deleteServiceSubtypeImageKey(key);
+  }
 }

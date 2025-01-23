@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { KeyGeneratorService } from "./key-generator.service";
 import { KeyGeneratorDto } from "../dtos/key-generator.dto";
 import { AwsS3Service } from "@src/utils/aws/aws-s3.service";
@@ -9,6 +9,7 @@ import { ContentTypeEnum } from "../enums/content-type.enum";
 import { v4 as uuidv4 } from 'uuid';
 import { badRequest } from "@src/utils/exceptions/common.exception";
 import { PresignedUrlResponseInterface } from "../interfaces/presigned-url-response.interface";
+import { ServiceExternalService } from "@modules/client/services/services/service-external.service";
 
 @Injectable()
 export class UploadFilesService {
@@ -17,6 +18,7 @@ export class UploadFilesService {
     private readonly awsS3Service: AwsS3Service,
     private readonly clientExternalService: ClientExternalService,
     private readonly outletExternalService: OutletExternalService,
+    private readonly serviceExternalService:ServiceExternalService
   ) {}
 
   async generatePreSignedUrlToUpload(
@@ -402,4 +404,30 @@ export class UploadFilesService {
     // }
     return {key,signedUrl};
   }
+
+  async deleteMediaByKey(key: string, type: MediaTypeEnum): Promise<void> {
+    try {
+      // Step 1: Attempt to delete the file from AWS S3
+      await this.awsS3Service.deleteFile(key);
+
+      // Step 2: Perform database deletion based on the media type
+      switch (type) {
+        case MediaTypeEnum.SERVICE_IMAGE:
+          await this.serviceExternalService.deleteServiceImageKey(key);
+          break;
+        case MediaTypeEnum.SERVICE_VIDEO:
+          await this.serviceExternalService.deleteServiceVideoKey(key);
+          break;
+        case MediaTypeEnum.SERVICE_SUBTYPE_IMAGE:
+          await this.serviceExternalService.deleteServiceSubtypeImageKey(key);
+          break;
+        default:
+          badRequest('Unsupported media type');
+      }
+      return;
+    } catch (error) {
+      throw new HttpException(`Error deleting the file: ${error.message}`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
 }
