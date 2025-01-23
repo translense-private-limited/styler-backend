@@ -1,4 +1,4 @@
-import { Body, Controller, Put, Get, Query, Delete } from '@nestjs/common';
+import { Body, Controller, Put, Get, Param, Post, Delete } from '@nestjs/common';
 import { KeyGeneratorDto } from '../dtos/key-generator.dto';
 import { UploadFilesService } from '../services/upload-files.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -9,9 +9,9 @@ import { DeleteFileDto } from '../dtos/delete-file-dto';
 @ApiTags('Admin/Upload')
 export class AdminUploadFilesController {
   constructor(private readonly uploadFilesService: UploadFilesService) {}
+
   @ApiOperation({
-    description:
-      'Give outletId and mediaType and should send clientId or serviceId while trying to upload respective media',
+    description: 'Give outletId and mediaType and should send clientId or serviceId while trying to upload respective media',
     summary: 'Admin to get presigned url to upload ',
   })
   @Put('generate-upload-url')
@@ -22,17 +22,26 @@ export class AdminUploadFilesController {
       keyGeneratorDto,
     );
   }
-  // this is temp
-  @Get('signed-url')
-  async getSignedUrl(@Query('key') key: string): Promise<string> {
-    const url = await this.uploadFilesService.getSignedUrl(key);
-    return url;
+
+  @Get('signed-url/:key')
+  async getSignedUrl(@Param('key') key: string): Promise<string> {
+    return await this.uploadFilesService.getSignedUrl(key);
+  }
+
+  @Post('outlet/update-keys')
+  async updateKeys(
+    @Body('outletId') outletId: number,
+  ): Promise<void> {
+    await this.uploadFilesService.updateOutletServiceKeys(outletId);
   }
 
   @Delete('delete-media')
   async deleteMedia(
-    @Body() deleteFileDto:DeleteFileDto
-  ):Promise<void>{
-    return await this.uploadFilesService.deleteMediaByKey(deleteFileDto.key,deleteFileDto.mediaType);
+    @Body() deleteFileDto: DeleteFileDto,
+  ): Promise<void> {
+    return await this.uploadFilesService.deleteMediaByKey(
+      deleteFileDto.key,
+      deleteFileDto.mediaType,
+    );
   }
 }

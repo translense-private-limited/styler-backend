@@ -17,6 +17,4 @@ export class KeyGeneratorDto{
     @IsOptional()
     subtypeId?:string;
 
-    @IsOptional()
-    count?:number;
 }

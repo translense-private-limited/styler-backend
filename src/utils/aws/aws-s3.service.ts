@@ -5,15 +5,19 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
   ListObjectsV2Command,
+  CopyObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Readable } from 'stream';
 import { Buffer } from 'buffer';
+import { CloudControlClient} from '@aws-sdk/client-cloudcontrol';
+
 
 @Injectable()
 export class AwsS3Service {
   private readonly logger = new Logger(AwsS3Service.name)
   private s3Client: S3Client;
+  private cloudControlClient: CloudControlClient;
   private bucketName: string;
 
   constructor() {
@@ -218,6 +222,24 @@ export class AwsS3Service {
         'Error generating signed URL for upload',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+
+  async moveFile(oldKey: string, newKey: string): Promise<void> {
+    try {
+      // Step 1: Copy the file to the new location
+      await this.s3Client.send(
+        new CopyObjectCommand({
+          Bucket: this.bucketName,
+          CopySource: `${this.bucketName}/${oldKey}`, // Source bucket/key
+          Key: newKey, // Destination key
+        })
+      );  
+      // Step 2: Delete the original file
+      await this.deleteFile(oldKey);
+    } catch (error) {
+      throw new Error(`Unable to move file: ${error.message}`);
     }
   }
 

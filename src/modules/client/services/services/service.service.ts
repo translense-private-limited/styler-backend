@@ -175,6 +175,14 @@ export class ServiceService {
     }
   }
 
+  async getAllServiceImageKeysForAnOutlet(outletId: number): Promise<Partial<ServiceSchema>[]> {
+    const fields = ['id', 'serviceImages', 'serviceVideos', 'subtypes'];
+  
+    return this.serviceRepository.getRepository().findOne({
+      where: { outletId },
+      select: fields,
+    });
+  }
   
   // Delete from subtypes (subtypeImages)
   async deleteServiceSubtypeImageKey(key: string): Promise<void> {
@@ -187,7 +195,6 @@ export class ServiceService {
       badRequest('Service subtype image not found');
     }
   }
-
   
   private assignIdsToSubtypes(subtypes?: SubtypeDto[]): void {
   if (subtypes) {

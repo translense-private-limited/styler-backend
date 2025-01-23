@@ -67,9 +67,17 @@ export class ServiceExternalService {
   async deleteServiceVideoKey(key: string): Promise<void> {
     return this.serviceService.deleteServiceVideoKey(key);
   }
-
+  
+  async updateServiceImageKeysById(serviceId:string,updateServiceDto:Partial<ServiceDto>):Promise<ServiceSchema>{
+    return await this.serviceService.updateServiceById(serviceId,updateServiceDto);
+  }
+  
+  async getAllServiceImageKeysForAnOutlet(outletId:number):Promise<Partial<ServiceSchema>[]>{
+    return await this.serviceService.getAllServiceImageKeysForAnOutlet(outletId)
+  }
   // Delete from subtypes (subtypeImage)
   async deleteServiceSubtypeImageKey(key: string): Promise<void> {
     return this.serviceService.deleteServiceSubtypeImageKey(key);
   }
+
 }
