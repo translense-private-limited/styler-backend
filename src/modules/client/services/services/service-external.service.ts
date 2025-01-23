@@ -48,22 +48,6 @@ export class ServiceExternalService {
       );
     }
   }
-  // async getServiceDetailsByServiceAndOutletIdOrThrow(outletId: number, serviceId: string, customer: CustomerDecoratorDto) {
-  //   console.log(serviceId,outletId,customer)
-  //   const serviceDetails = await this.serviceRepository.getRepository().findOne({
-  //       where: {
-  //           serviceId,
-  //           outletId,
-  //           whitelabelId: customer.whitelabelId
-  //       }
-  //   });
-
-  //   if (!serviceDetails) {
-  //       throw new NotFoundException('Service not found for the given outlet and whitelabel');
-  //   }
-
-  //   return serviceDetails;
-  // }
 
   async getServicesByServiceIds(
     serviceIds: string[],
@@ -74,17 +58,14 @@ export class ServiceExternalService {
   async updateServiceByIdOrThrow(serviceId:string,updateServiceDto:Partial<ServiceDto>):Promise<void>{
     await this.serviceService.updateServiceById(serviceId,updateServiceDto);
   }
-
-  async getServiceImagesCountById(serviceId:string):Promise<number>{
-    const service = await this.serviceService.getServiceByIdOrThrow(serviceId)
-    const count = service.serviceImages.length;
-    return count;
+  
+  async deleteServiceImageKey(key: string): Promise<void> {
+    return this.serviceService.deleteServiceImageKey(key);
   }
 
-  async getServiceVideosCountById(serviceId:string):Promise<number>{
-    const service = await this.serviceService.getServiceByIdOrThrow(serviceId)
-    const count = service.serviceVideos.length;
-    return count;
+  // Delete from serviceVideos
+  async deleteServiceVideoKey(key: string): Promise<void> {
+    return this.serviceService.deleteServiceVideoKey(key);
   }
 
   async getSubtypeImagesCountById(serviceId: string, subtypeId: string): Promise<number> {
@@ -110,4 +91,9 @@ export class ServiceExternalService {
   async getAllServiceImageKeysForAnOutlet(outletId:number):Promise<Partial<ServiceSchema>[]>{
     return await this.serviceService.getAllServiceImageKeysForAnOutlet(outletId)
   }
+  // Delete from subtypes (subtypeImage)
+  async deleteServiceSubtypeImageKey(key: string): Promise<void> {
+    return this.serviceService.deleteServiceSubtypeImageKey(key);
+  }
+
 }

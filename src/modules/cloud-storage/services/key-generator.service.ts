@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { KeyGeneratorDto } from '../dtos/key-generator.dto';
 import { MediaTypeEnum } from '../enums/media-type.enum';
-import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
-import { OutletExternalService } from '@modules/client/outlet/services/outlet-external.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class KeyGeneratorService {
-  constructor(
-    private readonly serviceExternalService:ServiceExternalService,
-    private readonly outletExternalService:OutletExternalService
-  ){}
+  constructor(){}
   async generateKey(
     keyGeneratorDto:KeyGeneratorDto
   ):Promise<string>{
@@ -49,55 +45,37 @@ export class KeyGeneratorService {
 
   private async generateKeyForClientProfilePhoto(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId, clientId } = keyGeneratorDto;
-    const count = 1;
-    const key = `${outletId}/clients/${clientId}/images/${clientId}-${count}.jpeg`;
+    const key = `${outletId}/clients/${clientId}/images/${clientId}-${uuidv4()}.jpeg`;
     return key;
   }
 
   private async generateKeyForServiceImage(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId, serviceId } = keyGeneratorDto;
-    let count = 1;
-    if(!serviceId.includes('-')){
-     count = (await this.serviceExternalService.getServiceImagesCountById(serviceId))+1;
-    }
-    const key = `${outletId}/services/${serviceId}/images/${serviceId}-${count}.jpeg`;
+    const key = `${outletId}/services/${serviceId}/images/${serviceId}-${uuidv4()}.jpeg`;
     return key;
   }
 
   private async generateKeyForServiceSubtypeImage(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId, serviceId,subtypeId } = keyGeneratorDto;
-    let count = 1;
-    if(!subtypeId.includes('-')){
-     count = (await this.serviceExternalService.getSubtypeImagesCountById(serviceId,subtypeId))+1;
-    }
-    const key = `${outletId}/services/${serviceId}/subtypes/${subtypeId }/images/${subtypeId}-${count}.jpeg`;
+    const key = `${outletId}/services/${serviceId}/subtypes/images/${subtypeId}-${uuidv4()}.jpeg`;
     return key;
   }
 
   private async generateKeyForServiceVideo(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId, serviceId } = keyGeneratorDto;
-    let count = 1;
-    if(!serviceId.includes('-')){
-     count = (await this.serviceExternalService.getServiceImagesCountById(serviceId))+1;
-    }    const key = `${outletId}/services/${serviceId}/videos/${serviceId}-${count}.mp4`;
+    const key = `${outletId}/services/${serviceId}/videos/${serviceId}-${uuidv4()}.mp4`;
     return key;
   }
 
   private async generateKeyForOutletImage(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId } = keyGeneratorDto;
-    let count = 1;
-    // if(!outletId.includes('-')){
-    // const count = (await this.outletExternalService.getOutletBannerImagesCountById(outletId))+1;
-    // }
-    const key = `${outletId}/outlets/${outletId}/images/${outletId}-${count}.jpeg`;
+    const key = `${outletId}/outlets/${outletId}/images/${outletId}-${uuidv4()}.jpeg`;
     return key;
   }
 
   private async generateKeyForOutletVideo(keyGeneratorDto: KeyGeneratorDto): Promise<string> {
     const { outletId } = keyGeneratorDto;
-    let count = 1;
-    // const count = (await this.outletExternalService.getOutletVideosCountById(outletId))+1;
-    const key = `${outletId}/outlets/${outletId}/videos/${outletId}-${count}.mp4`;
+    const key = `${outletId}/outlets/${outletId}/videos/${outletId}-${uuidv4()}.mp4`;
     return key;
   }
 

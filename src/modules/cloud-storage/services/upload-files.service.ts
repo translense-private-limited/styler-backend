@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { KeyGeneratorService } from "./key-generator.service";
 import { KeyGeneratorDto } from "../dtos/key-generator.dto";
 import { AwsS3Service } from "@src/utils/aws/aws-s3.service";
@@ -406,6 +406,7 @@ export class UploadFilesService {
     // }
     return {key,signedUrl};
   }
+  
   async updateOutletServiceKeys(outletId: number): Promise<void> {
     await this.outletExternalService.getOutletById(outletId);
     const services = await this.serviceExternalService.getAllServicesForAnOutlet(outletId);
@@ -493,5 +494,30 @@ export class UploadFilesService {
       updatedKeys.subtypes = updatedSubtypes;  // Assigning the updated subtypes
     }
   }  
-  
+
+  async deleteMediaByKey(key: string, type: MediaTypeEnum): Promise<void> {
+    try {
+      // Step 1: Attempt to delete the file from AWS S3
+      await this.awsS3Service.deleteFile(key);
+
+      // Step 2: Perform database deletion based on the media type
+      switch (type) {
+        case MediaTypeEnum.SERVICE_IMAGE:
+          await this.serviceExternalService.deleteServiceImageKey(key);
+          break;
+        case MediaTypeEnum.SERVICE_VIDEO:
+          await this.serviceExternalService.deleteServiceVideoKey(key);
+          break;
+        case MediaTypeEnum.SERVICE_SUBTYPE_IMAGE:
+          await this.serviceExternalService.deleteServiceSubtypeImageKey(key);
+          break;
+        default:
+          badRequest('Unsupported media type');
+      }
+      return;
+    } catch (error) {
+      throw new HttpException(`Error deleting the file: ${error.message}`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
 }

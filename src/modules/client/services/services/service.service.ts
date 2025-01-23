@@ -3,7 +3,7 @@ import { ServiceRepository } from '../repositories/service.repository';
 import { ServiceSchema } from '../schema/service.schema';
 import { ServiceDto } from '../dtos/service.dto';
 import { CategoryExternal } from '@modules/admin/category/services/category-external';
-import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
+import { badRequest, throwIfNotFound } from '@src/utils/exceptions/common.exception';
 import { SubtypeDto } from '../dtos/subtype.dto';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -151,7 +151,30 @@ export class ServiceService {
       throw new Error(`Failed to delete subtype: ${error.message}`);
     }
   }
-  
+  // Delete from serviceImages
+  async deleteServiceImageKey(key: string): Promise<void> {
+    const result = await this.serviceRepository.getRepository().updateOne(
+      { serviceImages: { $in: [key] } }, 
+      { $pull: { serviceImages: key } }
+    );
+    
+    if (result.modifiedCount === 0) {
+      badRequest('Service image not found');
+    }
+  }
+
+  // Delete from serviceVideos
+  async deleteServiceVideoKey(key: string): Promise<void> {
+    const result = await this.serviceRepository.getRepository().updateOne(
+      { serviceVideos: { $in: [key] } }, // Find a document where the array contains the key
+      { $pull: { serviceVideos: key } } // Remove the key from the array
+    );
+    
+    if (result.modifiedCount === 0) {
+      badRequest('Service video not found');
+    }
+  }
+
   async getAllServiceImageKeysForAnOutlet(outletId: number): Promise<Partial<ServiceSchema>[]> {
     const fields = ['id', 'serviceImages', 'serviceVideos', 'subtypes'];
   
@@ -161,6 +184,17 @@ export class ServiceService {
     });
   }
   
+  // Delete from subtypes (subtypeImages)
+  async deleteServiceSubtypeImageKey(key: string): Promise<void> {
+    const result = await this.serviceRepository.getRepository().updateOne(
+      { 'subtypes.subtypeImages': key }, // Find documents where a subtype's subtypeImages array contains the key
+      { $pull: { 'subtypes.$[].subtypeImages': key } } // Remove the key from all subtypeImages arrays
+    );
+
+    if (result.modifiedCount === 0) {
+      badRequest('Service subtype image not found');
+    }
+  }
   
   private assignIdsToSubtypes(subtypes?: SubtypeDto[]): void {
   if (subtypes) {

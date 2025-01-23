@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Put, Query } from '@nestjs/common';
 import { KeyGeneratorDto } from '../dtos/key-generator.dto';
 import { UploadFilesService } from '../services/upload-files.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PresignedUrlResponseInterface } from '../interfaces/presigned-url-response.interface';
-
+import { DeleteFileDto } from '../dtos/delete-file-dto';
 
 @Controller('client')
 @ApiTags('Client/Upload')
@@ -24,8 +24,15 @@ export class ClientUploadFilesController {
     );
   }
 
-  @Get('signed-url/:key')
-  async getSignedUrl(@Param('key') key: string): Promise<string> {
+  @Get('signed-url')
+  async getSignedUrl(@Query('key') key: string): Promise<string> {
     return await this.uploadFilesService.getSignedUrl(key);
+  }
+
+  @Delete('delete-media')
+  async deleteMedia(
+    @Body() deleteFileDto:DeleteFileDto,
+  ):Promise<void>{
+    return await this.uploadFilesService.deleteMediaByKey(deleteFileDto.key,deleteFileDto.mediaType);
   }
 }
