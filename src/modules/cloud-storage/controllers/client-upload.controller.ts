@@ -7,6 +7,8 @@ import { DeleteFileDto } from '../dtos/delete-file-dto';
 import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
 import { unauthorized } from '@src/utils/exceptions/common.exception';
 import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
+import { extractOutletIdFromKey } from '@src/utils/helpers/extract-outlet-id-from-key.helper';
+import { validateClient } from '@src/utils/helpers/validate-client.helper';
 
 @Controller('client')
 @ApiTags('Client/Upload')
@@ -33,8 +35,8 @@ export class ClientUploadFilesController {
     @ClientIdDecorator() clientIdDto:ClientIdDto
   ): Promise<string> {
 
-    const outletId = parseInt(key.split('/')[0], 10);
-    if (!clientIdDto.outletIds.includes(outletId)) {
+    const outletId = extractOutletIdFromKey(key);
+    if (validateClient(clientIdDto,outletId)) {
       unauthorized('You do not have permission to access this media');
     }
     return await this.uploadFilesService.getSignedUrl(key);
