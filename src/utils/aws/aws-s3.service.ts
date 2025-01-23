@@ -5,11 +5,12 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
   ListObjectsV2Command,
+  CopyObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Readable } from 'stream';
 import { Buffer } from 'buffer';
-import { UpdateResourceCommand,CloudControlClient} from '@aws-sdk/client-cloudcontrol';
+import { CloudControlClient} from '@aws-sdk/client-cloudcontrol';
 
 
 @Injectable()
@@ -226,32 +227,21 @@ export class AwsS3Service {
 
 
   async moveFile(oldKey: string, newKey: string): Promise<void> {
-    // Define the patch operations
-    const patchDocument = [
-      {
-        op: "move",
-        from: `/${oldKey}`, 
-        to: `/${newKey}`, 
-      },
-    ];
-  
-    // Create parameters for the CloudControl update
-    const params = {
-      TypeName: "AWS::S3::Object", 
-      Identifier: `${this.bucketName}/${oldKey}`,
-      PatchDocument: JSON.stringify(patchDocument),
-    };
-  
-    const command = new UpdateResourceCommand(params);
-  
     try {
-      // Send the update request to AWS CloudControl API
-      await this.cloudControlClient.send(command);
+      // Step 1: Copy the file to the new location
+      await this.s3Client.send(
+        new CopyObjectCommand({
+          Bucket: this.bucketName,
+          CopySource: `${this.bucketName}/${oldKey}`, // Source bucket/key
+          Key: newKey, // Destination key
+        })
+      );  
+      // Step 2: Delete the original file
+      await this.deleteFile(oldKey);
     } catch (error) {
-      throw new Error(`Error moving file from ${oldKey} to ${newKey}`);
+      throw new Error(`Unable to move file: ${error.message}`);
     }
   }
-  
 
   /**
    * Helper function to convert a Readable stream to a Buffer.
