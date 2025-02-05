@@ -9,17 +9,19 @@ import { AdminEntity } from './entities/admin.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
 import { EncryptionModule } from '@modules/encryption/encryption.module';
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
+import { CouponModule } from '@modules/coupons/coupon.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AdminEntity],getMysqlDataSource()), // Register AdminEntity here
+    TypeOrmModule.forFeature([AdminEntity], getMysqlDataSource()), // Register AdminEntity here
     CategoryModule,
     forwardRef(() => SeedModule), // Use forwardRef to avoid circular dependency
     EncryptionModule,
-    AuthorizationModule
+    AuthorizationModule,
+    CouponModule,
   ],
-  controllers:[],
-  providers:[AdminService,AdminExternalService,AdminRepository],
-  exports:[AdminExternalService,AdminRepository]
+  controllers: [],
+  providers: [AdminService, AdminExternalService, AdminRepository],
+  exports: [AdminExternalService, AdminRepository],
 })
 export class AdminModule {}

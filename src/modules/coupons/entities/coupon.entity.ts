@@ -2,9 +2,11 @@ import { BaseEntity } from '@src/utils/entities/base.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { DiscountTypeEnum } from '../enums/discount-type.enum';
 import { CouponTypeEnum } from '../enums/coupon-type.enum';
+import { CouponInterface } from '../interfaces/coupon.interface';
+import { ClientEntity } from '@modules/client/client/entities/client.entity';
 
 @Entity()
-export class CouponEntity extends BaseEntity {
+export class CouponEntity extends BaseEntity implements CouponInterface {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -49,6 +51,6 @@ export class CouponEntity extends BaseEntity {
   @Column({ default: true })
   isActive: boolean; // To deactivate coupons
 
-  @ManyToOne(() => Client, (client) => client.coupons, { nullable: true })
-  createdByClient: Client | null; // Can be null if created by admin
+  // @ManyToOne(() => ClientEntity, (client) => client.coupons, { nullable: true })
+  createdByClient: ClientEntity | null; // Can be null if created by admin
 }

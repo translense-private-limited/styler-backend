@@ -6,14 +6,14 @@ export class customerCouponRedemption extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Coupon, { onDelete: 'CASCADE' })
-  coupon: Coupon;
+  // @ManyToOne(() => Coupon, { onDelete: 'CASCADE' })
+  // coupon: Coupon;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  user: User;
+  // @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  // user: User;
 
-  @ManyToOne(() => Order, { onDelete: 'CASCADE' })
-  order: Order;
+  // @ManyToOne(() => Order, { onDelete: 'CASCADE' })
+  // order: Order;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   redeemedAt: Date;

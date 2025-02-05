@@ -6,9 +6,9 @@ export class CouponOutletMappingEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Coupon, (coupon) => coupon.id, { onDelete: 'CASCADE' })
-  coupon: Coupon;
+  // @ManyToOne(() => Coupon, (coupon) => coupon.id, { onDelete: 'CASCADE' })
+  // coupon: Coupon;
 
-  @ManyToOne(() => Outlet, (outlet) => outlet.id, { onDelete: 'CASCADE' })
-  outlet: Outlet;
+  // @ManyToOne(() => Outlet, (outlet) => outlet.id, { onDelete: 'CASCADE' })
+  // outlet: Outlet;
 }
