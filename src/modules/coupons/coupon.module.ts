@@ -5,9 +5,13 @@ import { getMysqlDataSource } from '@modules/database/data-source';
 import { CouponService } from './services/coupon.service';
 import { CouponRepository } from './repositories/coupon.repository';
 import { CouponAdminController } from './controllers/coupon-admin.controller';
+import { ClientModule } from '@modules/client/client.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CouponEntity], getMysqlDataSource())],
+  imports: [
+    TypeOrmModule.forFeature([CouponEntity], getMysqlDataSource()),
+    ClientModule,
+  ],
   providers: [CouponService, CouponRepository],
   controllers: [CouponAdminController],
   exports: [],

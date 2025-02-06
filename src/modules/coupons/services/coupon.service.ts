@@ -4,10 +4,14 @@ import { CouponInterface } from '../interfaces/coupon.interface';
 
 import { CouponRepository } from '../repositories/coupon.repository';
 import { CreateCouponDto } from '../dtos/create-coupon.dto';
+import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 
 @Injectable()
 export class CouponService {
-  constructor(private couponRepository: CouponRepository) {}
+  constructor(
+    private couponRepository: CouponRepository,
+    private clientExternalService: ClientExternalService,
+  ) {}
 
   async getCouponByIdOrThrow(id: number): Promise<CouponInterface> {
     const coupon = await this.couponRepository.getRepository().findOne({
@@ -23,6 +27,12 @@ export class CouponService {
 
   // Create a new coupon
   async create(createCouponDto: CreateCouponDto): Promise<CouponInterface> {
+    // if (createCouponDto.clientId) {
+    //   const client = await this.clientExternalService.getClientById(
+    //     createCouponDto.clientId,
+    //   );
+    //   // createCouponDto.client  = client
+    // }
     const coupon = this.couponRepository
       .getRepository()
       .create(createCouponDto);

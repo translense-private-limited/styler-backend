@@ -53,5 +53,5 @@ export class CreateCouponDto implements Omit<CouponInterface, 'id'> {
   isActive: boolean;
 
   @IsOptional()
-  createdByClient?: ClientEntity | null;
+  clientId?: number | null;
 }
