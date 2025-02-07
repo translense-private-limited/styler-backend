@@ -5,6 +5,8 @@ import { CouponInterface } from '../interfaces/coupon.interface';
 import { CouponRepository } from '../repositories/coupon.repository';
 import { CreateCouponDto } from '../dtos/create-coupon.dto';
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
+import { CouponCheckResponseInterface } from '../interfaces/coupon-check-response.interface';
+import { CouponEntity } from '../entities/coupon.entity';
 
 @Injectable()
 export class CouponService {
@@ -26,13 +28,7 @@ export class CouponService {
   }
 
   // Create a new coupon
-  async create(createCouponDto: CreateCouponDto): Promise<CouponInterface> {
-    // if (createCouponDto.clientId) {
-    //   const client = await this.clientExternalService.getClientById(
-    //     createCouponDto.clientId,
-    //   );
-    //   // createCouponDto.client  = client
-    // }
+  async create(createCouponDto: CreateCouponDto): Promise<CouponEntity> {
     const coupon = this.couponRepository
       .getRepository()
       .create(createCouponDto);
@@ -68,16 +64,29 @@ export class CouponService {
     await this.couponRepository.getRepository().delete({ id });
   }
 
-  async isCouponCodeUnique(couponCode: string): Promise<boolean> {
+  async isCouponCodeUnique(
+    couponCode: string,
+  ): Promise<CouponCheckResponseInterface> {
     const coupon = await this.couponRepository.getRepository().findOne({
       where: {
         code: couponCode,
       },
     });
 
-    if (!coupon) {
-      return true;
+    if (coupon) {
+      return {
+        success: false,
+        message:
+          'The coupon code is already present with the provided code. Please choose a unique code.',
+        isUnique: false,
+        coupon: couponCode,
+      };
     }
-    return false;
+    return {
+      success: true,
+      message: 'Coupon code is unique.',
+      isUnique: true,
+      coupon: couponCode,
+    };
   }
 }

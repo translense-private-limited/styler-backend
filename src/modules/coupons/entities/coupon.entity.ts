@@ -50,7 +50,4 @@ export class CouponEntity extends BaseEntity implements CouponInterface {
 
   @Column({ default: true })
   isActive: boolean; // To deactivate coupons
-
-  // @ManyToOne(() => ClientEntity, (client) => client.coupons, { nullable: true })
-  createdByClient: ClientEntity | null; // Can be null if created by admin
 }
