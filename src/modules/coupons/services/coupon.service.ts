@@ -27,6 +27,18 @@ export class CouponService {
     return coupon;
   }
 
+  async getCouponByCouponCode(
+    couponCode: string,
+  ): Promise<CouponEntity | null> {
+    const coupon = await this.couponRepository.getRepository().findOne({
+      where: {
+        code: couponCode,
+      },
+    });
+
+    return coupon;
+  }
+
   // Create a new coupon
   async create(createCouponDto: CreateCouponDto): Promise<CouponEntity> {
     const coupon = this.couponRepository

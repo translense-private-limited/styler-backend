@@ -18,6 +18,7 @@ import { CouponEntity } from '../entities/coupon.entity';
 import { CouponOutletMappingEntity } from '../entities/coupon-outlet-mapping.entity';
 
 import { CreateCouponClientDto } from '../dtos/create-coupon-client.dto';
+import { CouponClientService } from '../services/coupon-client.service';
 
 @Controller('client')
 @ApiTags('Coupons')
@@ -25,13 +26,14 @@ export class CouponClientController {
   constructor(
     private couponService: CouponService,
     private couponAdminService: CouponAdminService,
+    private couponClientService: CouponClientService,
   ) {}
 
   @Post('coupon')
   async createCoupon(
     @Body() createCouponDto: CreateCouponClientDto,
-  ): Promise<CouponEntity | CouponOutletMappingEntity> {
-    return this.couponAdminService.createCoupon(createCouponDto);
+  ): Promise<CouponOutletMappingEntity> {
+    return this.couponClientService.createCoupon(createCouponDto);
   }
 
   @Get('coupons')
@@ -39,11 +41,33 @@ export class CouponClientController {
     return this.couponService.findAll();
   }
 
-  @Get('coupon/is-coupon-code-unique/:couponCode')
+  @Get('coupon/outlet/:outletId/is-coupon-code-unique/:couponCode')
   async isCouponCodeUnique(
     @Param('couponCode') couponCode: string,
+    @Param('outletId') outletId: number,
   ): Promise<CouponCheckResponseInterface> {
-    return await this.couponService.isCouponCodeUnique(couponCode);
+    const response =
+      await this.couponClientService.doesCouponCodeExistForOutlet(
+        couponCode,
+        outletId,
+      );
+
+    if (!response) {
+      // you cannot create
+      return {
+        success: true,
+        message: 'Coupon code is unique.',
+        isUnique: true,
+        coupon: couponCode,
+      };
+    }
+    return {
+      success: false,
+      message:
+        'The coupon code is already present with the provided code. Please choose a unique code.',
+      isUnique: false,
+      coupon: couponCode,
+    };
   }
 
   @Get('coupon/:id')

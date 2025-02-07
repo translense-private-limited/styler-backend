@@ -1,9 +1,8 @@
 import { BaseEntity } from '@src/utils/entities/base.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { DiscountTypeEnum } from '../enums/discount-type.enum';
 import { CouponTypeEnum } from '../enums/coupon-type.enum';
 import { CouponInterface } from '../interfaces/coupon.interface';
-import { ClientEntity } from '@modules/client/client/entities/client.entity';
 
 @Entity()
 export class CouponEntity extends BaseEntity implements CouponInterface {
@@ -37,6 +36,13 @@ export class CouponEntity extends BaseEntity implements CouponInterface {
 
   @Column({ type: 'timestamp' })
   validFrom: Date;
+
+  @Column({
+    type: 'enum',
+    enum: [],
+    default: 'PERCENTAGE',
+  })
+  createdBy: DiscountTypeEnum; // Type of discount
 
   @Column({
     type: 'enum',

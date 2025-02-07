@@ -18,4 +18,19 @@ export class CouponOutletMappingService {
       .getRepository()
       .save({ outlet, coupon });
   }
+
+  async getByCouponAndOutletId(
+    outletId: number,
+    couponId: number,
+  ): Promise<CouponOutletMappingEntity> {
+    const couponOutletMapping = await this.couponOutletMappingRepository
+      .getRepository()
+      .findOne({
+        where: {
+          coupon: { id: couponId },
+          outlet: { id: outletId },
+        },
+      });
+    return couponOutletMapping;
+  }
 }
