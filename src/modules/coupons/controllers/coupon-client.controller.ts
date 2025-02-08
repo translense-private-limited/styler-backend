@@ -7,6 +7,7 @@ import {
   Body,
   HttpCode,
   Patch,
+  Put,
 } from '@nestjs/common';
 import { CouponService } from '../services/coupon.service';
 import { CreateCouponDto } from '../dtos/create-coupon.dto';
@@ -14,11 +15,13 @@ import { CouponInterface } from '../interfaces/coupon.interface';
 import { ApiTags } from '@nestjs/swagger';
 import { CouponCheckResponseInterface } from '../interfaces/coupon-check-response.interface';
 import { CouponAdminService } from '../services/coupon-admin.service';
-import { CouponEntity } from '../entities/coupon.entity';
+
 import { CouponOutletMappingEntity } from '../entities/coupon-outlet-mapping.entity';
 
 import { CreateCouponClientDto } from '../dtos/create-coupon-client.dto';
 import { CouponClientService } from '../services/coupon-client.service';
+import { CouponEntity } from '../entities/coupon.entity';
+import { AcceptRejectCouponCodeDto } from '../dtos/accept-reject-coupon-code.dto';
 
 @Controller('client')
 @ApiTags('Coupons')
@@ -36,9 +39,14 @@ export class CouponClientController {
     return this.couponClientService.createCoupon(createCouponDto);
   }
 
+  @Get()
+  async getAllCouponPublishedByAdmin(): Promise<CouponEntity[]> {
+    return await this.couponClientService.getAllCouponCodePublishedByAdmin();
+  }
+
   @Get('coupons')
   async getCoupons(): Promise<CouponInterface[]> {
-    return this.couponService.findAll();
+    return this.couponService.getAll();
   }
 
   @Get('coupon/outlet/:outletId/is-coupon-code-unique/:couponCode')
@@ -70,6 +78,24 @@ export class CouponClientController {
     };
   }
 
+  @Put('coupon/action')
+  async acceptRejectCouponCode(
+    @Body() acceptRejectCouponCodeDto: AcceptRejectCouponCodeDto,
+  ): Promise<boolean> {
+    await this.couponClientService.acceptRejectCouponCode(
+      acceptRejectCouponCodeDto,
+    );
+    return true;
+  }
+
+  @Get('coupons/active/outlet/:outletId')
+  async getAllActiveCouponCode(
+    @Param('outletId') outletId: number,
+  ): Promise<CouponEntity[]> {
+    return await this.couponClientService.getAllActiveCouponCode(outletId);
+  }
+
+  //-----------------  need to check --------------//
   @Get('coupon/:id')
   async getCouponById(@Param('id') id: number): Promise<CouponInterface> {
     return this.couponService.findOne(id);

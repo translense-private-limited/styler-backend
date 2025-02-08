@@ -34,7 +34,7 @@ export class CouponAdminController {
 
   @Get('coupons')
   async getCoupons(): Promise<CouponInterface[]> {
-    return this.couponService.findAll();
+    return this.couponService.getAll();
   }
 
   @Get('coupon/is-coupon-code-unique/:couponCode')

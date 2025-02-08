@@ -13,11 +13,11 @@ export class OutletExternalService {
   constructor(
     private readonly outletService: OutletService,
     private readonly serviceExternalService: ServiceExternalService,
-    private readonly outletAdminService:OutletAdminService,
-    private readonly outletDocsService:OutletDocsService
+    private readonly outletAdminService: OutletAdminService,
+    private readonly outletDocsService: OutletDocsService,
   ) {}
 
-  async getOutletById(outletId: number): Promise<OutletEntity> {
+  async getOutletByIdOrThrow(outletId: number): Promise<OutletEntity> {
     const outlet = await this.outletService.getOutletByIdOrThrow(outletId);
     return outlet;
   }
@@ -34,24 +34,29 @@ export class OutletExternalService {
     );
   }
 
-  async getOutletDetailsByIds(outletIds:number[]):Promise<OutletEntity[]>{
-      return this.outletService.getOutletDetailsByIds(outletIds);
+  async getOutletDetailsByIds(outletIds: number[]): Promise<OutletEntity[]> {
+    return this.outletService.getOutletDetailsByIds(outletIds);
   }
 
-  async updateOutletByIdOrThrow(outletId:number,updatedData:Partial<CreateOutletDto>):Promise<void>{
-    await this.outletAdminService.updateOutletByIdOrThrow(outletId,updatedData)
+  async updateOutletByIdOrThrow(
+    outletId: number,
+    updatedData: Partial<CreateOutletDto>,
+  ): Promise<void> {
+    await this.outletAdminService.updateOutletByIdOrThrow(
+      outletId,
+      updatedData,
+    );
   }
 
   async saveOutletRegistration(outletId: number, key: string): Promise<void> {
-    await this.outletDocsService.saveOutletRegistration(outletId,key);
+    await this.outletDocsService.saveOutletRegistration(outletId, key);
   }
 
-    async saveOutletMou(outletId: number, key: string): Promise<void> {
-      await this.outletDocsService.saveOutletMou(outletId,key);
+  async saveOutletMou(outletId: number, key: string): Promise<void> {
+    await this.outletDocsService.saveOutletMou(outletId, key);
   }
 
-    async saveOutletGst(outletId: number, key: string): Promise<void> {
-      await this.outletDocsService.saveOutletGst(outletId,key);
+  async saveOutletGst(outletId: number, key: string): Promise<void> {
+    await this.outletDocsService.saveOutletGst(outletId, key);
   }
-  
 }

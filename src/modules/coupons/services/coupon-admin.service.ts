@@ -5,6 +5,7 @@ import { CouponOutletMappingService } from './coupon-outlet-mapping.service';
 import { CreateCouponDto } from '../dtos/create-coupon.dto';
 import { CouponEntity } from '../entities/coupon.entity';
 import { CouponOutletMappingEntity } from '../entities/coupon-outlet-mapping.entity';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 
 @Injectable()
 export class CouponAdminService {
@@ -18,10 +19,14 @@ export class CouponAdminService {
     createCouponDto: CreateCouponDto,
   ): Promise<CouponEntity | CouponOutletMappingEntity> {
     const { outletId, ...couponDto } = createCouponDto;
-    const coupon = await this.couponService.create(couponDto);
+    const coupon = await this.couponService.create({
+      ...couponDto,
+      owner: UserTypeEnum.ADMIN,
+    });
 
     if (outletId) {
-      const outlet = await this.outletExternalService.getOutletById(outletId);
+      const outlet =
+        await this.outletExternalService.getOutletByIdOrThrow(outletId);
       const couponOutletMappingResponse =
         await this.couponOutletMappingService.createCouponOutletMapping(
           outlet,

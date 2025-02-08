@@ -1,5 +1,10 @@
 import { BaseEntity } from '@src/utils/entities/base.entity';
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CouponEntity } from './coupon.entity';
 import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
 
@@ -15,4 +20,7 @@ export class CouponOutletMappingEntity extends BaseEntity {
   // this will create a column called outletId in coupon_outlet_mapping table
   @ManyToOne(() => OutletEntity, (outlet) => outlet.id, { onDelete: 'CASCADE' })
   outlet: OutletEntity;
+
+  @DeleteDateColumn() // This column will be updated on soft delete
+  deletedAt?: Date;
 }

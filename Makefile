@@ -23,7 +23,7 @@ stage:
 	docker-compose -f stack.yaml up --build -d
 	npm run start
 debug:
-	docker-compose -f stack.yaml up -d
+	docker compose -f stack.yaml up -d
 	npm run start:debug
 dev:
 	docker-compose -f stack.yaml up -d

@@ -12,7 +12,7 @@ import { DiscountTypeEnum } from '../enums/discount-type.enum';
 import { CouponTypeEnum } from '../enums/coupon-type.enum';
 import { CouponInterface } from '../interfaces/coupon.interface';
 
-export class CreateCouponDto implements Omit<CouponInterface, 'id'> {
+export class CreateCouponDto implements Omit<CouponInterface, 'id' | 'owner'> {
   @IsString()
   code: string;
 

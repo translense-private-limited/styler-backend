@@ -3,6 +3,7 @@ import { CouponOutletMappingRepository } from '../repositories/coupon-outlet-map
 import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
 import { CouponEntity } from '../entities/coupon.entity';
 import { CouponOutletMappingEntity } from '../entities/coupon-outlet-mapping.entity';
+import { InsertResult, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class CouponOutletMappingService {
@@ -19,6 +20,12 @@ export class CouponOutletMappingService {
       .save({ outlet, coupon });
   }
 
+  async softDelete(id: number): Promise<UpdateResult> {
+    return await this.couponOutletMappingRepository
+      .getRepository()
+      .softDelete({ id });
+  }
+
   async getByCouponAndOutletId(
     outletId: number,
     couponId: number,
@@ -32,5 +39,32 @@ export class CouponOutletMappingService {
         },
       });
     return couponOutletMapping;
+  }
+
+  // async addOrUpdateMapping(
+  //   outlet: OutletEntity,
+  //   coupon: CouponEntity,
+  // ): Promise<void> {
+  //   await this.couponOutletMappingRepository.getRepository().upsert(
+  //     { outlet, coupon },
+  //     {
+  //       conflictPaths: ['outlet', 'coupon'], // Columns that determine uniqueness
+  //       upsertType: 'on-conflict-do-update', // Ensures it updates on conflict
+  //     },
+  //   );
+  // }
+
+  async getAllActiveCouponsByOutletId(
+    outletId: number,
+  ): Promise<CouponEntity[]> {
+    const couponOutletMappings = await this.couponOutletMappingRepository
+      .getRepository()
+      .find({
+        where: {
+          outlet: { id: outletId },
+        },
+      });
+
+    return couponOutletMappings.map((mapping) => mapping.coupon);
   }
 }

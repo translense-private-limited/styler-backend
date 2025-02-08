@@ -1,17 +1,17 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { KeyGeneratorService } from "./key-generator.service";
-import { KeyGeneratorDto } from "../dtos/key-generator.dto";
-import { AwsS3Service } from "@src/utils/aws/aws-s3.service";
-import { ClientExternalService } from "@modules/client/client/services/client-external.service";
-import { OutletExternalService } from "@modules/client/outlet/services/outlet-external.service";
-import { MediaTypeEnum } from "../enums/media-type.enum";
-import { ContentTypeEnum } from "../enums/content-type.enum";
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { KeyGeneratorService } from './key-generator.service';
+import { KeyGeneratorDto } from '../dtos/key-generator.dto';
+import { AwsS3Service } from '@src/utils/aws/aws-s3.service';
+import { ClientExternalService } from '@modules/client/client/services/client-external.service';
+import { OutletExternalService } from '@modules/client/outlet/services/outlet-external.service';
+import { MediaTypeEnum } from '../enums/media-type.enum';
+import { ContentTypeEnum } from '../enums/content-type.enum';
 import { v4 as uuidv4 } from 'uuid';
-import { badRequest } from "@src/utils/exceptions/common.exception";
-import { PresignedUrlResponseInterface } from "../interfaces/presigned-url-response.interface";
-import { ServiceExternalService } from "@modules/client/services/services/service-external.service";
-import { ServiceSchema } from "@modules/client/services/schema/service.schema";
-import { ServiceDto } from "@modules/client/services/dtos/service.dto";
+import { badRequest } from '@src/utils/exceptions/common.exception';
+import { PresignedUrlResponseInterface } from '../interfaces/presigned-url-response.interface';
+import { ServiceExternalService } from '@modules/client/services/services/service-external.service';
+import { ServiceSchema } from '@modules/client/services/schema/service.schema';
+import { ServiceDto } from '@modules/client/services/dtos/service.dto';
 
 @Injectable()
 export class UploadFilesService {
@@ -20,7 +20,7 @@ export class UploadFilesService {
     private readonly awsS3Service: AwsS3Service,
     private readonly clientExternalService: ClientExternalService,
     private readonly outletExternalService: OutletExternalService,
-    private readonly serviceExternalService:ServiceExternalService
+    private readonly serviceExternalService: ServiceExternalService,
   ) {}
 
   async generatePreSignedUrlToUpload(
@@ -38,10 +38,14 @@ export class UploadFilesService {
 
   private async mediaTypeMethodMapper(
     mediaType: MediaTypeEnum,
-  ): Promise<(keyGeneratorDto: KeyGeneratorDto) => Promise<PresignedUrlResponseInterface>> {
+  ): Promise<
+    (keyGeneratorDto: KeyGeneratorDto) => Promise<PresignedUrlResponseInterface>
+  > {
     const mediaTypeMethodMap: Map<
       MediaTypeEnum,
-      (keyGeneratorDto: KeyGeneratorDto) => Promise<PresignedUrlResponseInterface>
+      (
+        keyGeneratorDto: KeyGeneratorDto,
+      ) => Promise<PresignedUrlResponseInterface>
     > = new Map([
       [MediaTypeEnum.PAN, this.getPresignedUrlToUploadPan.bind(this)],
       [MediaTypeEnum.AADHAR, this.getPresignedUrlToUploadAadhar.bind(this)],
@@ -83,10 +87,10 @@ export class UploadFilesService {
   async getPresignedUrlToUploadProfilePhoto(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
     }
-    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || Date.now();
+    keyGeneratorDto.clientId = keyGeneratorDto.clientId || Date.now();
     const maxFileSize = 1; // in MB
     const allowedTypes = [
       ContentTypeEnum.IMAGE_JPEG,
@@ -106,17 +110,16 @@ export class UploadFilesService {
     //     `Failed to save the profile photo for client with given ClientId`,
     //   );
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
 
   async getPresignedUrlToUploadPan(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
     }
-    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || Date.now();
+    keyGeneratorDto.clientId = keyGeneratorDto.clientId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -139,17 +142,16 @@ export class UploadFilesService {
     //     `Failed to save the PAN doc for client with the given ClientId`,
     //   );
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
 
   async getPresignedUrlToUploadAadhar(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
     }
-    keyGeneratorDto.clientId  = keyGeneratorDto.clientId || Date.now();
+    keyGeneratorDto.clientId = keyGeneratorDto.clientId || Date.now();
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -172,16 +174,15 @@ export class UploadFilesService {
     //     `Failed to save the Aadhar doc for client with the given ClientId`,
     //   );
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
   async getPresignedUrlToUploadServiceImage(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
     }
-    keyGeneratorDto.serviceId  = keyGeneratorDto.serviceId || uuidv4();
+    keyGeneratorDto.serviceId = keyGeneratorDto.serviceId || uuidv4();
     const maxFileSize = 1; // in MB
     const allowedTypes = [
       ContentTypeEnum.IMAGE_JPEG,
@@ -199,17 +200,16 @@ export class UploadFilesService {
     // } catch (error) {
     //   throw new Error(`Failed to save service images with the given serviceId`);
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
 
   async getPresignedUrlToUploadServiceSubtypeImage(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
     }
-    keyGeneratorDto.serviceId  = keyGeneratorDto.serviceId || uuidv4();
+    keyGeneratorDto.serviceId = keyGeneratorDto.serviceId || uuidv4();
     keyGeneratorDto.subtypeId = keyGeneratorDto.subtypeId || uuidv4();
     const maxFileSize = 1; // in MB
     const allowedTypes = [
@@ -228,17 +228,16 @@ export class UploadFilesService {
     // } catch (error) {
     //   throw new Error(`Failed to save service subtype images with the given serviceId and subtypeId`);
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
 
   async getPresignedUrlToUploadServiceVideo(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
     }
-    keyGeneratorDto.serviceId  = keyGeneratorDto.serviceId || uuidv4();
+    keyGeneratorDto.serviceId = keyGeneratorDto.serviceId || uuidv4();
     const maxFileSize = 8;
     const allowedTypes = [ContentTypeEnum.VIDEO_MP4];
     const key = await this.keyGeneratorService.generateKey(keyGeneratorDto);
@@ -253,14 +252,13 @@ export class UploadFilesService {
     // } catch (error) {
     //   throw new Error(`Failed to save service videos with the given ServiceId`);
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
 
   async getPresignedUrlToUploadOutletBannerImage(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
     }
     const maxFileSize = 1; // in MB
@@ -282,16 +280,15 @@ export class UploadFilesService {
     //     `Failed to save the profile photo for outlet with the given outletId`,
     //   );
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
 
   async getPresignedUrlToUploadOutletVideo(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
-    }    
+    }
     const maxFileSize = 8;
     const allowedTypes = [ContentTypeEnum.VIDEO_MP4];
     const key = await this.keyGeneratorService.generateKey(keyGeneratorDto);
@@ -308,14 +305,13 @@ export class UploadFilesService {
     //     `Failed to save the video for outlet with the given outletId.`,
     //   );
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
 
   async getPresignedUrlToUploadGst(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
     }
     const maxFileSize = 3;
@@ -340,16 +336,15 @@ export class UploadFilesService {
     //     `Failed to save the gst doc for outlet with the given outletId.`,
     //   );
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
 
   async getPresignedUrlToUploadRegistration(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
-    }    
+    }
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -372,16 +367,15 @@ export class UploadFilesService {
     //     `Failed to save the registration doc for outlet with the given outletId.`,
     //   );
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
 
   async getPresignedUrlToUploadMou(
     keyGeneratorDto: KeyGeneratorDto,
   ): Promise<PresignedUrlResponseInterface> {
-
-    if(!keyGeneratorDto.outletId){
+    if (!keyGeneratorDto.outletId) {
       badRequest(`outletId is required`);
-    }    
+    }
     const maxFileSize = 3;
     const allowedTypes = [
       ContentTypeEnum.APPLICATION_PDF,
@@ -404,32 +398,36 @@ export class UploadFilesService {
     //     `Failed to save the MoU doc for outlet with the given outletId.`,
     //   );
     // }
-    return {key,signedUrl};
+    return { key, signedUrl };
   }
-  
+
   async updateOutletServiceKeys(outletId: number): Promise<void> {
-    await this.outletExternalService.getOutletById(outletId);
-    const services = await this.serviceExternalService.getAllServicesForAnOutlet(outletId);
-  
+    await this.outletExternalService.getOutletByIdOrThrow(outletId);
+    const services =
+      await this.serviceExternalService.getAllServicesForAnOutlet(outletId);
+
     const updatedServices = [];
     const errors = [];
-  
+
     for (const service of services) {
       try {
-        const updatedKeys: Partial<ServiceDto> = { 
-          serviceImages: [], 
-          serviceVideos: [], 
-          subtypes: [] 
+        const updatedKeys: Partial<ServiceDto> = {
+          serviceImages: [],
+          serviceVideos: [],
+          subtypes: [],
         };
-  
+
         // Call separate functions to handle updating images, videos, and subtypes
         await this.updateServiceImages(service, updatedKeys, outletId);
         await this.updateServiceVideos(service, updatedKeys, outletId);
         await this.updateSubtypes(service, updatedKeys, outletId);
-  
+
         // Update the service in the database
-        await this.serviceExternalService.updateServiceImageKeysById(service.id, updatedKeys);
-  
+        await this.serviceExternalService.updateServiceImageKeysById(
+          service.id,
+          updatedKeys,
+        );
+
         updatedServices.push({
           serviceId: service.id,
           updatedKeys,
@@ -442,8 +440,12 @@ export class UploadFilesService {
       }
     }
   }
-  
-  private async updateServiceImages(service: Partial<ServiceSchema>, updatedKeys: Partial<ServiceDto>, outletId: number): Promise<void> {
+
+  private async updateServiceImages(
+    service: Partial<ServiceSchema>,
+    updatedKeys: Partial<ServiceDto>,
+    outletId: number,
+  ): Promise<void> {
     if (service.serviceImages && service.serviceImages.length > 0) {
       for (const oldKey of service.serviceImages) {
         const newKey = await this.keyGeneratorService.generateKey({
@@ -452,12 +454,16 @@ export class UploadFilesService {
           mediaType: MediaTypeEnum.SERVICE_IMAGE,
         });
         await this.awsS3Service.moveFile(oldKey, newKey);
-        updatedKeys.serviceImages.push(newKey);  // Correctly pushing into serviceImages array
+        updatedKeys.serviceImages.push(newKey); // Correctly pushing into serviceImages array
       }
     }
   }
-  
-  private async updateServiceVideos(service: Partial<ServiceSchema>, updatedKeys: Partial<ServiceDto>, outletId: number): Promise<void> {
+
+  private async updateServiceVideos(
+    service: Partial<ServiceSchema>,
+    updatedKeys: Partial<ServiceDto>,
+    outletId: number,
+  ): Promise<void> {
     if (service.serviceVideos && service.serviceVideos.length > 0) {
       for (const oldKey of service.serviceVideos) {
         const newKey = await this.keyGeneratorService.generateKey({
@@ -466,12 +472,16 @@ export class UploadFilesService {
           mediaType: MediaTypeEnum.SERVICE_VIDEO,
         });
         await this.awsS3Service.moveFile(oldKey, newKey);
-        updatedKeys.serviceVideos.push(newKey);  // Correctly pushing into serviceVideos array
+        updatedKeys.serviceVideos.push(newKey); // Correctly pushing into serviceVideos array
       }
     }
   }
-  
-  private async updateSubtypes(service: Partial<ServiceSchema>, updatedKeys: Partial<ServiceDto>, outletId: number): Promise<void> {
+
+  private async updateSubtypes(
+    service: Partial<ServiceSchema>,
+    updatedKeys: Partial<ServiceDto>,
+    outletId: number,
+  ): Promise<void> {
     if (service.subtypes && service.subtypes.length > 0) {
       const updatedSubtypes = [];
       for (const subtype of service.subtypes) {
@@ -484,16 +494,19 @@ export class UploadFilesService {
               mediaType: MediaTypeEnum.SERVICE_SUBTYPE_IMAGE,
             });
             await this.awsS3Service.moveFile(oldKey, newKey);
-            updatedSubtypeImages.push(newKey);  // Adding updated subtype image
+            updatedSubtypeImages.push(newKey); // Adding updated subtype image
           }
-          updatedSubtypes.push({ ...subtype, subtypeImages: updatedSubtypeImages });
+          updatedSubtypes.push({
+            ...subtype,
+            subtypeImages: updatedSubtypeImages,
+          });
         } else {
-          updatedSubtypes.push(subtype);  // No images, keep the subtype as is
+          updatedSubtypes.push(subtype); // No images, keep the subtype as is
         }
       }
-      updatedKeys.subtypes = updatedSubtypes;  // Assigning the updated subtypes
+      updatedKeys.subtypes = updatedSubtypes; // Assigning the updated subtypes
     }
-  }  
+  }
 
   async deleteMediaByKey(key: string, type: MediaTypeEnum): Promise<void> {
     try {
@@ -516,8 +529,10 @@ export class UploadFilesService {
       }
       return;
     } catch (error) {
-      throw new HttpException(`Error deleting the file: ${error.message}`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        `Error deleting the file: ${error.message}`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
-
 }

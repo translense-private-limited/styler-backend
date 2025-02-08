@@ -7,6 +7,7 @@ import { CreateCouponDto } from '../dtos/create-coupon.dto';
 import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 import { CouponCheckResponseInterface } from '../interfaces/coupon-check-response.interface';
 import { CouponEntity } from '../entities/coupon.entity';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 
 @Injectable()
 export class CouponService {
@@ -15,7 +16,7 @@ export class CouponService {
     private clientExternalService: ClientExternalService,
   ) {}
 
-  async getCouponByIdOrThrow(id: number): Promise<CouponInterface> {
+  async getCouponByIdOrThrow(id: number): Promise<CouponEntity> {
     const coupon = await this.couponRepository.getRepository().findOne({
       where: {
         id,
@@ -40,7 +41,11 @@ export class CouponService {
   }
 
   // Create a new coupon
-  async create(createCouponDto: CreateCouponDto): Promise<CouponEntity> {
+  async create(
+    createCouponDto: CreateCouponDto & {
+      owner: UserTypeEnum.ADMIN | UserTypeEnum.CLIENT;
+    },
+  ): Promise<CouponEntity> {
     const coupon = this.couponRepository
       .getRepository()
       .create(createCouponDto);
@@ -48,7 +53,7 @@ export class CouponService {
   }
 
   // Find all coupons
-  async findAll(): Promise<CouponInterface[]> {
+  async getAll(): Promise<CouponEntity[]> {
     return await this.couponRepository.getRepository().find();
   }
 

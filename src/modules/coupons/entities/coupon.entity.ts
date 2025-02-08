@@ -3,6 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { DiscountTypeEnum } from '../enums/discount-type.enum';
 import { CouponTypeEnum } from '../enums/coupon-type.enum';
 import { CouponInterface } from '../interfaces/coupon.interface';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 
 @Entity()
 export class CouponEntity extends BaseEntity implements CouponInterface {
@@ -39,10 +40,10 @@ export class CouponEntity extends BaseEntity implements CouponInterface {
 
   @Column({
     type: 'enum',
-    enum: [],
-    default: 'PERCENTAGE',
+    enum: [UserTypeEnum.ADMIN, UserTypeEnum.CLIENT], // Restrict to only these two values
+    default: UserTypeEnum.ADMIN, // Default value must be one of them
   })
-  createdBy: DiscountTypeEnum; // Type of discount
+  owner: UserTypeEnum.ADMIN | UserTypeEnum.CLIENT; // Who created the coupon
 
   @Column({
     type: 'enum',
