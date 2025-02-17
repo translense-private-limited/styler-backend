@@ -12,6 +12,8 @@ import { CouponOutletMappingRepository } from './repositories/coupon-outlet-mapp
 import { OutletModule } from '@modules/client/outlet/outlet.module';
 import { ClientModule } from '@modules/client/client.module';
 import { CouponOutletMappingService } from './services/coupon-outlet-mapping.service';
+import { CouponClientController } from './controllers/coupon-client.controller';
+import { CouponClientService } from './services/coupon-client.service';
 
 @Module({
   imports: [
@@ -28,8 +30,9 @@ import { CouponOutletMappingService } from './services/coupon-outlet-mapping.ser
     CouponAdminService,
     CouponOutletMappingService,
     CouponOutletMappingRepository,
+    CouponClientService,
   ],
-  controllers: [CouponAdminController],
+  controllers: [CouponAdminController, CouponClientController],
   exports: [],
 })
 export class CouponModule {}
