@@ -30,6 +30,7 @@ import { CustomerModule } from '@modules/customer/customer.module';
 import { SeedModule } from '@modules/seed/seed.module';
 import { NotificationModule } from '@src/utils/notification/notification.module';
 import { CloudStorageModule } from '@modules/cloud-storage/cloud-storage.module';
+import { AuthorizationGuard } from '@modules/authorization/gaurds/authorization.gaurd';
 
 @Module({
   imports: [
@@ -44,7 +45,7 @@ import { CloudStorageModule } from '@modules/cloud-storage/cloud-storage.module'
     CustomerModule,
     SeedModule,
     NotificationModule,
-    CloudStorageModule
+    CloudStorageModule,
   ],
   controllers: [AppController, ImageController],
   providers: [
@@ -78,10 +79,10 @@ import { CloudStorageModule } from '@modules/cloud-storage/cloud-storage.module'
       provide: APP_GUARD,
       useClass: OutletGuard,
     },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthorizationGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: AuthorizationGuard,
+    },
   ],
 })
 export class AppModule {

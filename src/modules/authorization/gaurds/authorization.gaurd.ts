@@ -1,11 +1,12 @@
 // auth.guard.ts
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) { }
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(
     context: ExecutionContext,
@@ -44,8 +45,14 @@ export class AuthorizationGuard implements CanActivate {
     const path = request.url;
     const firstSegment = path.split('/')[1]; // Get the segment after the first '/'
 
-    //@ts-expect-error //handled
-    const { userType } = request.user;
+    let userType: UserTypeEnum;
+
+    //@ts-expect-error //user added to request body during authentication process
+    if (request.user.adminId) userType = UserTypeEnum.ADMIN;
+    //@ts-expect-error //user added to request body during authentication process
+    else if (request.user.clientId) userType = UserTypeEnum.CLIENT;
+    //@ts-expect-error //user added to request body during authentication process
+    else if (request.user.customerId) userType = UserTypeEnum.CUSTOMER;
 
     if (firstSegment.toUpperCase() === userType) {
       return true;
