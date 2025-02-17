@@ -1,6 +1,7 @@
 import { DiscountTypeEnum } from '../enums/discount-type.enum';
 import { CouponTypeEnum } from '../enums/coupon-type.enum';
 import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
+import { CouponStatusEnum } from '../enums/coupon-status.enum';
 
 export interface CouponInterface {
   id: number;
@@ -16,4 +17,5 @@ export interface CouponInterface {
   owner: UserTypeEnum.ADMIN | UserTypeEnum.CLIENT;
   couponType: CouponTypeEnum;
   isActive: boolean;
+  status?: CouponStatusEnum;
 }

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CouponService } from './coupon.service';
 import { OutletExternalService } from '@modules/client/outlet/services/outlet-external.service';
 import { CouponOutletMappingService } from './coupon-outlet-mapping.service';
@@ -10,6 +14,10 @@ import { CreateCouponClientDto } from '../dtos/create-coupon-client.dto';
 import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 import { AcceptRejectCouponCodeDto } from '../dtos/accept-reject-coupon-code.dto';
 import { CouponActionEnum } from '../enums/coupon-action.enum';
+import { CreateCouponDto } from '../dtos/create-coupon.dto';
+import { CouponInterface } from '../interfaces/coupon.interface';
+import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
+import { CouponStatusEnum } from '../enums/coupon-status.enum';
 
 @Injectable()
 export class CouponClientService {
@@ -18,6 +26,33 @@ export class CouponClientService {
     private outletExternalService: OutletExternalService,
     private couponOutletMappingService: CouponOutletMappingService,
   ) {}
+
+  async getCoupons(
+    outletId: number,
+    status?: CouponStatusEnum,
+  ): Promise<CouponEntity[]> {
+    const coupons =
+      await this.couponOutletMappingService.getAllCouponsByOutletId(
+        outletId,
+        status,
+      );
+    return coupons;
+  }
+
+  async delete(outletId: number, couponId: number): Promise<void> {
+    const couponOutletMapping =
+      await this.couponOutletMappingService.getByCouponAndOutletId(
+        outletId,
+        couponId,
+      );
+    const { coupon, outlet, id } = couponOutletMapping;
+    if (!coupon || !outlet) {
+      throw new NotFoundException(`Coupon not found `);
+    }
+    await this.couponOutletMappingService.softDelete(id);
+
+    return;
+  }
 
   async createCoupon(
     createCouponClientDto: CreateCouponClientDto,
@@ -110,5 +145,28 @@ export class CouponClientService {
     return await this.couponOutletMappingService.getAllActiveCouponsByOutletId(
       outletId,
     );
+  }
+
+  async updateCoupon(
+    couponId: number,
+    outletId: number,
+    updateCouponDto: Partial<CreateCouponDto>,
+  ): Promise<CouponEntity> {
+    const couponOutletMapping =
+      await this.couponOutletMappingService.getByCouponAndOutletId(
+        outletId,
+        couponId,
+      );
+
+    const { coupon, outlet } = couponOutletMapping;
+
+    if (!coupon || !outlet) {
+      throw new UnauthorizedException(
+        'You are not authorized to update the coupon',
+      );
+    }
+
+    const updatedCoupon = Object.assign(coupon, updateCouponDto);
+    return await this.couponService.save(updatedCoupon);
   }
 }

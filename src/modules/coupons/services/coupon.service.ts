@@ -16,6 +16,10 @@ export class CouponService {
     private clientExternalService: ClientExternalService,
   ) {}
 
+  async save(coupon: CouponEntity): Promise<CouponEntity> {
+    return await this.couponRepository.getRepository().save(coupon);
+  }
+
   async getCouponByIdOrThrow(id: number): Promise<CouponEntity> {
     const coupon = await this.couponRepository.getRepository().findOne({
       where: {

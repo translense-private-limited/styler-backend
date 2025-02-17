@@ -3,7 +3,8 @@ import { CouponOutletMappingRepository } from '../repositories/coupon-outlet-map
 import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
 import { CouponEntity } from '../entities/coupon.entity';
 import { CouponOutletMappingEntity } from '../entities/coupon-outlet-mapping.entity';
-import { InsertResult, UpdateResult } from 'typeorm';
+import { In, InsertResult, UpdateResult } from 'typeorm';
+import { CouponStatusEnum } from '../enums/coupon-status.enum';
 
 @Injectable()
 export class CouponOutletMappingService {
@@ -62,6 +63,22 @@ export class CouponOutletMappingService {
       .find({
         where: {
           outlet: { id: outletId },
+        },
+      });
+
+    return couponOutletMappings.map((mapping) => mapping.coupon);
+  }
+
+  async getAllCouponsByOutletId(
+    outletId: number,
+    status: CouponStatusEnum,
+  ): Promise<CouponEntity[]> {
+    const couponOutletMappings = await this.couponOutletMappingRepository
+      .getRepository()
+      .find({
+        where: {
+          outlet: { id: outletId },
+          coupon: { status },
         },
       });
 

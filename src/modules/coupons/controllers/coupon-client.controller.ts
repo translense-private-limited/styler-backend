@@ -8,6 +8,7 @@ import {
   HttpCode,
   Patch,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CouponService } from '../services/coupon.service';
 import { CreateCouponDto } from '../dtos/create-coupon.dto';
@@ -22,6 +23,9 @@ import { CreateCouponClientDto } from '../dtos/create-coupon-client.dto';
 import { CouponClientService } from '../services/coupon-client.service';
 import { CouponEntity } from '../entities/coupon.entity';
 import { AcceptRejectCouponCodeDto } from '../dtos/accept-reject-coupon-code.dto';
+import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
+import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
+import { CouponStatusEnum } from '../enums/coupon-status.enum';
 
 @Controller('client')
 @ApiTags('Coupons')
@@ -32,12 +36,7 @@ export class CouponClientController {
     private couponClientService: CouponClientService,
   ) {}
 
-  @Post('coupon')
-  async createCoupon(
-    @Body() createCouponDto: CreateCouponClientDto,
-  ): Promise<CouponOutletMappingEntity> {
-    return this.couponClientService.createCoupon(createCouponDto);
-  }
+  // *********************** Admin Coupon Routes ******************************** //
 
   @Get()
   async getAllCouponPublishedByAdmin(): Promise<CouponEntity[]> {
@@ -47,6 +46,67 @@ export class CouponClientController {
   @Get('coupons')
   async getCoupons(): Promise<CouponInterface[]> {
     return this.couponService.getAll();
+  }
+
+  @Put('coupon/action')
+  async acceptRejectCouponCode(
+    @Body() acceptRejectCouponCodeDto: AcceptRejectCouponCodeDto,
+  ): Promise<boolean> {
+    await this.couponClientService.acceptRejectCouponCode(
+      acceptRejectCouponCodeDto,
+    );
+    return true;
+  }
+
+  @Get('coupons/active/outlet/:outletId')
+  async getAllActiveCouponCode(
+    @Param('outletId') outletId: number,
+  ): Promise<CouponEntity[]> {
+    return await this.couponClientService.getAllActiveCouponCode(outletId);
+  }
+
+  //-----------------  need to check --------------//
+  @Get('coupon/:id')
+  async getCouponById(@Param('id') id: number): Promise<CouponInterface> {
+    return this.couponService.findOne(id);
+  }
+
+  // ********************** Client Coupon Routes ******************************* //
+  @Post('coupon')
+  async createCoupon(
+    @Body() createCouponDto: CreateCouponClientDto,
+  ): Promise<CouponOutletMappingEntity> {
+    return this.couponClientService.createCoupon(createCouponDto);
+  }
+
+  @Patch('/outlet/:outletId/coupon/:couponId')
+  async updateCoupon(
+    @Param('couponId') couponId: number,
+    @Param('outletId') outletId: number,
+    @Body() updateCouponDto: Partial<CreateCouponDto>,
+  ): Promise<CouponInterface> {
+    return this.couponClientService.updateCoupon(
+      couponId,
+      outletId,
+      updateCouponDto,
+    );
+  }
+
+  @Delete('outlet/:outletId/coupon/:couponId')
+  @HttpCode(204)
+  async deleteCoupon(
+    @Param('couponId') couponId: number,
+    @Param('outletId') outletId: number,
+  ): Promise<void> {
+    return this.couponClientService.delete(outletId, couponId);
+  }
+
+  @Get('outlet/:outletId/coupons')
+  async getClientCoupons(
+    @Param('outletId') outletId: number,
+    @Query('status') status?: CouponStatusEnum, // Optional query param
+  ): Promise<CouponEntity[]> {
+    return this.couponClientService.getCoupons(outletId, status);
   }
 
   @Get('coupon/outlet/:outletId/is-coupon-code-unique/:couponCode')
@@ -76,42 +136,5 @@ export class CouponClientController {
       isUnique: false,
       coupon: couponCode,
     };
-  }
-
-  @Put('coupon/action')
-  async acceptRejectCouponCode(
-    @Body() acceptRejectCouponCodeDto: AcceptRejectCouponCodeDto,
-  ): Promise<boolean> {
-    await this.couponClientService.acceptRejectCouponCode(
-      acceptRejectCouponCodeDto,
-    );
-    return true;
-  }
-
-  @Get('coupons/active/outlet/:outletId')
-  async getAllActiveCouponCode(
-    @Param('outletId') outletId: number,
-  ): Promise<CouponEntity[]> {
-    return await this.couponClientService.getAllActiveCouponCode(outletId);
-  }
-
-  //-----------------  need to check --------------//
-  @Get('coupon/:id')
-  async getCouponById(@Param('id') id: number): Promise<CouponInterface> {
-    return this.couponService.findOne(id);
-  }
-
-  @Patch('coupon/:id')
-  async updateCoupon(
-    @Param('id') id: number,
-    @Body() updateCouponDto: Partial<CreateCouponDto>,
-  ): Promise<CouponInterface> {
-    return this.couponService.update(id, updateCouponDto);
-  }
-
-  @Delete('coupon/:id')
-  @HttpCode(204)
-  async deleteCoupon(@Param('id') id: number): Promise<void> {
-    return this.couponService.delete(id);
   }
 }
