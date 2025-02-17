@@ -1,6 +1,7 @@
 // auth.guard.ts
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { isPublicKey } from '@src/utils/decorators/public.decorator';
 import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 import { Observable } from 'rxjs';
 
@@ -11,6 +12,13 @@ export class AuthorizationGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): Observable<boolean> | Promise<boolean> | boolean {
+    const isPublic =
+      this.reflector.get<boolean>(isPublicKey, context.getHandler()) ||
+      this.reflector.get<boolean>(isPublicKey, context.getClass());
+
+    if (isPublic) {
+      return true;
+    }
     const req = context.switchToHttp().getRequest();
     const isAuthorizedUserType = this.isUserAuthorizedToAccessPath(req);
     if (!isAuthorizedUserType) {
