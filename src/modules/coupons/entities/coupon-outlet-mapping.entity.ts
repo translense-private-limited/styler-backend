@@ -1,5 +1,6 @@
 import { BaseEntity } from '@src/utils/entities/base.entity';
 import {
+  Column,
   DeleteDateColumn,
   Entity,
   ManyToOne,
@@ -7,6 +8,7 @@ import {
 } from 'typeorm';
 import { CouponEntity } from './coupon.entity';
 import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
+import { CouponActionEnum } from '../enums/coupon-action.enum';
 
 @Entity('coupon_outlet_mapping')
 export class CouponOutletMappingEntity extends BaseEntity {
@@ -23,4 +25,10 @@ export class CouponOutletMappingEntity extends BaseEntity {
 
   @DeleteDateColumn() // This column will be updated on soft delete
   deletedAt?: Date;
+
+  @Column({
+    type: 'enum',
+    enum: CouponActionEnum,
+  })
+  status: CouponActionEnum;
 }

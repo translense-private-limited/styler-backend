@@ -61,6 +61,22 @@ export class CouponService {
     return await this.couponRepository.getRepository().find();
   }
 
+  async findUnmappedGlobalCouponsForOutlet(
+    outletId: number,
+  ): Promise<CouponEntity[]> {
+    return await this.couponRepository.findUnmappedGlobalCouponsForOutlet(
+      outletId,
+    );
+  }
+
+  async getAllGlobalCoupons(): Promise<CouponEntity[]> {
+    return this.couponRepository.getRepository().find({
+      where: {
+        owner: UserTypeEnum.ADMIN,
+      },
+    });
+  }
+
   // Find a coupon by its ID
   async findOne(id: number): Promise<CouponInterface> {
     const coupon = await this.getCouponByIdOrThrow(id);

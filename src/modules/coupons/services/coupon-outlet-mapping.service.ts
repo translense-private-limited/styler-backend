@@ -21,6 +21,14 @@ export class CouponOutletMappingService {
       .save({ outlet, coupon });
   }
 
+  async save(
+    outletMappingEntity: CouponOutletMappingEntity,
+  ): Promise<CouponOutletMappingEntity> {
+    return await this.couponOutletMappingRepository
+      .getRepository()
+      .save(outletMappingEntity);
+  }
+
   async softDelete(id: number): Promise<UpdateResult> {
     return await this.couponOutletMappingRepository
       .getRepository()

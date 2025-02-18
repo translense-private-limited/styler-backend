@@ -36,19 +36,21 @@ export class CouponClientController {
     private couponClientService: CouponClientService,
   ) {}
 
-  // *********************** Admin Coupon Routes ******************************** //
+  // *********************** Global Coupon Routes ******************************** //
 
-  @Get()
-  async getAllCouponPublishedByAdmin(): Promise<CouponEntity[]> {
+  @Get('coupons/global')
+  async getGlobalCoupons(): Promise<CouponEntity[]> {
     return await this.couponClientService.getAllCouponCodePublishedByAdmin();
   }
 
-  @Get('coupons')
-  async getCoupons(): Promise<CouponInterface[]> {
-    return this.couponService.getAll();
-  }
-
-  @Put('coupon/action')
+  /**
+   * Handles HTTP PUT requests to accept or reject a global coupon code.
+   *
+   * @param acceptRejectCouponCodeDto - Data Transfer Object containing the details
+   *                                    required to accept or reject a coupon code.
+   * @description used to accept or reject global coupon
+   */
+  @Put('coupon/global/action')
   async acceptRejectCouponCode(
     @Body() acceptRejectCouponCodeDto: AcceptRejectCouponCodeDto,
   ): Promise<boolean> {
@@ -58,11 +60,18 @@ export class CouponClientController {
     return true;
   }
 
-  @Get('coupons/active/outlet/:outletId')
+  @Get('coupons/global/outlet/:outletId/active')
   async getAllActiveCouponCode(
     @Param('outletId') outletId: number,
   ): Promise<CouponEntity[]> {
-    return await this.couponClientService.getAllActiveCouponCode(outletId);
+    return await this.couponClientService.getAllActiveGlobalCoupon(outletId);
+  }
+
+  @Get('coupons/global/outlet/:outletId/pending')
+  async getAllPendingGlobalCoupon(
+    @Param('outletId') outletId: number,
+  ): Promise<CouponEntity[]> {
+    return await this.couponClientService.getAllActiveGlobalCoupon(outletId);
   }
 
   //-----------------  need to check --------------//

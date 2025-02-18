@@ -111,12 +111,12 @@ export class CouponClientService {
 
   // list all coupon code published by admin
   async getAllCouponCodePublishedByAdmin(): Promise<CouponEntity[]> {
-    return await this.couponService.getAll();
+    return await this.couponService.getAllGlobalCoupons();
   }
 
   async acceptRejectCouponCode(
     acceptRejectCouponCodeDto: AcceptRejectCouponCodeDto,
-  ) {
+  ): Promise<CouponOutletMappingEntity> {
     const { couponCodeId, outletId, flag } = acceptRejectCouponCodeDto;
 
     const coupon = await this.couponService.getCouponByIdOrThrow(couponCodeId);
@@ -129,20 +129,32 @@ export class CouponClientService {
         couponCodeId,
       );
 
-    if (flag === CouponActionEnum.ACCEPT) {
-      if (!couponOutletMapping) {
-        await this.couponOutletMappingService.createCouponOutletMapping(
-          outlet,
-          coupon,
-        );
-      }
-    } else {
-      await this.couponOutletMappingService.softDelete(couponOutletMapping.id);
+    if (couponOutletMapping) {
+      return await this.couponOutletMappingService.save({
+        ...couponOutletMapping,
+        status: flag,
+      });
+    }
+
+    if (!couponOutletMapping) {
+      const couponOutletMappingInstance = new CouponOutletMappingEntity();
+      couponOutletMappingInstance.coupon = coupon;
+      couponOutletMapping.outlet = outlet;
+      couponOutletMapping.status = flag;
+      return await this.couponOutletMappingService.save(
+        couponOutletMappingInstance,
+      );
     }
   }
 
-  async getAllActiveCouponCode(outletId: number): Promise<CouponEntity[]> {
+  async getAllActiveGlobalCoupon(outletId: number): Promise<CouponEntity[]> {
     return await this.couponOutletMappingService.getAllActiveCouponsByOutletId(
+      outletId,
+    );
+  }
+
+  async getAllPendingGlobalCoupon(outletId: number): Promise<CouponEntity[]> {
+    return await this.couponService.findUnmappedGlobalCouponsForOutlet(
       outletId,
     );
   }
