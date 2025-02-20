@@ -14,7 +14,7 @@ export class CouponService {
   constructor(
     private couponRepository: CouponRepository,
     private clientExternalService: ClientExternalService,
-  ) {}
+  ) { }
 
   async save(coupon: CouponEntity): Promise<CouponEntity> {
     return await this.couponRepository.getRepository().save(coupon);
@@ -58,7 +58,11 @@ export class CouponService {
 
   // Find all coupons
   async getAll(): Promise<CouponEntity[]> {
-    return await this.couponRepository.getRepository().find();
+    return await this.couponRepository.getRepository().find({
+      where: {
+        owner: UserTypeEnum.ADMIN
+      }
+    });
   }
 
   async findUnmappedGlobalCouponsForOutlet(

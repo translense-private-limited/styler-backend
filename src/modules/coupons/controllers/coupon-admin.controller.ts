@@ -16,6 +16,7 @@ import { CouponCheckResponseInterface } from '../interfaces/coupon-check-respons
 import { CouponAdminService } from '../services/coupon-admin.service';
 import { CouponEntity } from '../entities/coupon.entity';
 import { CouponOutletMappingEntity } from '../entities/coupon-outlet-mapping.entity';
+import { CouponClientService } from '../services/coupon-client.service';
 
 @Controller('admin')
 @ApiTags('Coupons')
@@ -23,7 +24,9 @@ export class CouponAdminController {
   constructor(
     private couponService: CouponService,
     private couponAdminService: CouponAdminService,
-  ) {}
+    private couponClientService: CouponClientService,
+
+  ) { }
 
   @Post('coupon')
   async createCoupon(
@@ -35,6 +38,13 @@ export class CouponAdminController {
   @Get('coupons')
   async getCoupons(): Promise<CouponInterface[]> {
     return this.couponService.getAll();
+  }
+
+  @Get('coupons/outlet/:outletId')
+  async getCouponsByOutletId(
+    @Param('outletId') outletId: number,
+  ): Promise<CouponInterface[]> {
+    return this.couponClientService.getCoupons(outletId);
   }
 
   @Get('coupon/is-coupon-code-unique/:couponCode')
