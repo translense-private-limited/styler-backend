@@ -34,7 +34,7 @@ export class CouponClientController {
     private couponService: CouponService,
     private couponAdminService: CouponAdminService,
     private couponClientService: CouponClientService,
-  ) {}
+  ) { }
 
   // *********************** Global Coupon Routes ******************************** //
 
@@ -71,7 +71,7 @@ export class CouponClientController {
   async getAllPendingGlobalCoupon(
     @Param('outletId') outletId: number,
   ): Promise<CouponEntity[]> {
-    return await this.couponClientService.getAllActiveGlobalCoupon(outletId);
+    return await this.couponClientService.getAllPendingGlobalCoupon(outletId);
   }
 
   //-----------------  need to check --------------//
@@ -113,7 +113,7 @@ export class CouponClientController {
   @Get('outlet/:outletId/coupons')
   async getClientCoupons(
     @Param('outletId') outletId: number,
-    @Query('status') status?: CouponStatusEnum, // Optional query param
+    @Query('status') status?: CouponStatusEnum,
   ): Promise<CouponEntity[]> {
     return this.couponClientService.getCoupons(outletId, status);
   }

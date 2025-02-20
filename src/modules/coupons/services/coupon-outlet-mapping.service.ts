@@ -5,12 +5,13 @@ import { CouponEntity } from '../entities/coupon.entity';
 import { CouponOutletMappingEntity } from '../entities/coupon-outlet-mapping.entity';
 import { In, InsertResult, UpdateResult } from 'typeorm';
 import { CouponStatusEnum } from '../enums/coupon-status.enum';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 
 @Injectable()
 export class CouponOutletMappingService {
   constructor(
     private couponOutletMappingRepository: CouponOutletMappingRepository,
-  ) {}
+  ) { }
 
   async createCouponOutletMapping(
     outlet: OutletEntity,
@@ -46,6 +47,8 @@ export class CouponOutletMappingService {
           coupon: { id: couponId },
           outlet: { id: outletId },
         },
+        relations: ['coupon', 'outlet'],
+
       });
     return couponOutletMapping;
   }
@@ -71,25 +74,39 @@ export class CouponOutletMappingService {
       .find({
         where: {
           outlet: { id: outletId },
+          coupon: {
+            status: CouponStatusEnum.ACTIVE, isActive: true, owner: UserTypeEnum.ADMIN,
+          },
         },
+        relations: ['coupon', 'outlet'],
       });
 
     return couponOutletMappings.map((mapping) => mapping.coupon);
   }
 
+
+
   async getAllCouponsByOutletId(
     outletId: number,
-    status: CouponStatusEnum,
+    status: CouponStatusEnum
   ): Promise<CouponEntity[]> {
     const couponOutletMappings = await this.couponOutletMappingRepository
       .getRepository()
       .find({
         where: {
           outlet: { id: outletId },
-          coupon: { status },
+          coupon: { owner: UserTypeEnum.CLIENT },
         },
+        relations: ['coupon'],
       });
 
-    return couponOutletMappings.map((mapping) => mapping.coupon);
+    return couponOutletMappings
+      .map((mapping) => mapping.coupon)
+      .filter((coupon) => {
+        if (status === CouponStatusEnum.ACTIVE) return coupon.isActive === true;
+        if (status === CouponStatusEnum.INACTIVE) return coupon.isActive === false;
+        return true;
+      });
   }
+
 }

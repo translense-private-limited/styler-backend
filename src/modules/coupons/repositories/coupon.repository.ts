@@ -23,7 +23,7 @@ export class CouponRepository extends BaseRepository<CouponEntity> {
         'coupon_outlet_mapping',
         'mapping',
         'coupon.id = mapping.couponId AND mapping.outletId = :outletId',
-        { outletId }, // Removed extra quote here
+        { outletId },
       )
       .where('coupon.owner = :owner', { owner: UserTypeEnum.ADMIN })
       .andWhere('mapping.id IS NULL') // Ensures the coupon is NOT mapped

@@ -25,7 +25,7 @@ export class CouponClientService {
     private couponService: CouponService,
     private outletExternalService: OutletExternalService,
     private couponOutletMappingService: CouponOutletMappingService,
-  ) {}
+  ) { }
 
   async getCoupons(
     outletId: number,
@@ -120,32 +120,37 @@ export class CouponClientService {
     const { couponCodeId, outletId, flag } = acceptRejectCouponCodeDto;
 
     const coupon = await this.couponService.getCouponByIdOrThrow(couponCodeId);
-    const outlet =
-      await this.outletExternalService.getOutletByIdOrThrow(outletId);
+    const outlet = await this.outletExternalService.getOutletByIdOrThrow(outletId);
 
-    const couponOutletMapping =
-      await this.couponOutletMappingService.getByCouponAndOutletId(
-        outletId,
-        couponCodeId,
-      );
+    const couponOutletMapping = await this.couponOutletMappingService.getByCouponAndOutletId(
+      outletId,
+      couponCodeId,
+    );
 
     if (couponOutletMapping) {
-      return await this.couponOutletMappingService.save({
-        ...couponOutletMapping,
-        status: flag,
-      });
-    }
-
-    if (!couponOutletMapping) {
-      const couponOutletMappingInstance = new CouponOutletMappingEntity();
-      couponOutletMappingInstance.coupon = coupon;
-      couponOutletMapping.outlet = outlet;
       couponOutletMapping.status = flag;
-      return await this.couponOutletMappingService.save(
-        couponOutletMappingInstance,
-      );
+      if (flag === CouponActionEnum.ACCEPT) {
+        coupon.status = CouponStatusEnum.ACTIVE;
+      } else {
+        coupon.status = CouponStatusEnum.INACTIVE;
+      }
+      await this.couponService.save(coupon);
+      return await this.couponOutletMappingService.save(couponOutletMapping);
+    } else {
+      const newCouponOutletMapping = new CouponOutletMappingEntity();
+      newCouponOutletMapping.coupon = coupon;
+      newCouponOutletMapping.outlet = outlet;
+      newCouponOutletMapping.status = flag;
+      if (flag === CouponActionEnum.ACCEPT) {
+        coupon.status = CouponStatusEnum.ACTIVE;
+      } else {
+        coupon.status = CouponStatusEnum.INACTIVE;
+      }
+      await this.couponService.save(coupon);
+      return await this.couponOutletMappingService.save(newCouponOutletMapping);
     }
   }
+
 
   async getAllActiveGlobalCoupon(outletId: number): Promise<CouponEntity[]> {
     return await this.couponOutletMappingService.getAllActiveCouponsByOutletId(
