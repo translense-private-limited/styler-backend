@@ -1,5 +1,5 @@
 import { BaseEntity } from '@src/utils/entities/base.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class customerCouponRedemption extends BaseEntity {

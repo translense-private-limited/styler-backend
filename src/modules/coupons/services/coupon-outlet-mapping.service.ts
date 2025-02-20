@@ -3,7 +3,7 @@ import { CouponOutletMappingRepository } from '../repositories/coupon-outlet-map
 import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
 import { CouponEntity } from '../entities/coupon.entity';
 import { CouponOutletMappingEntity } from '../entities/coupon-outlet-mapping.entity';
-import { In, InsertResult, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { CouponStatusEnum } from '../enums/coupon-status.enum';
 import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 

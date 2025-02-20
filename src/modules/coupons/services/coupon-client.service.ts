@@ -15,8 +15,6 @@ import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
 import { AcceptRejectCouponCodeDto } from '../dtos/accept-reject-coupon-code.dto';
 import { CouponActionEnum } from '../enums/coupon-action.enum';
 import { CreateCouponDto } from '../dtos/create-coupon.dto';
-import { CouponInterface } from '../interfaces/coupon.interface';
-import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { CouponStatusEnum } from '../enums/coupon-status.enum';
 
 @Injectable()

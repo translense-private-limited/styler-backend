@@ -23,8 +23,6 @@ import { CreateCouponClientDto } from '../dtos/create-coupon-client.dto';
 import { CouponClientService } from '../services/coupon-client.service';
 import { CouponEntity } from '../entities/coupon.entity';
 import { AcceptRejectCouponCodeDto } from '../dtos/accept-reject-coupon-code.dto';
-import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
-import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
 import { CouponStatusEnum } from '../enums/coupon-status.enum';
 
 @Controller('client')
