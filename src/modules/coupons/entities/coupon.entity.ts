@@ -49,7 +49,7 @@ export class CouponEntity extends BaseEntity implements CouponInterface {
   @Column({
     type: 'enum',
     enum: CouponStatusEnum, // Restrict to only these two values
-    default: CouponStatusEnum.ACTIVE, // Default value must be one of them
+    default: CouponStatusEnum.ACCEPTED, // Default value must be one of them
   })
   status: CouponStatusEnum; // Who created the coupon
 

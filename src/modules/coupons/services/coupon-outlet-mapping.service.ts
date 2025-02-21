@@ -75,7 +75,7 @@ export class CouponOutletMappingService {
         where: {
           outlet: { id: outletId },
           coupon: {
-            status: CouponStatusEnum.ACTIVE, isActive: true, owner: UserTypeEnum.ADMIN,
+            status: CouponStatusEnum.ACCEPTED, isActive: true, owner: UserTypeEnum.ADMIN,
           },
         },
         relations: ['coupon', 'outlet'],
@@ -103,8 +103,8 @@ export class CouponOutletMappingService {
     return couponOutletMappings
       .map((mapping) => mapping.coupon)
       .filter((coupon) => {
-        if (status === CouponStatusEnum.ACTIVE) return coupon.isActive === true;
-        if (status === CouponStatusEnum.INACTIVE) return coupon.isActive === false;
+        if (status === CouponStatusEnum.ACCEPTED) return coupon.isActive === true;
+        if (status === CouponStatusEnum.REJECTED) return coupon.isActive === false;
         return true;
       });
   }

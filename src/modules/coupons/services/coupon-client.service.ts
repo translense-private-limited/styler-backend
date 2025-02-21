@@ -128,9 +128,9 @@ export class CouponClientService {
     if (couponOutletMapping) {
       couponOutletMapping.status = flag;
       if (flag === CouponActionEnum.ACCEPT) {
-        coupon.status = CouponStatusEnum.ACTIVE;
+        coupon.status = CouponStatusEnum.ACCEPTED;
       } else {
-        coupon.status = CouponStatusEnum.INACTIVE;
+        coupon.status = CouponStatusEnum.REJECTED;
       }
       await this.couponService.save(coupon);
       return await this.couponOutletMappingService.save(couponOutletMapping);
@@ -140,9 +140,9 @@ export class CouponClientService {
       newCouponOutletMapping.outlet = outlet;
       newCouponOutletMapping.status = flag;
       if (flag === CouponActionEnum.ACCEPT) {
-        coupon.status = CouponStatusEnum.ACTIVE;
+        coupon.status = CouponStatusEnum.ACCEPTED;
       } else {
-        coupon.status = CouponStatusEnum.INACTIVE;
+        coupon.status = CouponStatusEnum.REJECTED;
       }
       await this.couponService.save(coupon);
       return await this.couponOutletMappingService.save(newCouponOutletMapping);
