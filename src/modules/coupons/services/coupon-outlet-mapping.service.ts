@@ -108,5 +108,4 @@ export class CouponOutletMappingService {
         return true;
       });
   }
-
 }
