@@ -12,7 +12,9 @@ import { DiscountTypeEnum } from '../enums/discount-type.enum';
 import { CouponTypeEnum } from '../enums/coupon-type.enum';
 import { CouponInterface } from '../interfaces/coupon.interface';
 
-export class CreateCouponDto implements Omit<CouponInterface, 'id' | 'owner'> {
+export class CreateCouponClientDto
+  implements Omit<CouponInterface, 'id' | 'owner'>
+{
   @IsString()
   code: string;
 
@@ -52,6 +54,6 @@ export class CreateCouponDto implements Omit<CouponInterface, 'id' | 'owner'> {
   @IsBoolean()
   isActive: boolean;
 
-  @IsOptional()
-  outletId?: number | null;
+  @IsNumber()
+  outletId: number | null;
 }

@@ -36,7 +36,7 @@ export class ClientOutletMappingService {
     const { clientId, outletId } = clientOutletIdDto;
 
     await this.clientExternalService.getClientById(clientId);
-    await this.outletExternalService.getOutletById(outletId);
+    await this.outletExternalService.getOutletByIdOrThrow(outletId);
 
     const existingClientOutletMapping =
       await this.getClientOutletMapping(clientOutletIdDto);

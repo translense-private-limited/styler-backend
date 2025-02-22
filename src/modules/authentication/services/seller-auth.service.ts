@@ -49,7 +49,11 @@ export class SellerAuthService implements AuthServiceInterface {
       unauthorized(`Invalid Credentials`);
     }
     const tokenPayload = await this.addHeaderDataForTokenPayload(seller);
-    const jwtToken = await this.jwtService.generateToken(tokenPayload);
+    
+    const jwtToken = await this.jwtService.generateToken({
+      ...tokenPayload,
+      clientId: seller.id,
+    });
     return { seller, jwtToken };
   }
 }

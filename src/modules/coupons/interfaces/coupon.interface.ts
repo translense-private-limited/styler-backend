@@ -1,6 +1,7 @@
 import { DiscountTypeEnum } from '../enums/discount-type.enum';
 import { CouponTypeEnum } from '../enums/coupon-type.enum';
-import { ClientEntity } from '@modules/client/client/entities/client.entity';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
+import { CouponStatusEnum } from '../enums/coupon-status.enum';
 
 export interface CouponInterface {
   id: number;
@@ -13,7 +14,8 @@ export interface CouponInterface {
   perUserRedemptionLimit?: number;
   validFrom: Date;
   validTo: Date;
+  owner: UserTypeEnum.ADMIN | UserTypeEnum.CLIENT;
   couponType: CouponTypeEnum;
   isActive: boolean;
-  createdByClient?: ClientEntity | null;
+  status?: CouponStatusEnum;
 }

@@ -1,9 +1,10 @@
 import { BaseEntity } from '@src/utils/entities/base.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { DiscountTypeEnum } from '../enums/discount-type.enum';
 import { CouponTypeEnum } from '../enums/coupon-type.enum';
 import { CouponInterface } from '../interfaces/coupon.interface';
-import { ClientEntity } from '@modules/client/client/entities/client.entity';
+import { UserTypeEnum } from '@src/utils/enums/user-type.enum';
+import { CouponStatusEnum } from '../enums/coupon-status.enum';
 
 @Entity()
 export class CouponEntity extends BaseEntity implements CouponInterface {
@@ -40,6 +41,20 @@ export class CouponEntity extends BaseEntity implements CouponInterface {
 
   @Column({
     type: 'enum',
+    enum: [UserTypeEnum.ADMIN, UserTypeEnum.CLIENT], // Restrict to only these two values
+    default: UserTypeEnum.ADMIN, // Default value must be one of them
+  })
+  owner: UserTypeEnum.ADMIN | UserTypeEnum.CLIENT; // Who created the coupon
+
+  @Column({
+    type: 'enum',
+    enum: CouponStatusEnum, // Restrict to only these two values
+    default: CouponStatusEnum.ACCEPTED, // Default value must be one of them
+  })
+  status: CouponStatusEnum; // Who created the coupon
+
+  @Column({
+    type: 'enum',
     enum: CouponTypeEnum,
     default: CouponTypeEnum.ONE_TIME,
   })
@@ -50,7 +65,4 @@ export class CouponEntity extends BaseEntity implements CouponInterface {
 
   @Column({ default: true })
   isActive: boolean; // To deactivate coupons
-
-  // @ManyToOne(() => ClientEntity, (client) => client.coupons, { nullable: true })
-  createdByClient: ClientEntity | null; // Can be null if created by admin
 }
