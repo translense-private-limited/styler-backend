@@ -36,8 +36,9 @@ export class CouponAdminController {
     return this.couponAdminService.createCoupon(createCouponDto);
   }
 
-  @Post('outlet/coupon')
+  @Post('coupon/outlet/:outletId')
   async createCouponForOutlet(
+    @Param('outletId') outletId: number,
     @Body() createCouponDto: CreateCouponClientDto,
   ): Promise<CouponOutletMappingEntity> {
     return this.couponClientService.createCoupon(createCouponDto);
