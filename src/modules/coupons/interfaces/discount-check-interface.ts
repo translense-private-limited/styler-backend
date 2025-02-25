@@ -1,4 +1,5 @@
-export interface DiscountCheckResponseInterface {
-    couponId: number,
-    totalDiscount: number,
+export interface CouponApplicabilityMetricsInterface {
+    couponId: number;
+    discountAmount: number;
+    isApplicable: boolean;
 }

@@ -1,11 +1,10 @@
-import { CouponInterface } from "@modules/coupons/interfaces/coupon.interface";
+import { CouponInterface } from '@modules/coupons/interfaces/coupon.interface';
 
-export const getCouponDiscountAmount = (coupon: CouponInterface, totalPrice: number): number => {
+export const evaluateCouponApplicability = (coupon: CouponInterface, totalPrice: number): number => {
     let discountAmount = 0;
 
     if (coupon.discountType === 'PERCENTAGE') {
         discountAmount = (totalPrice * coupon.discountValue) / 100;
-
         if (coupon.maximumDiscountCapping) {
             discountAmount = Math.min(discountAmount, coupon.maximumDiscountCapping);
         }

@@ -2,12 +2,13 @@ import {
     Injectable,
 } from '@nestjs/common';
 import { CouponEntity } from '../entities/coupon.entity';
-import { CheckDiscountDto } from '../dtos/check-discount.dto';
+import { CheckCouponApplicabilityDto } from '../dtos/check-coupon-applicability-dto';
 import { CouponService } from './coupon.service';
 import { ApplicableCouponEntity } from '../entities/applicable-coupon.entity';
-import { DiscountCheckResponseInterface } from '../interfaces/discount-check-interface';
-import { getCouponDiscountAmount } from '@src/utils/helpers/calculate-discount';
+import { CouponApplicabilityMetricsInterface } from '../interfaces/discount-check-interface';
+import { evaluateCouponApplicability } from '@src/utils/helpers/evaluate-coupon-applicability';
 import { CouponOutletMappingService } from './coupon-outlet-mapping.service';
+import { ApplicableCouponsDto } from '../dtos/applicable-coupons-dto';
 
 @Injectable()
 export class CouponCustomerService {
@@ -17,16 +18,17 @@ export class CouponCustomerService {
 
     ) { }
 
-    async getAllActiveCustomerCouponsByOutletId(
+    async getAllActiveCouponsByOutletId(
         outletId: number,
     ): Promise<CouponEntity[]> {
         return await this.couponOutletMappingService.getAllCustomerCouponsByOutletId(outletId)
     }
-    async getApplicableCoupons(
-        outletId: number,
-        totalPrice: number,
+    async getApplicableCouponsForOrder(
+        queryParams: ApplicableCouponsDto
     ): Promise<ApplicableCouponEntity[]> {
-        const coupons = await this.getAllActiveCustomerCouponsByOutletId(outletId);
+        const { outletId, totalPrice } = queryParams;
+
+        const coupons = await this.getAllActiveCouponsByOutletId(outletId);
 
         return coupons.map((coupon) => {
             const applicableCoupon = new ApplicableCouponEntity();
@@ -35,17 +37,24 @@ export class CouponCustomerService {
             return applicableCoupon;
         });
     }
-    async getDiscountOnCoupon(
-        checkDiscountDto: CheckDiscountDto
-    ): Promise<DiscountCheckResponseInterface> {
-        const { couponId, totalPrice } = checkDiscountDto;
+
+    async getCouponApplicabilityMetrics(
+        checkCouponApplicabilityDto: CheckCouponApplicabilityDto
+    ): Promise<CouponApplicabilityMetricsInterface> {
+        const { couponId, totalPrice } = checkCouponApplicabilityDto;
+
         const coupon = await this.couponService.getCouponByIdOrThrow(couponId);
 
+        const discountAmount = evaluateCouponApplicability(coupon, totalPrice);
+        const isApplicable = totalPrice >= (coupon.minOrderValue ?? 0);
+
         return {
-            couponId,
-            totalDiscount: getCouponDiscountAmount(coupon, totalPrice),
+            couponId: couponId,
+            discountAmount,
+            isApplicable,
         };
     }
+
 
 
 

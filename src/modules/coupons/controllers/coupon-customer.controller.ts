@@ -10,10 +10,10 @@ import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CouponEntity } from '../entities/coupon.entity';
 
 import { CouponCustomerService } from '../services/coupon-customer.service';
-import { CheckDiscountDto } from '../dtos/check-discount.dto';
 import { ApplicableCouponEntity } from '../entities/applicable-coupon.entity';
 import { ApplicableCouponsDto } from '../dtos/applicable-coupons-dto';
-import { DiscountCheckResponseInterface } from '../interfaces/discount-check-interface';
+import { CouponApplicabilityMetricsInterface } from '../interfaces/discount-check-interface';
+import { CheckCouponApplicabilityDto } from '../dtos/check-coupon-applicability-dto';
 
 @Controller('customer')
 @ApiTags('Coupons')
@@ -26,7 +26,7 @@ export class CouponCustomerController {
     @Get('coupons/outlet/:outletId')
     async getAllCouponsForOutlet(@Param('outletId') outletId: number,
     ): Promise<CouponEntity[]> {
-        return await this.couponCustomerService.getAllActiveCustomerCouponsByOutletId(outletId);
+        return await this.couponCustomerService.getAllActiveCouponsByOutletId(outletId);
     }
     @Get('coupons/outlet/:outletId/applicable')
     @ApiQuery({ name: 'totalPrice', type: Number, required: true })
@@ -34,13 +34,14 @@ export class CouponCustomerController {
         @Param('outletId') outletId: number,
         @Query() queryParams: ApplicableCouponsDto,
     ): Promise<ApplicableCouponEntity[]> {
-        return await this.couponCustomerService.getApplicableCoupons(outletId, queryParams.totalPrice);
+        return await this.couponCustomerService.getApplicableCouponsForOrder(queryParams);
     }
 
-    @Post('coupon/discount')
-    async checkDiscount(
-        @Body() checkDiscountDto: CheckDiscountDto,
-    ): Promise<DiscountCheckResponseInterface> {
-        return await this.couponCustomerService.getDiscountOnCoupon(checkDiscountDto);
+    @Post('coupon/applicability')
+    async checkCouponApplicability(
+        @Body() checkCouponApplicabilityDto: CheckCouponApplicabilityDto,
+    ): Promise<CouponApplicabilityMetricsInterface> {
+        return await this.couponCustomerService.getCouponApplicabilityMetrics(checkCouponApplicabilityDto);
     }
+
 }
