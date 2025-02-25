@@ -5,7 +5,6 @@ import { getMysqlDataSource } from '@modules/database/data-source';
 import { CouponService } from './services/coupon.service';
 import { CouponRepository } from './repositories/coupon.repository';
 import { CouponAdminController } from './controllers/coupon-admin.controller';
-
 import { CouponOutletMappingEntity } from './entities/coupon-outlet-mapping.entity';
 import { CouponAdminService } from './services/coupon-admin.service';
 import { CouponOutletMappingRepository } from './repositories/coupon-outlet-mapping.repository';
@@ -14,6 +13,8 @@ import { ClientModule } from '@modules/client/client.module';
 import { CouponOutletMappingService } from './services/coupon-outlet-mapping.service';
 import { CouponClientController } from './controllers/coupon-client.controller';
 import { CouponClientService } from './services/coupon-client.service';
+import { CouponCustomerController } from './controllers/coupon-customer.controller';
+import { CouponCustomerService } from './services/coupon-customer.service';
 
 @Module({
   imports: [
@@ -31,8 +32,9 @@ import { CouponClientService } from './services/coupon-client.service';
     CouponOutletMappingService,
     CouponOutletMappingRepository,
     CouponClientService,
+    CouponCustomerService,
   ],
-  controllers: [CouponAdminController, CouponClientController],
+  controllers: [CouponAdminController, CouponClientController, CouponCustomerController],
   exports: [],
 })
-export class CouponModule {}
+export class CouponModule { }

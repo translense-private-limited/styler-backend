@@ -42,10 +42,9 @@ export class OrderService {
     private readonly appointmentService: AppointmentService,
     private readonly appointmentRepository: AppointmentRepository,
     private readonly clientOrderService: ClientOrderService,
-  ) {}
+  ) { }
 
-  /*This method processes each orderItem from the provided list, retrieves the corresponding service details using serviceExternalService, and constructs an expanded order item with the service details, quantity, outlet ID, and notes.
-  It returns an array of expanded order items with all necessary data for further processing.*/
+
   private async expandOrderItem(
     orderItems: OrderItemPayloadDto[],
   ): Promise<ExpandedOrderItemInterface[]> {
@@ -517,15 +516,15 @@ export class OrderService {
           outletWebsite: outlet.website,
           address: outlet.address
             ? {
-                addressId: outlet.address.addressId,
-                country: outlet.address.country,
-                state: outlet.address.state,
-                district: outlet.address.district,
-                city: outlet.address.city,
-                pincode: outlet.address.pincode,
-                street: outlet.address.street,
-                landmark: outlet.address.landmark,
-              }
+              addressId: outlet.address.addressId,
+              country: outlet.address.country,
+              state: outlet.address.state,
+              district: outlet.address.district,
+              city: outlet.address.city,
+              pincode: outlet.address.pincode,
+              street: outlet.address.street,
+              landmark: outlet.address.landmark,
+            }
             : null,
         };
       }

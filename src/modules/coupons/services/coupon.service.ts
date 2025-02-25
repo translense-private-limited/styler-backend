@@ -64,6 +64,15 @@ export class CouponService {
       }
     });
   }
+  async getAllCustomerCoupon(outletId: number,
+  ): Promise<CouponEntity[]> {
+    return await this.couponRepository.getRepository().find({
+      where: {
+        owner: UserTypeEnum.ADMIN,
+        id: outletId
+      }
+    });
+  }
 
   async findUnmappedGlobalCouponsForOutlet(
     outletId: number,
