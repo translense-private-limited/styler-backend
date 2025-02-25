@@ -1,6 +1,6 @@
 import { CouponInterface } from "@modules/coupons/interfaces/coupon.interface";
 
-export const calculateDiscount = (coupon: CouponInterface, totalPrice: number): number => {
+export const getCouponDiscountAmount = (coupon: CouponInterface, totalPrice: number): number => {
     let discountAmount = 0;
 
     if (coupon.discountType === 'PERCENTAGE') {

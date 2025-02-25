@@ -84,7 +84,23 @@ export class CouponOutletMappingService {
     return couponOutletMappings.map((mapping) => mapping.coupon);
   }
 
+  async getAllCustomerCouponsByOutletId(
+    outletId: number,
+  ): Promise<CouponEntity[]> {
+    const couponOutletMappings = await this.couponOutletMappingRepository
+      .getRepository()
+      .find({
+        where: {
+          outlet: { id: outletId },
+          coupon: {
+            status: CouponStatusEnum.ACCEPTED, isActive: true,
+          },
+        },
+        relations: ['coupon', 'outlet'],
+      });
 
+    return couponOutletMappings.map((mapping) => mapping.coupon);
+  }
 
   async getAllCouponsByOutletId(
     outletId: number,
