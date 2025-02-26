@@ -36,7 +36,7 @@ export class CouponAdminController {
     return this.couponAdminService.createCoupon(createCouponDto);
   }
 
-  @Post('coupon/outlet/:outletId')
+  @Post('outlet/:outletId/coupon')
   async createCouponForOutlet(
     @Param('outletId') outletId: number,
     @Body() createCouponDto: CreateCouponClientDto,
