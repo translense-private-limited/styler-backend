@@ -17,6 +17,7 @@ import { CouponAdminService } from '../services/coupon-admin.service';
 import { CouponEntity } from '../entities/coupon.entity';
 import { CouponOutletMappingEntity } from '../entities/coupon-outlet-mapping.entity';
 import { CouponClientService } from '../services/coupon-client.service';
+import { CreateCouponClientDto } from '../dtos/create-coupon-client.dto';
 
 @Controller('admin')
 @ApiTags('Coupons')
@@ -33,6 +34,14 @@ export class CouponAdminController {
     @Body() createCouponDto: CreateCouponDto,
   ): Promise<CouponEntity | CouponOutletMappingEntity> {
     return this.couponAdminService.createCoupon(createCouponDto);
+  }
+
+  @Post('outlet/:outletId/coupon')
+  async createCouponForOutlet(
+    @Param('outletId') outletId: number,
+    @Body() createCouponDto: CreateCouponClientDto,
+  ): Promise<CouponOutletMappingEntity> {
+    return this.couponClientService.createCoupon(createCouponDto);
   }
 
   @Get('coupons')
