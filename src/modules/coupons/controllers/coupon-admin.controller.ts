@@ -28,7 +28,6 @@ export class CouponAdminController {
     private couponService: CouponService,
     private couponAdminService: CouponAdminService,
     private couponClientService: CouponClientService,
-
   ) { }
 
   @Post('coupon')
@@ -43,7 +42,7 @@ export class CouponAdminController {
     @Param('outletId') outletId: number,
     @Body() createCouponDto: CreateCouponClientDto,
   ): Promise<CouponOutletMappingEntity> {
-    return this.couponClientService.createCoupon(createCouponDto);
+    return this.couponAdminService.createCouponForOutlet(createCouponDto);
   }
 
   @Get('coupons')
@@ -55,7 +54,7 @@ export class CouponAdminController {
   async getCouponsByOutletId(
     @Param('outletId') outletId: number,
   ): Promise<CouponInterface[]> {
-    return this.couponClientService.getCoupons(outletId);
+    return this.couponAdminService.getCouponsForOutlet(outletId);
   }
 
   @Get('coupon/is-coupon-code-unique/:couponCode')
@@ -65,37 +64,30 @@ export class CouponAdminController {
     return await this.couponService.isCouponCodeUnique(couponCode);
   }
 
-  @Get('coupon/:id')
-  async getCouponById(@Param('id') id: number): Promise<CouponInterface> {
-    return this.couponService.findOne(id);
+  @Get('coupon/:couponId')
+  async getCouponById(@Param('couponId') couponId: number): Promise<CouponInterface> {
+    return this.couponService.findOne(couponId);
   }
 
-  @Patch('coupon/:id/update')
+  @Patch('coupon/:couponId')
   async updateCouponForGlobal(
-    @Param('id') id: number,
+    @Param('couponId') couponId: number,
     @Body() updateCouponDto: Partial<CreateCouponDto>,
   ): Promise<CouponInterface> {
-    return this.couponService.update(id, updateCouponDto);
+    return this.couponService.update(couponId, updateCouponDto);
   }
 
-  @Delete('coupon/:id/delete')
+  @Delete('coupon/:couponId')
   @HttpCode(204)
-  async deleteCouponForGlobal(@Param('id') id: number): Promise<void> {
-    return this.couponService.delete(id);
-  }
-
-  // API's for CouponsForOutlet
-
-  @Get('coupons/global')
-  async getGlobalCouponsForOutlet(): Promise<CouponEntity[]> {
-    return await this.couponClientService.getAllCouponCodePublishedByAdmin();
+  async deleteCouponForGlobal(@Param('couponId') couponId: number): Promise<void> {
+    return this.couponService.delete(couponId);
   }
 
   @Put('coupon/global/action')
-  async acceptRejectCouponCodeForGlobal(
+  async acceptRejectGlobalCouponForOutlet(
     @Body() acceptRejectCouponCodeDto: AcceptRejectCouponCodeDto,
   ): Promise<boolean> {
-    await this.couponClientService.acceptRejectCouponCode(
+    await this.couponAdminService.acceptRejectCouponForOutlet(
       acceptRejectCouponCodeDto,
     );
     return true;
@@ -105,35 +97,36 @@ export class CouponAdminController {
   async getAllActiveCouponCodeForOutlet(
     @Param('outletId') outletId: number,
   ): Promise<CouponEntity[]> {
-    return await this.couponClientService.getAllActiveGlobalCoupon(outletId);
+    return await this.couponAdminService.getAllActiveGlobalCouponForOutlet(outletId);
   }
+
   @Get('outlet/:outletId/coupons/global/pending')
   async getAllPendingGlobalCouponForOutlet(
     @Param('outletId') outletId: number,
   ): Promise<CouponEntity[]> {
-    return await this.couponClientService.getAllPendingGlobalCoupon(outletId);
+    return await this.couponAdminService.getAllPendingGlobalCouponForOutlet(outletId);
   }
 
-  @Patch('/outlet/:outletId/coupon/:couponId/update')
+  @Patch('/outlet/:outletId/coupon/:couponId')
   async updateCouponForOutlet(
     @Param('couponId') couponId: number,
     @Param('outletId') outletId: number,
     @Body() updateCouponDto: Partial<CreateCouponDto>,
   ): Promise<CouponInterface> {
-    return this.couponClientService.updateCoupon(
+    return this.couponAdminService.updateCouponForOutlet(
       couponId,
       outletId,
       updateCouponDto,
     );
   }
 
-  @Delete('outlet/:outletId/coupon/:couponId/delete')
+  @Delete('outlet/:outletId/coupon/:couponId')
   @HttpCode(204)
   async deleteCouponForOutlet(
     @Param('couponId') couponId: number,
     @Param('outletId') outletId: number,
   ): Promise<void> {
-    return this.couponClientService.delete(outletId, couponId);
+    return this.couponAdminService.deleteCouponForOutlet(outletId, couponId);
   }
 
   @Get('coupon/outlet/:outletId/is-coupon-code-unique/:couponCode')
@@ -141,26 +134,7 @@ export class CouponAdminController {
     @Param('couponCode') couponCode: string,
     @Param('outletId') outletId: number,
   ): Promise<CouponCheckResponseInterface> {
-    const response =
-      await this.couponClientService.doesCouponCodeExistForOutlet(
-        couponCode,
-        outletId,
-      );
-
-    if (!response) {
-      return {
-        success: true,
-        message: 'Coupon code is unique.',
-        isUnique: true,
-        coupon: couponCode,
-      };
-    }
-    return {
-      success: false,
-      message:
-        'The coupon code is already present with the provided code. Please choose a unique code.',
-      isUnique: false,
-      coupon: couponCode,
-    };
+    return await this.couponAdminService.isCouponCodeUniqueForOutlet(couponCode, outletId);
   }
+
 }
