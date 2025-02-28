@@ -77,7 +77,6 @@ export class CouponClientService {
     );
   }
 
-  // return true if coupon exist with provided name
   async doesCouponCodeExistForOutlet(
     couponCode: string,
     outletId: number,
@@ -107,7 +106,6 @@ export class CouponClientService {
     return !!couponOutletMapping;
   }
 
-  // list all coupon code published by admin
   async getAllCouponCodePublishedByAdmin(): Promise<CouponEntity[]> {
     return await this.couponService.getAllGlobalCoupons();
   }
