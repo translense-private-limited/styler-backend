@@ -1,4 +1,4 @@
 export enum CouponStatusEnum {
-  ACCEPTED = 'ACCEPTED',
-  REJECTED = 'REJECTED',
+  ACCEPTED = 'ACTIVE',
+  REJECTED = 'INACTIVE',
 }

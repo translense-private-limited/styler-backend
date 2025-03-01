@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { BaseEntity } from '@src/utils/entities/base.entity';
 import { BookingStatusEnum } from '../enums/booking-status.enum';
+import { AppointmentSourceEnum } from '../enums/booking-source.enum';
 
 @Entity('appointments')
 export class AppointmentEntity extends BaseEntity {
@@ -34,4 +35,11 @@ export class AppointmentEntity extends BaseEntity {
 
   @Column({ type: 'datetime', nullable: true })
   actualEndTime?: Date; // The actual end time of the appointment, if it occurred
+
+  @Column({
+    type: 'enum',
+    enum: AppointmentSourceEnum,
+    default: AppointmentSourceEnum.CUSTOMER,
+  })
+  appointmentSource: AppointmentSourceEnum; // Status of the appointment
 }

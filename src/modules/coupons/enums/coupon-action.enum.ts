@@ -1,4 +1,4 @@
 export enum CouponActionEnum {
-  ACCEPT = 'accept',
-  REJECT = 'reject',
+  ACCEPT = 'ACCEPT',
+  REJECT = 'REJECT',
 }
