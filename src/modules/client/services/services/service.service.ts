@@ -14,7 +14,7 @@ export class ServiceService {
   constructor(
     private readonly serviceRepository: ServiceRepository,
     private readonly categoryExternal: CategoryExternal,
-  ) {}
+  ) { }
 
   async createService(createServiceDto: ServiceDto): Promise<ServiceSchema> {
     await this.categoryExternal.getCategoryById(createServiceDto.categoryId);
@@ -39,7 +39,7 @@ export class ServiceService {
     const service = await this.serviceRepository
       .getRepository()
       .findById(serviceId);
-    throwIfNotFound(service,'no service exist with provided Id')
+    throwIfNotFound(service, 'no service exist with provided Id')
     return service;
   }
 
@@ -60,7 +60,7 @@ export class ServiceService {
   async updateServiceById(
     serviceId: string,
     updateServiceDto: Partial<ServiceDto>,
-  ): Promise<ServiceSchema> {    
+  ): Promise<ServiceSchema> {
     const updatedService = await this.serviceRepository
       .getRepository()
       .findByIdAndUpdate(
@@ -99,11 +99,11 @@ export class ServiceService {
   }
 
   async addSubtypeToExistingService(
-    serviceId: string, 
+    serviceId: string,
     subtype: SubtypeDto
   ): Promise<ServiceSchema> {
     const service = await this.getServiceByIdOrThrow(serviceId);
-  
+
     // Generate a unique ID for the new subtype
     const newSubtype = {
       id: uuidv4(),
@@ -120,18 +120,18 @@ export class ServiceService {
     updatedSubtype: Partial<SubtypeDto>
   ): Promise<ServiceSchema> {
     const service = await this.getServiceByIdOrThrow(serviceId);
-  
+
     // Find the subtype by its unique subtypeId
     const subtype = service.subtypes.find(subtype => subtype.id === subtypeId);
     if (!subtype) {
       throw new Error(`Subtype with ID ${subtypeId} not found in service ${serviceId}`);
     }
-  
+
     Object.assign(subtype, updatedSubtype);
     service.markModified('subtypes');
     return service.save();
   }
-  
+
   async deleteSubtype(serviceId: string, subtypeId: string): Promise<void> {
     try {
       // Remove the specific subtype from the service's subtypes array
@@ -139,7 +139,7 @@ export class ServiceService {
         { _id: serviceId, "subtypes.id": subtypeId },
         { $pull: { subtypes: { id: subtypeId } } }   // Remove the subtype by id
       );
-  
+
       // Check if the operation was successful
       if (result.modifiedCount === 0) {
         throw new Error(
@@ -154,10 +154,10 @@ export class ServiceService {
   // Delete from serviceImages
   async deleteServiceImageKey(key: string): Promise<void> {
     const result = await this.serviceRepository.getRepository().updateOne(
-      { serviceImages: { $in: [key] } }, 
+      { serviceImages: { $in: [key] } },
       { $pull: { serviceImages: key } }
     );
-    
+
     if (result.modifiedCount === 0) {
       badRequest('Service image not found');
     }
@@ -169,7 +169,7 @@ export class ServiceService {
       { serviceVideos: { $in: [key] } }, // Find a document where the array contains the key
       { $pull: { serviceVideos: key } } // Remove the key from the array
     );
-    
+
     if (result.modifiedCount === 0) {
       badRequest('Service video not found');
     }
@@ -177,13 +177,13 @@ export class ServiceService {
 
   async getAllServiceImageKeysForAnOutlet(outletId: number): Promise<Partial<ServiceSchema>[]> {
     const fields = ['id', 'serviceImages', 'serviceVideos', 'subtypes'];
-  
+
     return this.serviceRepository.getRepository().findOne({
       where: { outletId },
       select: fields,
     });
   }
-  
+
   // Delete from subtypes (subtypeImages)
   async deleteServiceSubtypeImageKey(key: string): Promise<void> {
     const result = await this.serviceRepository.getRepository().updateOne(
@@ -195,13 +195,13 @@ export class ServiceService {
       badRequest('Service subtype image not found');
     }
   }
-  
+
   private assignIdsToSubtypes(subtypes?: SubtypeDto[]): void {
-  if (subtypes) {
-    subtypes.forEach(subtype => {
-      subtype['id'] = uuidv4();  // Assign a unique ID to the subtype
-    });
-  }
+    if (subtypes) {
+      subtypes.forEach(subtype => {
+        subtype['id'] = uuidv4();  // Assign a unique ID to the subtype
+      });
+    }
   }
 
 }

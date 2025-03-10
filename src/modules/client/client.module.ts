@@ -7,7 +7,7 @@ import { ClientOutletMappingModule } from '@modules/admin/client-outlet-mapping/
 import { AuthorizationModule } from '@modules/authorization/authorization.module';
 
 @Module({
-  imports: [OutletModule, ClientUserModule, ClientOutletMappingModule,AuthorizationModule,],
+  imports: [OutletModule, ClientUserModule, ClientOutletMappingModule, AuthorizationModule,],
   exports: [ClientUserModule],
 })
-export class ClientModule {}
+export class ClientModule { }
