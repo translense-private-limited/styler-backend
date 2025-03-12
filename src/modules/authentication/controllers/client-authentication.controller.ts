@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   HttpStatus,
+  Param,
   Post,
+  Put,
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -12,11 +14,15 @@ import { Response } from 'express';
 
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Public } from '@src/utils/decorators/public.decorator';
+import { ResetClientPasswordDto } from '../dtos/admin-reset-client-password.dto';
+import { ClientExternalService } from '@modules/client/client/services/client-external.service';
 
 @Controller('client')
 @ApiTags('Auth')
 export class ClientAuthController {
-  constructor(private clientAuthService: SellerAuthService) {}
+  constructor(private clientAuthService: SellerAuthService,
+    private readonly clientExternalService: ClientExternalService
+  ) { }
 
   @Post('login')
   @Public()
@@ -41,5 +47,14 @@ export class ClientAuthController {
     } catch (error) {
       throw new UnauthorizedException('Invalid Credentials', error.message);
     }
+  }
+
+  @Put('reset-password/:clientId')
+  async resetPassword(
+    @Param('clientId') clientId: number,
+    @Body() resetPasswordDto: ResetClientPasswordDto
+  ): Promise<String> {
+    return await this.clientExternalService.resetClientPassword(clientId, resetPasswordDto);
+
   }
 }
