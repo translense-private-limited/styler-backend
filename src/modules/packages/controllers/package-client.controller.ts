@@ -11,7 +11,7 @@ import { UpdatePackageDto } from "../dtos/update-package.dto";
 import { CreatePackageDto } from "../dtos/create-package-dto";
 import { ApiTags } from "@nestjs/swagger";
 import { PackageSchema } from "../schema/package-schema";
-import { PackageClientService } from "../services/package.client.service";
+import { PackageClientService } from "../services/package-client.service";
 
 @Controller('client')
 @ApiTags('Packages')

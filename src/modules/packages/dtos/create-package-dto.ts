@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ServiceWithDiscountDto } from './service-with-discount-dto';
 
@@ -14,17 +14,17 @@ export class CreatePackageDto {
     services: ServiceWithDiscountDto[];
 
     @IsNumber()
-    price: number; // Total price of the package
+    price: number;
+
+    @IsOptional()
+    @IsNumber()
+    discount?: number;
 
     @IsNumber()
-    discount: number; // Total discount for the package
+    totalDuration: number;
+    @IsNumber()
+    outletId: number;
 
     @IsNumber()
-    totalDuration: number; // Total duration of the package
-
-    @IsNumber()
-    outletId: number; // ID of the outlet
-
-    @IsNumber()
-    whitelabelId: number; // ID of the whitelabel
+    whitelabelId: number;
 }
