@@ -8,11 +8,11 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('CustomerAuth')
 @Controller('customer')
-@Public() // This marks the entire controller as public
+@Public()
 export class CustomerAuthenticationController {
   constructor(
-    private readonly customerAuthenticationService: CustomerAuthenticationService, // Added `readonly` for immutability
-  ) {}
+    private readonly customerAuthenticationService: CustomerAuthenticationService,
+  ) { }
 
   @Post('signup')
   async registerCustomer(
