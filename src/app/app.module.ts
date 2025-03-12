@@ -31,6 +31,7 @@ import { SeedModule } from '@modules/seed/seed.module';
 import { NotificationModule } from '@src/utils/notification/notification.module';
 import { CloudStorageModule } from '@modules/cloud-storage/cloud-storage.module';
 import { AuthorizationGuard } from '@modules/authorization/gaurds/authorization.gaurd';
+import { PackageModule } from '@modules/packages/package.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { AuthorizationGuard } from '@modules/authorization/gaurds/authorization.
     SeedModule,
     NotificationModule,
     CloudStorageModule,
+    PackageModule,
   ],
   controllers: [AppController, ImageController],
   providers: [
