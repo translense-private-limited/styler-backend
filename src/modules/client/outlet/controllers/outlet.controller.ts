@@ -7,10 +7,10 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { OutletInterface } from '../interfaces/outlet.interface';
 import { OutletFilterDto } from '../dtos/outlet-filter.dto';
 
-@Controller('client/outlets') // Global route
+@Controller('client/outlets')
 @ApiTags('Outlet')
 export class OutletController {
-  constructor(private readonly outletService: OutletService) {}
+  constructor(private readonly outletService: OutletService) { }
 
   @Post() // POST /outlets
   async createOutlet(
@@ -24,9 +24,9 @@ export class OutletController {
   async getAllOutlets(
     @Query() filterDto: OutletFilterDto,
   ): Promise<OutletInterface[]> {
-    return this.outletService.getAllOutlets(filterDto); 
+    return this.outletService.getAllOutlets(filterDto);
   }
-  
+
   @Get(':outletId')
   @ApiBearerAuth('jwt')
   async getOutletById(
