@@ -14,7 +14,7 @@ export class OutletService {
   constructor(
     private outletRepository: OutletRepository,
 
-  ) {}
+  ) { }
 
   async createOutlet(createAddressDto: CreateOutletDto): Promise<OutletEntity> {
     const outlet = await this.outletRepository
@@ -24,21 +24,23 @@ export class OutletService {
   }
 
   // Fetch all outlets
-  async getAllOutlets(filterDto:OutletFilterDto): Promise<OutletInterface[]> {
+  async getAllOutlets(filterDto: OutletFilterDto): Promise<OutletInterface[]> {
     return this.outletRepository.getAllOutletsWithOwner(filterDto);
   }
 
   async getOutletByIdOrThrow(outletId: number): Promise<OutletEntity> {
     const outlet = await this.outletRepository
       .getRepository()
-      .findOne({ where: { id: outletId },
-      relations:['address'] });
+      .findOne({
+        where: { id: outletId },
+        relations: ['address']
+      });
 
-    throwIfNotFound(outlet,`outlet with ${outletId} not found`)
+    throwIfNotFound(outlet, `outlet with ${outletId} not found`)
     return outlet;
   }
 
-  async deleteOutletByIdOrThrow(outletId: number,deleteOutletDto:DeleteOutletDto): Promise<string> {
+  async deleteOutletByIdOrThrow(outletId: number, deleteOutletDto: DeleteOutletDto): Promise<string> {
 
     if (!deleteOutletDto.confirmation) {
       throw new Error('Confirmation is required to delete the outlet.');
@@ -47,7 +49,7 @@ export class OutletService {
     const outlet = await this.outletRepository.getRepository().findOne({
       where: { id: outletId },
     });
-    throwIfNotFound(outlet,`Outlet with ID ${outletId} not found`)
+    throwIfNotFound(outlet, `Outlet with ID ${outletId} not found`)
 
     await this.outletRepository.getRepository().remove(outlet);
 
@@ -58,16 +60,19 @@ export class OutletService {
     return await this.outletRepository.getRepository().findOne({ where: { email } });
   }
 
-  async getOutletByContactNumber(contactNumber:string):Promise<OutletEntity>{
-    return await this.outletRepository.getRepository().findOne({where:{phoneNumber:contactNumber}})
+  async getOutletByContactNumber(contactNumber: string): Promise<OutletEntity> {
+    return await this.outletRepository.getRepository().findOne({ where: { phoneNumber: contactNumber } })
   }
 
-  async getOutletDetailsByIds(outletIds:number[]):Promise<OutletEntity[]>{
+  async getOutletDetailsByIds(outletIds: number[]): Promise<OutletEntity[]> {
     return this.outletRepository.getRepository().find({
-      where:{id:In(outletIds)},
-      relations:['address']
+      where: { id: In(outletIds) },
+      relations: ['address']
     })
   }
+
+
+
 }
 
 
