@@ -19,26 +19,29 @@ import { UtilsModule } from '@src/utils/utils.module';
 import { OutletDocsEntity } from './entities/outlet-docs.entity';
 import { OutletDocsRepository } from './repositories/outlet-docs.repository';
 import { OutletDocsService } from './services/outlet-docs-service';
+import { OutletClientController } from './controllers/outlet-client-controller';
+import { OutletClientService } from './services/outlet-client-service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OutletEntity,OutletDocsEntity], getMysqlDataSource()),
-  ServiceModule,
-  ClientUserModule,
-  ClientOutletMappingModule,
-  AuthorizationModule,
-  UtilsModule,
-],
+  imports: [TypeOrmModule.forFeature([OutletEntity, OutletDocsEntity], getMysqlDataSource()),
+    ServiceModule,
+    ClientUserModule,
+    ClientOutletMappingModule,
+    AuthorizationModule,
+    UtilsModule,
+  ],
   providers: [
     OutletService,
     OutletRepository,
     OutletExternalService,
     OutletCustomerService,
     OutletAdminService,
+    OutletClientService,
     OutletDocsRepository,
     OutletDocsService
   ],
-  controllers: [OutletController, OutletCustomerController,OutletAdminController],
-  exports: [OutletExternalService,OutletRepository],
+  controllers: [OutletController, OutletCustomerController, OutletAdminController, OutletClientController],
+  exports: [OutletExternalService, OutletRepository],
 
 })
-export class OutletModule {}
+export class OutletModule { }
