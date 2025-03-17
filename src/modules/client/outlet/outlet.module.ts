@@ -21,6 +21,7 @@ import { OutletDocsRepository } from './repositories/outlet-docs.repository';
 import { OutletDocsService } from './services/outlet-docs-service';
 import { OutletClientController } from './controllers/outlet-client-controller';
 import { OutletClientService } from './services/outlet-client-service';
+import { EncryptionModule } from '@modules/encryption/encryption.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OutletEntity, OutletDocsEntity], getMysqlDataSource()),
@@ -29,6 +30,7 @@ import { OutletClientService } from './services/outlet-client-service';
     ClientOutletMappingModule,
     AuthorizationModule,
     UtilsModule,
+    EncryptionModule,
   ],
   providers: [
     OutletService,
