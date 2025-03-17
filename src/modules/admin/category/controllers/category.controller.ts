@@ -17,7 +17,7 @@ import { Types } from 'mongoose';
 
 @ApiTags('category')
 @ApiBearerAuth('jwt')
-@Controller()
+@Controller('admin')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
