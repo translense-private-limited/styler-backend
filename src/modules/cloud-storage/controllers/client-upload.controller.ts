@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Put, Query } from '@nestjs/common';
 import { KeyGeneratorDto } from '../dtos/key-generator.dto';
 import { UploadFilesService } from '../services/upload-files.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PresignedUrlResponseInterface } from '../interfaces/presigned-url-response.interface';
 import { DeleteFileDto } from '../dtos/delete-file-dto';
 import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
@@ -12,6 +12,7 @@ import { validateClient } from '@src/utils/helpers/validate-client.helper';
 
 @Controller('client')
 @ApiTags('Client/Upload')
+@ApiBearerAuth('jwt')
 export class ClientUploadFilesController {
   constructor(private readonly uploadFilesService: UploadFilesService) {}
 
@@ -32,20 +33,20 @@ export class ClientUploadFilesController {
   @Get('signed-url')
   async getSignedUrl(
     @Query('key') key: string,
-    @ClientIdDecorator() clientIdDto:ClientIdDto
+    @ClientIdDecorator() clientIdDto: ClientIdDto,
   ): Promise<string> {
-
     const outletId = extractOutletIdFromKey(key);
-    if (validateClient(clientIdDto,outletId)) {
+    if (!validateClient(clientIdDto, outletId)) {
       unauthorized('You do not have permission to access this media');
     }
     return await this.uploadFilesService.getSignedUrl(key);
   }
 
   @Delete('delete-media')
-  async deleteMedia(
-    @Body() deleteFileDto:DeleteFileDto,
-  ):Promise<void>{
-    return await this.uploadFilesService.deleteMediaByKey(deleteFileDto.key,deleteFileDto.mediaType);
+  async deleteMedia(@Body() deleteFileDto: DeleteFileDto): Promise<void> {
+    return await this.uploadFilesService.deleteMediaByKey(
+      deleteFileDto.key,
+      deleteFileDto.mediaType,
+    );
   }
 }
