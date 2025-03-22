@@ -32,6 +32,7 @@ export class CustomerAuthenticationController {
       },
     },
   })
+
   @Post('login')
   async loginCustomer(
     @Body() loginDto: LoginDto, // Use the DTO for validation

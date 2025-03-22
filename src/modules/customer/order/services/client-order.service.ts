@@ -27,6 +27,12 @@ import { OtpTypeEnum } from '../enums/otp-type.enum';
 import { OrderStatusEnum } from '../enums/order-status.enum';
 import { FulfillOrderDto } from '../dtos/order-fulfill.dto';
 import { FulfillOrderResponseInterface } from '../interfaces/order-fulfill-response.interface';
+import { CreateWalkInCustomerOrderDto } from '../dtos/create-order-walk-in-customer.dto';
+import { OrderResponseDto } from '../dtos/order-response.dto';
+import { CustomerExternalService } from '@modules/customer/services/customer-external.service';
+import { CustomerSignupDto } from '@modules/authentication/dtos/customer-signup.dto';
+import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
+import { CustomerEntity } from '@modules/customer/entities/customer.entity';
 
 @Injectable()
 export class ClientOrderService {
@@ -39,8 +45,10 @@ export class ClientOrderService {
     @Inject(forwardRef(() => OrderService))
     private readonly orderService: OrderService,
     private readonly clientExternalService: ClientExternalService,
-    private readonly orderFulfillmentOtpService:OrderFulfillmentOtpService
-  ) {}
+    private readonly orderFulfillmentOtpService: OrderFulfillmentOtpService,
+    private customerExternalService: CustomerExternalService,
+
+  ) { }
 
   async getAllOpenOrders(clientId: number): Promise<OrderResponseInterface[]> {
     const outletId = await this.getOutletIdByClientId(clientId);
@@ -121,6 +129,56 @@ export class ClientOrderService {
       quantity: row.quantity,
       notes: row.notes,
     } as ServiceDetailsInterface;
+  }
+
+  async createOrderForWalkINCustomer(createOrderDto: CreateWalkInCustomerOrderDto, clientIdDto: ClientIdDto,
+  ): Promise<OrderResponseDto> {
+    let customer: CustomerEntity;
+
+    const customerByContactNumber = await this.customerExternalService.getCustomerByContactNumber(createOrderDto.contactNumber);
+    const customerByEmail = await this.customerExternalService.getCustomerByEmail(createOrderDto.email);
+
+    if (customerByContactNumber) {
+      customer = customerByContactNumber;
+    } else if (customerByEmail) {
+      customer = customerByEmail;
+    } else {
+      const customerSignupDto: CustomerSignupDto = {
+        email: createOrderDto.email,
+        password: createOrderDto.contactNumber.toString(),
+        emailOtp: 123456,
+        contactNumber: createOrderDto.contactNumber,
+        contactNumberOtp: 123456,
+        name: createOrderDto.name,
+      };
+      customer = await this.customerExternalService.save(customerSignupDto);
+    }
+
+    const customerOrderDto: CustomerDecoratorDto = {
+      contactNumber: customer.contactNumber,
+      customerId: customer.id,
+      email: customer.email,
+      name: customer.name,
+      whitelabelId: customer.whitelabelId
+    }
+
+    if (!customer?.id) {
+      throw new Error('Failed to retrieve or create customer.');
+    }
+    const orderResponse = await this.orderService.createOrder(createOrderDto, customerOrderDto);
+    const serviceIds = createOrderDto.orderItems.map(item => item.serviceId);
+    const orderConfirmationDto: OrderConfirmationDto = {
+      accept: serviceIds,
+      reject: [],
+      reasonForRejection: ""
+    };
+
+    // Directly confirm the order for walk-in customers
+    await this.confirmOrder(orderResponse.orderId,
+      orderConfirmationDto, createOrderDto.outletId
+      , clientIdDto);
+
+    return orderResponse;
   }
 
   async getAllOrderHistoryForClient(
@@ -249,17 +307,17 @@ export class ClientOrderService {
       );
 
       // Step 2: Update order items
-      if(reject && reject.length>0){
+      if (reject && reject.length > 0) {
         await this.updateOrderItemsStatus(queryRunner, orderId, accept, reject);
       }
 
       // Step 3: Update appointment status
       if (accept && accept.length > 0) {
-        const appointment = await this.updateAppointmentStatus(queryRunner, orderId,BookingStatusEnum.CONFIRMED);
-        await this.orderFulfillmentOtpService.generateOtp(clientId,order.customerId,orderId,appointment.endTime,OtpTypeEnum.ORDER)
+        const appointment = await this.updateAppointmentStatus(queryRunner, orderId, BookingStatusEnum.CONFIRMED);
+        await this.orderFulfillmentOtpService.generateOtp(clientId, order.customerId, orderId, appointment.endTime, OtpTypeEnum.ORDER)
       }
-      else{
-        await this.updateAppointmentStatus(queryRunner, orderId,BookingStatusEnum.CANCELLED_BY_SALON);
+      else {
+        await this.updateAppointmentStatus(queryRunner, orderId, BookingStatusEnum.CANCELLED_BY_SALON);
       }
 
       // Commit the transaction
@@ -318,7 +376,7 @@ export class ClientOrderService {
   private async updateAppointmentStatus(
     queryRunner: QueryRunner,
     orderId: number,
-    status:BookingStatusEnum
+    status: BookingStatusEnum
   ): Promise<AppointmentEntity> {
     const appointment =
       await this.appointmentService.getAppointmentByOrderIdOrThrow(orderId);
@@ -336,18 +394,18 @@ export class ClientOrderService {
     return client.outletId;
   }
 
-  async rescheduleOrder(orderId:number,rescheduledTimeSlot:TimeSlotDto):Promise<string>{
-    const appointment = await this.appointmentRepository.getRepository().findOne({where:{orderId}})
-    
+  async rescheduleOrder(orderId: number, rescheduledTimeSlot: TimeSlotDto): Promise<string> {
+    const appointment = await this.appointmentRepository.getRepository().findOne({ where: { orderId } })
+
     appointment.status = BookingStatusEnum.RESCHEDULED;
-    Object.assign(appointment,rescheduledTimeSlot)
+    Object.assign(appointment, rescheduledTimeSlot)
 
     await this.appointmentRepository.getRepository().save(appointment)
     return 'rescheduled the order successfully';
- }
+  }
 
-async fulFillTheOrder(clientId: number, orderId: number, fulfillOrderDto: FulfillOrderDto): Promise<FulfillOrderResponseInterface> {
-    const {otp,paymentMode,amountReceived} = fulfillOrderDto;
+  async fulFillTheOrder(clientId: number, orderId: number, fulfillOrderDto: FulfillOrderDto): Promise<FulfillOrderResponseInterface> {
+    const { otp, paymentMode, amountReceived } = fulfillOrderDto;
     // Step 1: Validate the OTP using the existing method
     await this.orderFulfillmentOtpService.validateOtp(otp, OtpTypeEnum.ORDER);
 
