@@ -1,47 +1,54 @@
-// import {
-//   Controller,
-//   Get,
-//   Param,
-//   Delete,
-//   Body,
-//   ParseIntPipe,
-// } from '@nestjs/common';
-// import { ApiTags } from '@nestjs/swagger';
-// import { TimeSlotDto } from '../dtos/time-slot.dto';
+import {
+    Controller,
+    Param,
+    ParseIntPipe,
+    Get,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AppointmentService } from '../services/appointment.service';
+import { TimeSlotDto } from '../dtos/time-slot.dto';
 
-// @ApiTags('client/appointment')
-// @Controller('client/appointment')
-// export class ClientAppointmentController {
-//   constructor(
-//     private readonly clientAppointmentService: ClientAppointmentService,
-//   ) {}
 
-//   /**
-//    * Get the list of occupied and unoccupied slots for a given outlet.
-//    * @param outletId - The ID of the outlet for which to fetch time slots.
-//    * @returns List of occupied and unoccupied time slots.
-//    */
-//   @Get(':outletId/time-slots')
-//   async getTimeSlots(
-//     @Param('outletId', ParseIntPipe) outletId: number,
-//   ): Promise<TimeSlotDto[]> {
-//     return await this.clientAppointmentService.getTimeSlots(outletId);
-//   }
+@ApiTags('Client Appointments')
+@Controller('client')
+export class CLientAppointmentController {
+    constructor(private readonly appointmentService: AppointmentService) { }
 
-//   /**
-//    * Cancel an existing appointment for a customer.
-//    * @param appointmentId - The ID of the appointment to cancel.
-//    * @param cancelAppointmentDto - The data required to cancel the appointment.
-//    * @returns Confirmation of cancellation.
-//    */
-//   @Delete(':appointmentId')
-//   async cancelAppointment(
-//     @Param('appointmentId', ParseIntPipe) appointmentId: number,
-//     @Body() cancelAppointmentDto: CancelAppointmentDto,
-//   ): Promise<string> {
-//     return await this.clientAppointmentService.cancelAppointment(
-//       appointmentId,
-//       cancelAppointmentDto,
-//     );
-//   }
-// }
+
+    /**
+     * Retrieves the occupied time slots for a specific outlet.
+     * @param outletId - The ID of the outlet.
+     * @returns An array of occupied time slots.
+     */
+    @Get('outlet/:outletId/occupied-slots')
+    @ApiOperation({
+        summary: 'Get occupied time slots for an outlet',
+        description:
+            'Fetches the timeline that is already booked for an outlet, ensuring it adheres to 30-minute intervals.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'An array of occupied time slots.',
+        schema: {
+            example: [
+                {
+                    startTime: '2024-12-04T12:00:00.000Z',
+                    endTime: '2024-12-04T12:30:00.000Z',
+                },
+                {
+                    startTime: '2024-12-04T13:00:00.000Z',
+                    endTime: '2024-12-04T13:30:00.000Z',
+                },
+            ],
+        },
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'No appointments found for the given outlet.',
+    })
+    async getOccupiedTimeSlots(
+        @Param('outletId', ParseIntPipe) outletId: number,
+    ): Promise<TimeSlotDto[]> {
+        return await this.appointmentService.getOccupiedTimeSlots(outletId);
+    }
+}

@@ -21,19 +21,20 @@ import { ClientModule } from '@modules/client/client/client.module';
 import { OrderFulfillmentOtpService } from './services/order-fulfillment-otp.service';
 import { OrderFulfillmentOtpEntity } from './entities/otp.entity';
 import { OrderFulfillmentOtpRepository } from './repositories/otp.repository';
+import { CLientAppointmentController } from './controllers/client-appointment.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [OrderEntity, OrderItemEntity, AppointmentEntity,OrderFulfillmentOtpEntity],
+      [OrderEntity, OrderItemEntity, AppointmentEntity, OrderFulfillmentOtpEntity],
       getMysqlDataSource(),
     ),
     OutletModule,
     ServiceModule,
-    forwardRef(()=>CustomerModule),
+    forwardRef(() => CustomerModule),
     ClientModule
   ],
-  controllers: [OrderController,AppointmentController,ClientOrderController],
+  controllers: [OrderController, AppointmentController, ClientOrderController, CLientAppointmentController],
   providers: [
     OrderService,
     OrderRepository,
@@ -44,7 +45,7 @@ import { OrderFulfillmentOtpRepository } from './repositories/otp.repository';
     ClientOrderService,
     OrderFulfillmentOtpService,
     OrderFulfillmentOtpRepository
-    ],
+  ],
   exports: [],
 })
-export class OrderModule {}
+export class OrderModule { }
