@@ -14,7 +14,7 @@ export class CustomerService {
   constructor(
     private customerRepository: CustomerRepository,
     private bcryptEncryptionService: BcryptEncryptionService,
-  ) {}
+  ) { }
   async getCustomerByIdOrThrow(customerId: number): Promise<CustomerEntity> {
     const customer = await this.customerRepository.getRepository().findOne({
       where: {

@@ -1,11 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CustomerEntity } from '../entities/customer.entity';
 import { CustomerSignupDto } from '@modules/authentication/dtos/customer-signup.dto';
+import { CustomerSignupWithoutOtpDto } from '@modules/authentication/dtos/customer-signup-without-otp.dto';
+import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
+import { CustomerRepository } from '../repositories/customer.repository';
 
 @Injectable()
 export class CustomerExternalService {
-  constructor(private customerService: CustomerService) {}
+  constructor(private customerService: CustomerService,
+    private bcryptEncryptionService: BcryptEncryptionService,
+    private customerRepository: CustomerRepository,
+  ) { }
 
   async getCustomerByEmail(email: string): Promise<CustomerEntity> {
     return this.customerService.getCustomerByEmailId(email);
@@ -28,7 +34,19 @@ export class CustomerExternalService {
       username,
     );
   }
+  async createCustomerWithoutOtp(CustomerSignupWithoutOtpDto: CustomerSignupWithoutOtpDto): Promise<CustomerEntity> {
+    const isCustomerExistWithProvidedEmail = await this.getCustomerByEmail(CustomerSignupWithoutOtpDto.email);
+    const isCustomerExistWithContactNumber = await this.getCustomerByContactNumber(CustomerSignupWithoutOtpDto.contactNumber);
 
+    if (isCustomerExistWithContactNumber || isCustomerExistWithProvidedEmail) {
+      throw new BadRequestException(`User already exists with provided details`);
+    }
+
+    const encryptedPassword = await this.bcryptEncryptionService.encrypt(CustomerSignupWithoutOtpDto.password);
+    CustomerSignupWithoutOtpDto.password = encryptedPassword;
+
+    return this.customerRepository.getRepository().save(CustomerSignupWithoutOtpDto);
+  }
   /**
    * Saves a new customer to the database.
    *
