@@ -30,9 +30,9 @@ import { FulfillOrderResponseInterface } from '../interfaces/order-fulfill-respo
 import { CreateWalkInCustomerOrderDto } from '../dtos/create-order-walk-in-customer.dto';
 import { OrderResponseDto } from '../dtos/order-response.dto';
 import { CustomerExternalService } from '@modules/customer/services/customer-external.service';
-import { CustomerSignupDto } from '@modules/authentication/dtos/customer-signup.dto';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 import { CustomerEntity } from '@modules/customer/entities/customer.entity';
+import { CustomerSignupWithoutOtpDto } from '@modules/authentication/dtos/customer-signup-without-otp.dto';
 
 @Injectable()
 export class ClientOrderService {
@@ -131,29 +131,12 @@ export class ClientOrderService {
     } as ServiceDetailsInterface;
   }
 
-  async createOrderForWalkINCustomer(createOrderDto: CreateWalkInCustomerOrderDto, clientIdDto: ClientIdDto,
+  async createOrderForWalkInCustomer(createWalkInCustomerOrderDto: CreateWalkInCustomerOrderDto, clientIdDto: ClientIdDto,
   ): Promise<OrderResponseDto> {
-    let customer: CustomerEntity;
-
-    const customerByContactNumber = await this.customerExternalService.getCustomerByContactNumber(createOrderDto.contactNumber);
-    const customerByEmail = await this.customerExternalService.getCustomerByEmail(createOrderDto.email);
-
-    if (customerByContactNumber) {
-      customer = customerByContactNumber;
-    } else if (customerByEmail) {
-      customer = customerByEmail;
-    } else {
-      const customerSignupDto: CustomerSignupDto = {
-        email: createOrderDto.email,
-        password: createOrderDto.contactNumber.toString(),
-        emailOtp: 123456,
-        contactNumber: createOrderDto.contactNumber,
-        contactNumberOtp: 123456,
-        name: createOrderDto.name,
-      };
-      customer = await this.customerExternalService.save(customerSignupDto);
+    const customer = await this.getExistingOrCreateNewCustomer(createWalkInCustomerOrderDto);
+    if (!customer?.id) {
+      throw new Error('Failed to retrieve or create customer.');
     }
-
     const customerOrderDto: CustomerDecoratorDto = {
       contactNumber: customer.contactNumber,
       customerId: customer.id,
@@ -161,26 +144,42 @@ export class ClientOrderService {
       name: customer.name,
       whitelabelId: customer.whitelabelId
     }
-
-    if (!customer?.id) {
-      throw new Error('Failed to retrieve or create customer.');
-    }
-    const orderResponse = await this.orderService.createOrder(createOrderDto, customerOrderDto);
-    const serviceIds = createOrderDto.orderItems.map(item => item.serviceId);
+    const orderResponse = await this.orderService.createOrder(createWalkInCustomerOrderDto, customerOrderDto);
+    const serviceIds = createWalkInCustomerOrderDto.orderItems.map(item => item.serviceId);
     const orderConfirmationDto: OrderConfirmationDto = {
       accept: serviceIds,
       reject: [],
       reasonForRejection: ""
     };
-
-    // Directly confirm the order for walk-in customers
     await this.confirmOrder(orderResponse.orderId,
-      orderConfirmationDto, createOrderDto.outletId
+      orderConfirmationDto, createWalkInCustomerOrderDto.outletId
       , clientIdDto);
 
     return orderResponse;
   }
+  async getExistingOrCreateNewCustomer(createOrderDto: CreateWalkInCustomerOrderDto): Promise<CustomerEntity> {
+    let customer = await this.getExistingCustomer(createOrderDto.email, createOrderDto.contactNumber);
 
+    if (!customer) {
+      const customerSignupWithoutOtpDto: CustomerSignupWithoutOtpDto = {
+        email: createOrderDto.email,
+        password: createOrderDto.contactNumber.toString(),
+        contactNumber: createOrderDto.contactNumber,
+        name: createOrderDto.name,
+      };
+      customer = await this.customerExternalService.createCustomerWithoutOtp(customerSignupWithoutOtpDto);
+    }
+
+    return customer;
+  }
+
+  async getExistingCustomer(email: string, contactNumber: number): Promise<CustomerEntity | null> {
+    let customer = await this.customerExternalService.getCustomerByContactNumber(contactNumber);
+    if (!customer) {
+      customer = await this.customerExternalService.getCustomerByEmail(email);
+    };
+    return customer || null;
+  }
   async getAllOrderHistoryForClient(
     clientId: number,
     dateRange: OrderFilterDto,
@@ -429,5 +428,6 @@ export class ClientOrderService {
     };
     //console.log(`Order ${orderId} and its associated appointment have been marked as completed.`);
   }
+
 
 }

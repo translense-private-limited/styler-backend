@@ -23,7 +23,7 @@ export class ClientOrderController {
     @ClientIdDecorator() clientIdDto: ClientIdDto,
 
   ): Promise<OrderResponseDto> {
-    return this.clientOrderService.createOrderForWalkINCustomer(createWalkInCustomerOrderDto, clientIdDto);
+    return this.clientOrderService.createOrderForWalkInCustomer(createWalkInCustomerOrderDto, clientIdDto);
   }
 
   @Get('/:clientId/open-orders')
