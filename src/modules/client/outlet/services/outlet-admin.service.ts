@@ -22,6 +22,7 @@ import * as csc from 'country-state-city';
 import { CityInterface, CountryInterface, StateInterface } from '../interfaces/address.interface';
 import { OutletInterface } from '../interfaces/outlet.interface';
 import { OutletFilterDto } from '../dtos/outlet-filter.dto';
+import { BcryptEncryptionService } from '@modules/encryption/services/bcrypt-encryption.service';
 
 
 @Injectable()
@@ -34,7 +35,9 @@ export class OutletAdminService {
     private readonly roleExternalService: RoleExternalService,
     private readonly clientExternalService: ClientExternalService,
     private readonly addressRepository: AddressRepository,
-  ) {}
+    private bcryptEncryptionService: BcryptEncryptionService,
+
+  ) { }
 
   async createOutletWithClient(
     createOutletWithClientDto: CreateOutletWithClientDto,
@@ -73,6 +76,12 @@ export class OutletAdminService {
       //check if the client with the given email and contact number already exists
       await this.validateClientDetails(client);
       // Create the client and associate it with the outlet
+
+      if (client.password) {
+        client.password = await this.bcryptEncryptionService.encrypt(
+          client.password,
+        );
+      }
       client.outletId = newOutlet.id; // Link the outlet ID to the client
       client.roleId = await this.getOwnerRoleId(); // Assign role ID
       const newClient = await queryRunner.manager.save(ClientEntity, client);
@@ -191,7 +200,7 @@ export class OutletAdminService {
     return 'Outlet and associated clients deleted successfully';
   }
 
-  async getAllOutlets(filterDto:OutletFilterDto): Promise<OutletInterface[]> {
+  async getAllOutlets(filterDto: OutletFilterDto): Promise<OutletInterface[]> {
     return this.outletService.getAllOutlets(filterDto);
   }
 
@@ -322,15 +331,15 @@ export class OutletAdminService {
     });
   }
 
-  getAllCountries():CountryInterface[]{
+  getAllCountries(): CountryInterface[] {
     return csc.Country.getAllCountries();
   }
 
-  getStatesByCountry(countryCode: string):StateInterface[]{
+  getStatesByCountry(countryCode: string): StateInterface[] {
     return csc.State.getStatesOfCountry(countryCode);
   }
 
-  getCitiesByState(countryCode: string, stateCode: string):CityInterface[] {
+  getCitiesByState(countryCode: string, stateCode: string): CityInterface[] {
     return csc.City.getCitiesOfState(countryCode, stateCode);
   }
 }
