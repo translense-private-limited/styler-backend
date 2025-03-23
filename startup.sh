@@ -13,7 +13,7 @@ use styler;
 INSERT INTO `client` (id, name, email, password, createdAt, updatedAt) VALUES (1, 'Sample Outlet Client', 'sampleOutletClient@translense.com', '$2b$10$u6h7ARBL5PtbtXNblrwqPuQOWWIf5b5DZ2AJEnMCw.0Gb4hX1ZjCK', NOW(), NOW()) ON DUPLICATE KEY UPDATE id=id;
 
 #create outlet 
-INSERT INTO `outlets` (id, name, description, status, address, latitude, longitude, phoneNumber, email, website, createdAt, updatedAt, clientId) VALUES (1, 'Sample Outlet', 'This is a sample outlet description.', 'UNDER_CONSTRUCTION', '123 Main Street, City, Country', 37.7749, -122.4194, '+1234567890', 'sample@translense.com', 'http://www.sampleoutlet.com', NOW(), NOW(), 1) ON DUPLICATE KEY UPDATE id=id;
+INSERT INTO `outlets` (id, name, description, status, address, latitude, longitude, phoneNumber, email, website, createdAt, updatedAt, clientId) VALUES (1, 'Sample Outlet', 'This is a sample outlet description.', 'ONBOARDING', '123 Main Street, City, Country', 37.7749, -122.4194, '+1234567890', 'sample@translense.com', 'http://www.sampleoutlet.com', NOW(), NOW(), 1) ON DUPLICATE KEY UPDATE id=id;
 
 # create whitelabel
 Insert into whitelabel (whitelabelId, name, label) values (1, 'styler', 'styler');

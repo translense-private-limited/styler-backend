@@ -20,7 +20,11 @@ import { RegisterClientDto } from '@modules/client/client/dtos/register-client.d
 import { ClientEntity } from '@modules/client/client/entities/client.entity';
 import { AddressEntity } from '@src/utils/entities/address.entity';
 
-import { CityInterface, CountryInterface, StateInterface } from '../interfaces/address.interface';
+import {
+  CityInterface,
+  CountryInterface,
+  StateInterface,
+} from '../interfaces/address.interface';
 import { OutletInterface } from '../interfaces/outlet.interface';
 import { OutletFilterDto } from '../dtos/outlet-filter.dto';
 
@@ -56,7 +60,7 @@ export class OutletAdminController {
   async getAllOutlets(
     @Query() filterDto: OutletFilterDto,
   ): Promise<OutletInterface[]> {
-    return this.outletService.getAllOutlets(filterDto); 
+    return this.outletService.getAllOutlets(filterDto);
   }
 
   @ApiOperation({
@@ -74,7 +78,7 @@ export class OutletAdminController {
   }
 
   @ApiOperation({
-    summary: 'To update the outlet status like LIVE,UNDER_CONSTRUCTION...',
+    summary: 'To update the outlet status like LIVE,ONBOARDING...',
   })
   @Patch('status/outlet/:outletId')
   async updateOutletStatus(
@@ -118,21 +122,21 @@ export class OutletAdminController {
 
   @ApiOperation({
     summary: 'fetch all the details of an outlet by outletId',
-  }) 
+  })
   @Get('outlet/:outletId')
   async getOutletDetailsByOutletId(
-    @Param('outletId') outletId:number
-  ):Promise<OutletEntity>{
+    @Param('outletId') outletId: number,
+  ): Promise<OutletEntity> {
     return this.outletService.getOutletByIdOrThrow(outletId);
-  } 
+  }
 
   @Get('countries')
-  getCountries():CountryInterface[]{
+  getCountries(): CountryInterface[] {
     return this.outletAdminService.getAllCountries();
   }
 
   @Get('country/:countryCode/states')
-  getStates(@Param('countryCode') countryCode: string):StateInterface[] {
+  getStates(@Param('countryCode') countryCode: string): StateInterface[] {
     return this.outletAdminService.getStatesByCountry(countryCode);
   }
 
@@ -140,7 +144,7 @@ export class OutletAdminController {
   getCities(
     @Param('countryCode') countryCode: string,
     @Param('stateCode') stateCode: string,
-  ):CityInterface[]{
+  ): CityInterface[] {
     return this.outletAdminService.getCitiesByState(countryCode, stateCode);
   }
 }

@@ -18,7 +18,7 @@
 
 # INSERT INTO outlets (id, name, description, status, latitude, longitude, phoneNumber, email, website, createdAt, updatedAt, addressId, clientId)
 # VALUES 
-# (1, 'Sample Outlet', 'This is a sample outlet description.', 'UNDER_CONSTRUCTION', 37.7749, -122.4194, '+1234567890', 'sample@translense.com', 'http://www.sampleoutlet.com', NOW(), NOW(), 1, 1),
+# (1, 'Sample Outlet', 'This is a sample outlet description.', 'ONBOARDING', 37.7749, -122.4194, '+1234567890', 'sample@translense.com', 'http://www.sampleoutlet.com', NOW(), NOW(), 1, 1),
 # (2, 'Example Outlet', 'This is an example outlet description.', 'COMING_SOON', 34.0522, -118.2437, '+1987654321', 'example@translense.com', 'http://www.exampleoutlet.com', NOW(), NOW(), 2, 2)
 # ON DUPLICATE KEY UPDATE id=id;
 

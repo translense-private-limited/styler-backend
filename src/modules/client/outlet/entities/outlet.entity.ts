@@ -16,7 +16,7 @@ export class OutletEntity extends BaseEntity {
   @Column({
     type: 'enum',
     enum: OutletStatusEnum,
-    default: OutletStatusEnum.UNDER_CONSTRUCTION,
+    default: OutletStatusEnum.ONBOARDING,
   })
   status: OutletStatusEnum;
 
@@ -35,18 +35,18 @@ export class OutletEntity extends BaseEntity {
   @Column({ length: 255, nullable: true })
   website: string;
 
-  @Column({ type: 'int',nullable:true })
+  @Column({ type: 'int', nullable: true })
   clientId: number;
 
   @OneToOne(() => AddressEntity, (address) => address.outlet)
   address: AddressEntity; // One-to-one relation with Address
 
-  @Column({nullable:true})
-  addressId:number
+  @Column({ nullable: true })
+  addressId: number;
 
-  @Column('simple-array',{nullable:true})
-  outletBannerImages:string[];
+  @Column('simple-array', { nullable: true })
+  outletBannerImages: string[];
 
-  @Column('simple-array',{nullable:true})
+  @Column('simple-array', { nullable: true })
   outletVideos: string[];
 }
