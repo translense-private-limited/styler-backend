@@ -2,16 +2,16 @@ import {
   Body,
   Controller,
   Get,
-  Post,
   Param,
   ParseIntPipe,
+  Patch,
 } from '@nestjs/common';
 import { ClientService } from '../services/client.service';
-import { CreateClientDto } from '../dtos/client.dto';
+
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ClientIdDecorator } from '@src/utils/decorators/client-id.decorator';
-import { ClientIdDto } from '@src/utils/dtos/client-id.dto';
+
 import { ClientEntity } from '../entities/client.entity';
+import { UpdateClientDto } from '../dtos/update-client.dto';
 
 @Controller('client')
 @ApiBearerAuth('jwt')
@@ -24,5 +24,13 @@ export class ClientController {
     @Param('  clientId', ParseIntPipe) clientId: number,
   ): Promise<ClientEntity> {
     return await this.clientService.getClientById(clientId);
+  }
+
+  @Patch('client/:clientId')
+  async updateClient(
+    @Param('  clientId', ParseIntPipe) clientId: number,
+    @Body() updateClientDto: UpdateClientDto,
+  ): Promise<ClientEntity> {
+    return this.clientService.updateClient(clientId, updateClientDto);
   }
 }

@@ -35,5 +35,8 @@ export class ClientEntity extends BaseEntity {
   outletId: number;
 
   @Column('simple-array', { nullable: true })
-  profilePhotos: string[]; 
+  profilePhotos: string[];
+
+  @Column({ type: 'date', nullable: true }) // Added dateOfBirth as a Date type
+  dateOfBirth?: Date;
 }

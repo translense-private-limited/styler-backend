@@ -5,9 +5,11 @@ export interface ClientInterface {
   email: string;
   password?: string;
   contactNumber: string;
+  dateOfBirth?: Date;
   // roleId: number;
   gender: GenderEnum;
   pastExperience?: number;
   about?: string;
   outletId?: number;
 }
+

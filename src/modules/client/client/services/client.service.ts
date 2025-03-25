@@ -20,6 +20,7 @@ import { ResetClientPasswordDto } from '@modules/authentication/dtos/admin-reset
 import { RegisterClientDto } from '../dtos/register-client.dto';
 import { RoleExternalService } from '@modules/authorization/services/role-external.service';
 import { ClientOutletMappingEntity } from '@modules/admin/client-outlet-mapping/entities/client-outlet-mapping.entity';
+import { UpdateClientDto } from '../dtos/update-client.dto';
 
 @Injectable()
 export class ClientService {
@@ -233,8 +234,18 @@ export class ClientService {
     }
   }
 
-  async getAllExtendedClientsForOutlet(outletId: number): Promise<ExtendedClient[]> {
+  async getAllExtendedClientsForOutlet(
+    outletId: number,
+  ): Promise<ExtendedClient[]> {
     return await this.clientRepository.getClientsByOutletId(outletId);
   }
 
+  async updateClient(
+    clientId: number,
+    updateClientDto: UpdateClientDto,
+  ): Promise<ClientEntity> {
+    const client = await this.getClientById(clientId);
+    const updatedClient = Object.assign(client, updateClientDto);
+    return this.clientRepository.getRepository().save(updatedClient);
+  }
 }
