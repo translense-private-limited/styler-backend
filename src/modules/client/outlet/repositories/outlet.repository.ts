@@ -76,6 +76,11 @@ export class OutletRepository extends BaseRepository<OutletEntity> {
         'address.landmark AS landmark',
         'address.outletId AS outletId',
         'client.name AS clientName',
+        'client.email AS clientEmail',
+        'client.contactNumber As ClientContactNumber',
+        'client.gender AS ClientGender',
+        'client.pastExperience AS ClientPastExperience',
+        'client.about AS clientAbout',
       ]);
     // Apply filters if provided
     Object.keys(filterConditions).forEach(key => {
@@ -114,11 +119,18 @@ export class OutletRepository extends BaseRepository<OutletEntity> {
             pincode: outlet.pincode,
             street: outlet.street,
             landmark: outlet.landmark,
-            outletId: outlet.outletId
+            outletId: outlet.outletId,
           },
         },
+        owner: {
+          name: outlet.clientName,
+          email: outlet.clientEmail,
+          contactNumber: outlet.ClientContactNumber,
+          gender: outlet.ClientGender,
+          pastExperience: outlet.ClientPastExperience,
+          about: outlet.clientAbout,
+        },
         clientName: outlet.clientName,
-
       }));
       return outlet;
     }
