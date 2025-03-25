@@ -5,8 +5,6 @@ import { getMysqlDataSource } from './data-source';
 
 dotenv.config(); // Load environment variables
 
-
-
 export const databaseConfig: DataSourceOptions = {
   type: 'mysql',
   host: process.env.DB_HOST || '127.0.0.1',
@@ -17,9 +15,9 @@ export const databaseConfig: DataSourceOptions = {
   name: getMysqlDataSource(),
   logging: true,
   timezone: 'Z',
+  // eslint-disable-next-line no-undef
   entities: [path.join(__dirname, '../../**/*.entity{.ts,.js}')],
   synchronize: false,
   migrationsRun: false,
   migrations: ['dist/db/migrations/*.js'],
 };
-

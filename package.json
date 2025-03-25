@@ -23,8 +23,8 @@
     "typeorm": "npm run build && npx typeorm -d dist/db/dataSourceForMig.js",
     "migration:revert": "npm run typeorm -- migration:revert",
     "migration:generate": "node scripts/generate-migration.js",
-    "migration": "npm run typeorm -- migration:run",
-    "migrate": "npm run migration:generate && npm run migration",
+    "migration:run": "npm run typeorm -- migration:run",
+    "migrate": "npm run migration:generate && npm run migration:run",
     "startup": "npm run migrate && npm run seed"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as path from 'path';
-import { getMongodbDataSource, getMysqlDataSource } from './data-source';
+
+import { getMongodbDataSource } from './data-source';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { databaseConfig } from './database.config';
