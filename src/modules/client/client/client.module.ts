@@ -14,10 +14,14 @@ import { ClientAdminService } from './services/client-admin.service';
 import { ClientDocsEntity } from './entities/client-docs.entity';
 import { ClientDocsRepository } from './repository/client-docs.repository';
 import { ClientDocsService } from './services/client-docs-service';
+import { ClientController } from './controllers/client.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ClientEntity,ClientDocsEntity], getMysqlDataSource()),
+    TypeOrmModule.forFeature(
+      [ClientEntity, ClientDocsEntity],
+      getMysqlDataSource(),
+    ),
     EncryptionModule,
     AuthorizationModule,
   ],
@@ -30,7 +34,11 @@ import { ClientDocsService } from './services/client-docs-service';
     ClientDocsRepository,
     ClientDocsService,
   ],
-  controllers: [ExtendedClientController,ClientAdminController],
-  exports: [ClientExternalService,ClientRepository],
+  controllers: [
+    ExtendedClientController,
+    ClientAdminController,
+    ClientController,
+  ],
+  exports: [ClientExternalService, ClientRepository],
 })
 export class ClientModule {}
