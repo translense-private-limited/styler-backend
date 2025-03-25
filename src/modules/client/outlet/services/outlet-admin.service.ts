@@ -290,9 +290,8 @@ export class OutletAdminService {
   ): Promise<OutletEntity> {
     const outlet = await this.outletService.getOutletByIdOrThrow(outletId);
     throwIfNotFound(outlet, `outlet not found`);
-
     outlet.status = status;
-    return await this.outletRepository.getRepository().save(outlet);
+    return await this.outletRepository.getRepository().save(outlet, { reload: true });
   }
 
   async addClientToAnExistingOutlet(

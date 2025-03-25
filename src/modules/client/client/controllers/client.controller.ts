@@ -17,7 +17,7 @@ import { UpdateClientDto } from '../dtos/update-client.dto';
 @ApiBearerAuth('jwt')
 @ApiTags('Client')
 export class ClientController {
-  constructor(private readonly clientService: ClientService) {}
+  constructor(private readonly clientService: ClientService) { }
 
   @Get('client/:clientId')
   async getClientById(
@@ -28,7 +28,7 @@ export class ClientController {
 
   @Patch('client/:clientId')
   async updateClient(
-    @Param('  clientId', ParseIntPipe) clientId: number,
+    @Param('clientId', ParseIntPipe) clientId: number,
     @Body() updateClientDto: UpdateClientDto,
   ): Promise<ClientEntity> {
     return this.clientService.updateClient(clientId, updateClientDto);

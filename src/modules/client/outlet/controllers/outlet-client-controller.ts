@@ -7,12 +7,14 @@ import { CityInterface, CountryInterface, StateInterface } from '../interfaces/a
 import { OutletEntity } from '../entities/outlet.entity';
 import { OutletService } from '../services/outlet.service';
 import { DeleteOutletDto } from '../dtos/delete-outlet.dto';
+import { OutletStatusEnum } from '../enums/outlet-status.enum';
 
 
 @Controller('client')
 @ApiTags('Outlet')
 export class OutletClientController {
-    constructor(private readonly outletClientService: OutletClientService,
+    constructor(
+        private readonly outletClientService: OutletClientService,
         private readonly outletService: OutletService
     ) { }
 
@@ -46,6 +48,20 @@ export class OutletClientController {
     }
 
     @ApiOperation({
+        summary: 'To update the outlet status like LIVE,ONBOARDING...',
+    })
+    @Patch('status/outlet/:outletId')
+    async updateOutletStatus(
+        @Param('outletId') outletId: number,
+        @Body('status') status: OutletStatusEnum,
+    ): Promise<OutletEntity> {
+        const outlet = await this.outletClientService.updateOutletStatus(
+            outletId,
+            status,
+        );
+        return outlet;
+    }
+    @ApiOperation({
         summary: 'deletes the existing outlets and clients associated with it',
     })
     @Delete('outlet/:outletId')
@@ -68,6 +84,7 @@ export class OutletClientController {
     getStates(@Param('countryCode') countryCode: string): StateInterface[] {
         return this.outletClientService.getStatesByCountry(countryCode);
     }
+
 
     @Get('country-code/:countryCode/state-code/:stateCode/cities')
     getCities(
