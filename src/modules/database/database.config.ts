@@ -17,7 +17,7 @@ export const databaseConfig: DataSourceOptions = {
   timezone: 'Z',
   // eslint-disable-next-line no-undef
   entities: [path.join(__dirname, '../../**/*.entity{.ts,.js}')],
-  synchronize: false,
+  synchronize: true,
   migrationsRun: false,
   migrations: ['dist/db/migrations/*.js'],
 };

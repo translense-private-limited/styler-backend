@@ -49,7 +49,4 @@ export class OutletEntity extends BaseEntity {
 
   @Column('simple-array', { nullable: true })
   outletVideos: string[];
-
-  @Column({ nullable: true })
-  addressIdtest: number;
 }
