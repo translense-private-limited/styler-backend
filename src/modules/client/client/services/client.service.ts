@@ -29,7 +29,7 @@ export class ClientService {
     private roleClientService: RoleClientService,
     private bcryptEncryptionService: BcryptEncryptionService,
     private readonly roleExternalService: RoleExternalService,
-  ) {}
+  ) { }
 
   async getExtendedClientById(
     clientId: number,
@@ -244,7 +244,13 @@ export class ClientService {
     clientId: number,
     updateClientDto: UpdateClientDto,
   ): Promise<ClientEntity> {
+    if (isNaN(clientId)) {
+      throw new BadRequestException('Client ID must be a valid number');
+    }
     const client = await this.getClientById(clientId);
+    if (!client) {
+      throw new NotFoundException(`Client with ID ${clientId} not found`);
+    }
     const updatedClient = Object.assign(client, updateClientDto);
     return this.clientRepository.getRepository().save(updatedClient);
   }

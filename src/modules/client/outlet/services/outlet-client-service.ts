@@ -6,6 +6,8 @@ import { OutletAdminService } from './outlet-admin.service';
 import { OutletInterface } from '../interfaces/outlet.interface';
 import { CityInterface, CountryInterface, StateInterface } from '../interfaces/address.interface';
 import { DeleteOutletDto } from '../dtos/delete-outlet.dto';
+import { OutletStatusEnum } from '../enums/outlet-status.enum';
+import { OutletEntity } from '../entities/outlet.entity';
 
 
 @Injectable()
@@ -35,6 +37,14 @@ export class OutletClientService {
         return await this.outletAdminService.deleteOutletByIdOrThrow(outletId, deleteOutletDto);
 
     }
+
+    async updateOutletStatus(
+        outletId: number,
+        status: OutletStatusEnum,
+    ): Promise<OutletEntity> {
+        return await this.outletAdminService.updateOutletStatus(outletId, status);
+    }
+
 
     getAllCountries(): CountryInterface[] {
         return this.outletAdminService.getAllCountries();
