@@ -16,7 +16,7 @@ import { ImageService } from './image.service';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from '@src/utils/decorators/public.decorator';
-
+import { File } from 'buffer';
 @Controller('image')
 @ApiTags('Image')
 @Public()
@@ -26,7 +26,6 @@ export class ImageController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(
-    //@ts-ignore
     @UploadedFile() file: File,
   ): Promise<string> {
     if (!file) {
