@@ -21,7 +21,7 @@ export class ClientController {
 
   @Get('client/:clientId')
   async getClientById(
-    @Param('  clientId', ParseIntPipe) clientId: number,
+    @Param('clientId', ParseIntPipe) clientId: number,
   ): Promise<ClientEntity> {
     return await this.clientService.getClientById(clientId);
   }
