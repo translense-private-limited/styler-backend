@@ -24,8 +24,7 @@
     "migration:revert": "npm run typeorm -- migration:revert",
     "migration:generate": "node scripts/generate-migration.js",
     "migration:run": "npm run typeorm -- migration:run",
-    "migrate": "npm run migration:generate && npm run migration:run",
-    "startup": "npm run migrate && npm run seed"
+    "initdb": "npm run migration:run && npm run seed"
   },
   "dependencies": {
     "@aws-sdk/client-cloudcontrol": "^3.731.1",

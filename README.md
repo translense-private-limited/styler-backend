@@ -208,12 +208,26 @@ This will create the folder structure for the module in the specified location.
 
 ````
 
+## Createing Database
+
+To create and connect the necessary database required to boot up the system, follow the steps below:
+
+To connect your MySQL Workbench with the MySQL container running in Docker, use the following configuration:
+Hostname: localhost
+Port: 4001
+Username: root
+Password: root
+
+To create the database required to run the system, execute the following command in MySQL Workbench:
+CREATE DATABASE styler;
+
+
 ## Seed Data Setup
 
 To populate the necessary data required to boot up the system, run the following command:
 
 ```bash
-npm run seed
+npm run initdb
 ````
 
 **Instructions**
