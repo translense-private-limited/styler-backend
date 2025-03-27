@@ -22,9 +22,17 @@ import { OutletDocsService } from './services/outlet-docs-service';
 import { OutletClientController } from './controllers/outlet-client-controller';
 import { OutletClientService } from './services/outlet-client-service';
 import { EncryptionModule } from '@modules/encryption/encryption.module';
+import { BusinessHourService } from './services/business-hour.service';
+import { BusinessHourController } from './controllers/business-hour.controller';
+import { BusinessHourEntity } from './entities/business-hours.entity';
+import { BusinessHourRepository } from './repositories/business-hour.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OutletEntity, OutletDocsEntity], getMysqlDataSource()),
+  imports: [
+    TypeOrmModule.forFeature(
+      [OutletEntity, OutletDocsEntity, BusinessHourEntity],
+      getMysqlDataSource(),
+    ),
     ServiceModule,
     ClientUserModule,
     ClientOutletMappingModule,
@@ -40,10 +48,18 @@ import { EncryptionModule } from '@modules/encryption/encryption.module';
     OutletAdminService,
     OutletClientService,
     OutletDocsRepository,
-    OutletDocsService
+    OutletDocsService,
+    BusinessHourService,
+    BusinessHourController,
+    BusinessHourRepository,
   ],
-  controllers: [OutletController, OutletCustomerController, OutletAdminController, OutletClientController],
+  controllers: [
+    OutletController,
+    OutletCustomerController,
+    OutletAdminController,
+    OutletClientController,
+    BusinessHourController,
+  ],
   exports: [OutletExternalService, OutletRepository],
-
 })
-export class OutletModule { }
+export class OutletModule {}
