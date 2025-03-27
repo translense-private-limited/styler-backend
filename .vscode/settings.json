@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["Transac", "Translense"]
+  "cSpell.words": ["Transac", "Translense"],
+  "makefile.configureOnOpen": false
 }

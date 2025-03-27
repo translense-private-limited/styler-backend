@@ -4,7 +4,6 @@ import { BusinessHourEntity } from '../entities/business-hours.entity';
 import { OutletExternalService } from './outlet-external.service';
 import { Injectable } from '@nestjs/common';
 import { OutletEntity } from '../entities/outlet.entity';
-import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 
 @Injectable()
 export class BusinessHourService {

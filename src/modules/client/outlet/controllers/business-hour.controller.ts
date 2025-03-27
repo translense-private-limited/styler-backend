@@ -1,11 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiProperty,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BusinessHourService } from '../services/business-hour.service';
 import { BusinessHourDto } from '../dtos/business-hour.dto';
 import { BusinessHourEntity } from '../entities/business-hours.entity';
