@@ -33,7 +33,7 @@ import { CustomerExternalService } from '@modules/customer/services/customer-ext
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 import { CustomerEntity } from '@modules/customer/entities/customer.entity';
 import { CustomerSignupWithoutOtpDto } from '@modules/authentication/dtos/customer-signup-without-otp.dto';
-import { convertToUTC } from '@src/utils/timeZone/convertToUtc';
+import { convertToUTC } from '@src/utils/timeZone/convert-to-utc';
 
 @Injectable()
 export class ClientOrderService {
