@@ -33,6 +33,7 @@ import { CustomerExternalService } from '@modules/customer/services/customer-ext
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 import { CustomerEntity } from '@modules/customer/entities/customer.entity';
 import { CustomerSignupWithoutOtpDto } from '@modules/authentication/dtos/customer-signup-without-otp.dto';
+import { convertToUTC } from '@src/utils/timeZone/convertToUtc';
 
 @Injectable()
 export class ClientOrderService {
@@ -249,14 +250,17 @@ export class ClientOrderService {
     dateRange: OrderFilterDto,
   ): Promise<OrderResponseInterface[]> {
     const outletId = await this.getOutletIdByClientId(clientId);
-    const { startTime, endTime } = dateRange;
+    let { startTime, endTime } = dateRange;
+    startTime = convertToUTC(startTime);
+    endTime = convertToUTC(endTime);
     const currentTime = new Date();
     if (startTime > endTime) {
       throw new Error('Start time cannot be later than end time.');
     }
-    if (new Date(startTime) < currentTime) {
+    if (startTime.getTime() < currentTime.getTime() - 5000) {
       throw new Error('Start time cannot be in the past.');
     }
+    
     const bufferTime = new Date(new Date(startTime).getTime() - 30 * 60 * 1000);
     // Fetch upcoming orders based on the startTime from AppointmentEntity
     const upcomingOrdersForClient: OrderDetailsInterface[] =
