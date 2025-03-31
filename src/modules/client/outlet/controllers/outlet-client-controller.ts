@@ -93,4 +93,13 @@ export class OutletClientController {
     ): CityInterface[] {
         return this.outletClientService.getCitiesByState(countryCode, stateCode);
     }
+
+    @ApiOperation({
+        summary: 'Retrieve services categorized by service category for a given outlet',
+    })
+    @Get('outlet/:outletId/service/categorised')
+    async getCategorisedServices(@Param('outletId') outletId: number) {
+        return await this.outletClientService.getCategorisedServices(outletId);
+    }
+
 }

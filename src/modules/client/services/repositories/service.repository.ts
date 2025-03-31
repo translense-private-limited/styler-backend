@@ -108,4 +108,69 @@ export class ServiceRepository extends BaseSchema<ServiceSchema> {
       },
     ]);
   }
+
+//   async getCategorisedServices(outletId: number) {
+//     return this.serviceRepository.aggregate([
+//         {
+//             $lookup: {
+//                 from: 'categories', 
+//                 localField: 'categoryId',
+//                 foreignField: '_id',
+//                 as: 'category',
+//             },
+//         },
+//         {
+//             $unwind: {
+//                 path: '$category',
+//                 preserveNullAndEmptyArrays: true,
+//             },
+//         },
+//         {
+//             $group: {
+//                 _id: '$category.name',
+//                 services: { $push: '$$ROOT' },
+//             },
+//         },
+//         {
+//             $project: {
+//                 _id: 0,
+//                 categoryName: '$_id',
+//                 services: 1,
+//             },
+//         },
+//     ]);
+// }
+
+async getCategorisedServices(outletId: number) {
+  return this.categoryRepository.getRepository().aggregate([
+      {
+          $lookup: {
+              from: this.serviceRepository.collection.name, 
+              let: { categoryId: '$_id', outletId: outletId }, 
+              pipeline: [
+                  {
+                      $match: {
+                          $expr: {
+                              $and: [
+                                  { $eq: ['$categoryId', { $toObjectId: '$$categoryId' }] },
+                                  { $eq: ['$outletId', '$$outletId'] }
+                              ],
+                          },
+                      },
+                  },
+              ],
+              as: 'services',
+          },
+      },
+      {
+          $project: {
+              _id: 0,
+              categoryName: '$name',
+              services: 1,
+          },
+      },
+  ]);
+}
+
+  
 }
