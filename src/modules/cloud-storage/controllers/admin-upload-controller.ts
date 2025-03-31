@@ -1,4 +1,4 @@
-import { Body, Controller, Put, Get, Param, Post, Delete } from '@nestjs/common';
+import { Body, Controller, Put, Get, Post, Delete, Query } from '@nestjs/common';
 import { KeyGeneratorDto } from '../dtos/key-generator.dto';
 import { UploadFilesService } from '../services/upload-files.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -8,7 +8,7 @@ import { DeleteFileDto } from '../dtos/delete-file-dto';
 @Controller('admin')
 @ApiTags('Admin/Upload')
 export class AdminUploadFilesController {
-  constructor(private readonly uploadFilesService: UploadFilesService) {}
+  constructor(private readonly uploadFilesService: UploadFilesService) { }
 
   @ApiOperation({
     description: 'Give outletId and mediaType and should send clientId or serviceId while trying to upload respective media',
@@ -23,8 +23,9 @@ export class AdminUploadFilesController {
     );
   }
 
-  @Get('signed-url/:key')
-  async getSignedUrl(@Param('key') key: string): Promise<string> {
+  @Get('signed-url')
+  async getSignedUrl(@Query('key') key: string,
+  ): Promise<string> {
     return await this.uploadFilesService.getSignedUrl(key);
   }
 
