@@ -14,7 +14,7 @@ import { validateClient } from '@src/utils/helpers/validate-client.helper';
 @ApiTags('Client/Upload')
 @ApiBearerAuth('jwt')
 export class ClientUploadFilesController {
-  constructor(private readonly uploadFilesService: UploadFilesService) {}
+  constructor(private readonly uploadFilesService: UploadFilesService) { }
 
   @ApiOperation({
     description:
