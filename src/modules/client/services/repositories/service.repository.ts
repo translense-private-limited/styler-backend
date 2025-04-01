@@ -108,4 +108,37 @@ export class ServiceRepository extends BaseSchema<ServiceSchema> {
       },
     ]);
   }
+
+  async getCategorisedServices(outletId: number): Promise<{ categoryName: string; services: string[] }[]> {
+    return this.categoryRepository.getRepository().aggregate([
+      {
+        $lookup: {
+            from: this.serviceRepository.collection.name, 
+            let: { categoryId: '$_id', outletId: outletId }, 
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+                            $and: [
+                                { $eq: ['$categoryId', { $toObjectId: '$$categoryId' }] },
+                                { $eq: ['$outletId', '$$outletId'] }
+                            ],
+                        },
+                    },
+                },
+            ],
+            as: 'services',
+        },
+    },
+    {
+        $project: {
+            _id: 0,
+            categoryName: '$name',
+            services: 1,
+        },
+    },
+    ]);
+  }
+  
+  
 }

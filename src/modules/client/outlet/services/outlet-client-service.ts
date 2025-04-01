@@ -8,6 +8,7 @@ import { CityInterface, CountryInterface, StateInterface } from '../interfaces/a
 import { DeleteOutletDto } from '../dtos/delete-outlet.dto';
 import { OutletStatusEnum } from '../enums/outlet-status.enum';
 import { OutletEntity } from '../entities/outlet.entity';
+import { ServiceRepository } from '@modules/client/services/repositories/service.repository';
 
 
 @Injectable()
@@ -16,6 +17,7 @@ export class OutletClientService {
         private readonly outletRepository: OutletRepository,
         private readonly outletService: OutletService,
         private readonly outletAdminService: OutletAdminService,
+        private readonly serviceRepository: ServiceRepository
 
     ) { }
 
@@ -56,6 +58,19 @@ export class OutletClientService {
 
     getCitiesByState(countryCode: string, stateCode: string): CityInterface[] {
         return this.outletAdminService.getCitiesByState(countryCode, stateCode);
+    }
+
+    async getCategorisedServices(outletId: number): Promise<Record<string, string[]>> {
+        const categories = await this.serviceRepository.getCategorisedServices(outletId);
+
+        if (!categories || categories.length === 0) {
+            return {};
+        }
+
+        return categories.reduce((acc, category) => {
+            acc[category.categoryName] = category.services || [];
+            return acc;
+        }, {});
     }
 
 }
