@@ -28,7 +28,8 @@ debug:
 dev:
 	docker compose -f stack.yaml up -d
 	npm run start:dev
-
+mysql: 
+	docker exec -it 246b194bd3db mysql -u user -p
 # Start all frontend applications
 start-frontend:
 	@lsof -t -i:5000 -i:5001 -i:5002 -i:5003 | xargs -r kill -9
