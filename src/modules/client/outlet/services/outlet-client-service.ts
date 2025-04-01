@@ -60,7 +60,7 @@ export class OutletClientService {
         return this.outletAdminService.getCitiesByState(countryCode, stateCode);
     }
 
-    async getCategorisedServices(outletId: number): Promise<Record<string, any[]>> {
+    async getCategorisedServices(outletId: number): Promise<Record<string, string[]>> {
         const categories = await this.serviceRepository.getCategorisedServices(outletId);
 
         if (!categories || categories.length === 0) {

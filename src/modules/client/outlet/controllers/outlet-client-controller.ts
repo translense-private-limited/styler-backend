@@ -98,7 +98,7 @@ export class OutletClientController {
         summary: 'Retrieve services categorized by service category for a given outlet',
     })
     @Get('outlet/:outletId/service/categorised')
-    async getCategorisedServices(@Param('outletId') outletId: number): Promise<Record<string, any[]>> {
+    async getCategorisedServices(@Param('outletId') outletId: number): Promise<Record<string, string[]>> {
         return await this.outletClientService.getCategorisedServices(outletId);
     }
 
