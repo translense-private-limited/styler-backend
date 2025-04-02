@@ -568,4 +568,87 @@ export class OrderService {
       outletDetails,
     );
   }
+
+
+  async getOrderDetailsById(orderId: number): Promise<CustomerOrderResponseInterface> {
+    const allOrders = await this.appointmentRepository.getOrderDetails(orderId);
+    // Extract unique serviceIds and outletIds
+    const serviceIds = [...new Set(allOrders.map((order) => order.serviceId))];
+    const outletIds = [...new Set(allOrders.map((order) => order.outletId))];
+  
+    // Use Promise.all to fetch services and outlet details in parallel
+    const [services, outletDetails] = await Promise.all([
+      this.serviceExternalService.getServicesByServiceIds(serviceIds),
+      this.outletExternalService.getOutletDetailsByIds(outletIds),
+    ]);
+  
+    // Format the results and return
+    return this.formatCustomerOrderDetailsResponse(allOrders, services, outletDetails);
+  }
+  
+  formatCustomerOrderDetailsResponse(orders, services, outletDetails): CustomerOrderResponseInterface {
+    return orders.reduce((acc, row) => {
+      if (!acc[row.orderId]) {
+        acc[row.orderId] = {
+          orderId: row.orderId,
+          amountPaid: row.amountPaid,
+          orderStatus: row.orderStatus,
+          otp: row.otp,
+          services: [],
+          customer: {
+            customerId: row.customerId,
+            customerName: row.customerName,
+            customerContact: row.customerContact,
+            customerEmail: row.customerEmail,
+            customerImage: '',
+          },
+          appointment: {
+            appointmentId: row.appointmentId,
+            startTime: row.startTime,
+            endTime: row.endTime,
+            AppointmentStatus: row.status,
+          },
+          outlet: {},
+        };
+      }
+  
+      // Fetch outlet details for the current order
+      const outlet = outletDetails.find((outlet) => outlet.id === row.outletId);
+      if (outlet) {
+        acc[row.orderId].outlet = {
+          outletId: outlet.id,
+          outletName: outlet.name,
+          outletDescription: outlet.description,
+          outletLatitude: outlet.latitude,
+          outletLongitude: outlet.longitude,
+          outletPhoneNumber: outlet.phoneNumber,
+          outletEmail: outlet.email,
+          outletWebsite: outlet.website,
+          address: outlet.address
+            ? {
+                addressId: outlet.address.addressId,
+                country: outlet.address.country,
+                state: outlet.address.state,
+                district: outlet.address.district,
+                city: outlet.address.city,
+                pincode: outlet.address.pincode,
+                street: outlet.address.street,
+                landmark: outlet.address.landmark,
+              }
+            : null,
+        };
+      }
+  
+      // Format service details
+      const formattedServiceDetails =
+        this.clientOrderService.formatServiceDetails(row, services);
+  
+      // Add the formatted service details to the services array
+      acc[row.orderId].services.push(formattedServiceDetails);
+  
+      return acc[row.orderId];
+    }, {});
+  }
+  
+
 }

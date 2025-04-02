@@ -21,33 +21,41 @@ export class OrderController {
     return this.orderService.createOrder(createOrderDto, customerDecoratorDto);
   }
 
-  @Get('order/:orderId')
+  @Get('order/:orderId/order-summary')
   async getOrderSummaryByOrderId(
-    @Param('orderId') orderId:number,
-    @CustomerDecorator() customerDecoratorDto:CustomerDecoratorDto
-  ):Promise<OrderSummaryDto>{
-    return this.orderService.getOrderSummaryByOrderIdOrThrow(orderId,customerDecoratorDto.customerId)
+    @Param('orderId') orderId: number,
+    @CustomerDecorator() customerDecoratorDto: CustomerDecoratorDto
+  ): Promise<OrderSummaryDto> {
+    return this.orderService.getOrderSummaryByOrderIdOrThrow(orderId, customerDecoratorDto.customerId)
   }
 
+  @Get('order/:orderId')
+  async getOrderDetailsById(
+    @Param('orderId') orderId: number,
+  ): Promise<CustomerOrderResponseInterface> {
+    return this.orderService.getOrderDetailsById(orderId);
+  }
+
+  
   @Get('order/:customerId/upcoming-orders')
-    async getUpcomingOrdersForCustomer(
-        @Param('customerId') customerId:number,
-    ):Promise<CustomerOrderResponseInterface[]>{
-        return this.orderService.getUpcomingOrdersForCustomer(customerId);
-    }
+  async getUpcomingOrdersForCustomer(
+    @Param('customerId') customerId: number,
+  ): Promise<CustomerOrderResponseInterface[]> {
+    return this.orderService.getUpcomingOrdersForCustomer(customerId);
+  }
 
   @Get('order/:customerId/orders')
   async getOrderHistoryForCustomer(
-    @Param('customerId') customerId:number
-  ):Promise<CustomerOrderResponseInterface[]>{
-      return this.orderService.getOrderHistoryForCustomer(customerId)
+    @Param('customerId') customerId: number
+  ): Promise<CustomerOrderResponseInterface[]> {
+    return this.orderService.getOrderHistoryForCustomer(customerId)
   }
 
   @Get('order/:customerId/completed-orders')
   async getCompletedOrders(
     @Param('customerId') customerId:number
   ):Promise<CustomerOrderResponseInterface[]>{
-      return this.orderService.getCompletedOrdersForCustomer(customerId)
+    return this.orderService.getCompletedOrdersForCustomer(customerId)
   }
 }
 
