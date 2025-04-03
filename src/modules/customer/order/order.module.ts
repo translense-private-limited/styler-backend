@@ -22,6 +22,7 @@ import { OrderFulfillmentOtpService } from './services/order-fulfillment-otp.ser
 import { OrderFulfillmentOtpEntity } from './entities/otp.entity';
 import { OrderFulfillmentOtpRepository } from './repositories/otp.repository';
 import { CLientAppointmentController } from './controllers/client-appointment.controller';
+import { OrderExternalService } from './services/order-external.service';
 
 @Module({
   imports: [
@@ -44,8 +45,9 @@ import { CLientAppointmentController } from './controllers/client-appointment.co
     AppointmentService,
     ClientOrderService,
     OrderFulfillmentOtpService,
-    OrderFulfillmentOtpRepository
+    OrderFulfillmentOtpRepository,
+    OrderExternalService
   ],
-  exports: [OrderRepository],
+  exports: [OrderExternalService],
 })
 export class OrderModule { }

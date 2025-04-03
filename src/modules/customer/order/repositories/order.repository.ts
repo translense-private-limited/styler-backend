@@ -11,10 +11,4 @@ export class OrderRepository extends BaseRepository<OrderEntity> {
   ) {
     super(repository)
   }
-
-  async findOrderById(orderId: number, customerId: number): Promise<OrderEntity | null> {
-    return this.repository.findOne({ where: { orderId, customerId } });
-  }
-
-
 }

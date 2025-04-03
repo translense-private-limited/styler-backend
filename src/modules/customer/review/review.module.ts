@@ -5,6 +5,7 @@ import { getMysqlDataSource } from "@modules/database/data-source";
 import { ReviewController } from "./controllers/review.controller";
 import { ReviewService } from "./services/review.service";
 import { ReviewRepository } from "./repositories/review.repository";
+import { OrderExternalService } from "../order/services/order-external.service";
 import { OrderModule } from "../order/order.module";
 
 @Module({
@@ -13,10 +14,10 @@ import { OrderModule } from "../order/order.module";
       [ReviewEntity],
       getMysqlDataSource(),
     ),
-    forwardRef(() => OrderModule),
+    OrderModule
   ],
   controllers: [ReviewController],
-  providers: [ReviewService, ReviewRepository],
+  providers: [ReviewService, ReviewRepository, OrderExternalService],
   exports: [],
 })
 export class ReviewModule {}
