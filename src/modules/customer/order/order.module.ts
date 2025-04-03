@@ -46,6 +46,6 @@ import { CLientAppointmentController } from './controllers/client-appointment.co
     OrderFulfillmentOtpService,
     OrderFulfillmentOtpRepository
   ],
-  exports: [],
+  exports: [OrderRepository],
 })
 export class OrderModule { }
