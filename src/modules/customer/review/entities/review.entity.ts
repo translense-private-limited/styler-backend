@@ -20,4 +20,7 @@ export class ReviewEntity extends BaseEntity implements ReviewInterface{
 
   @Column({ type: 'text', nullable: true })
   review?: string;
+
+  @Column({ type: 'boolean', default: false })
+  isAggregated: boolean;
 }

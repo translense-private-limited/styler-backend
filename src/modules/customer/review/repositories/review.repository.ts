@@ -12,4 +12,12 @@ export class ReviewRepository extends BaseRepository<ReviewEntity> {
   ) {
     super(repository);
   }
+
+  async findUnaggregatedReviews(): Promise<ReviewEntity[]> {
+    return await this.repository.find({ where: { isAggregated: false } });
+  }
+
+  async markReviewsAsAggregated(): Promise<void> {
+    await this.repository.update({ isAggregated: false }, { isAggregated: true });
+  }
 }

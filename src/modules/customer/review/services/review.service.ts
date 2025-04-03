@@ -16,7 +16,6 @@ export class ReviewService {
   async submitReview(createReviewDto: CreateReviewDto): Promise<ReviewEntity> {
     const { customerId, orderId } = createReviewDto;
     const order = await this.orderExternalService.getOrderDetails(orderId, customerId);
-    // const order = await this.orderRepository.findOrderById(orderId, customerId);
     if (!order || order.status !== OrderStatusEnum.ORDER_COMPLETED) {
       throw new BadRequestException('Only completed orders can be reviewed.');
     }
