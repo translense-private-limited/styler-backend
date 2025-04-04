@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AggregatedReviewRepository } from '../repositories/aggregate-rating.repository';
+import { AggregatedRatingRepository } from '../repositories/aggregate-rating.repository';
 import { JobEnum } from '@src/utils/enums/job.enum';
 import { TimestampRepository } from '../repositories/timestamp.repository';
 import { ReviewService } from './review.service';
@@ -12,7 +12,7 @@ export class AggregateRatingService {
   constructor(
     private reviewService: ReviewService,
     private timestampRepository: TimestampRepository,
-    private aggregatedReviewRepository: AggregatedReviewRepository,
+    private aggregatedRatingRepository: AggregatedRatingRepository,
   ) {}
 
   private async getLastAggregatedTimeStamp(job: JobEnum): Promise<Date> {
@@ -43,7 +43,7 @@ export class AggregateRatingService {
     const serviceIds = aggregatedReviews.map((review) => review.serviceId);
 
     // Fetch all existing records in a single query
-    const existingReviews = await this.aggregatedReviewRepository
+    const existingReviews = await this.aggregatedRatingRepository
       .getRepository()
       .find({
         where: { serviceId: In(serviceIds) },
@@ -70,7 +70,7 @@ export class AggregateRatingService {
         updatedEntities.push(existing);
       } else {
         // Prepare new record for insertion
-        const newAggregatedReview = this.aggregatedReviewRepository
+        const newAggregatedReview = this.aggregatedRatingRepository
           .getRepository()
           .create({
             serviceId: review.serviceId,
@@ -84,13 +84,13 @@ export class AggregateRatingService {
 
     // Perform batch updates & inserts
     if (updatedEntities.length > 0) {
-      await this.aggregatedReviewRepository
+      await this.aggregatedRatingRepository
         .getRepository()
         .save(updatedEntities);
     }
 
     if (newEntities.length > 0) {
-      await this.aggregatedReviewRepository.getRepository().save(newEntities);
+      await this.aggregatedRatingRepository.getRepository().save(newEntities);
     }
   }
 
@@ -114,7 +114,7 @@ export class AggregateRatingService {
   async getRatingByServiceId(
     serviceId: string,
   ): Promise<AggregatedRatingEntity> {
-    return this.aggregatedReviewRepository.getRepository().findOne({
+    return this.aggregatedRatingRepository.getRepository().findOne({
       where: {
         serviceId,
       },
@@ -124,7 +124,7 @@ export class AggregateRatingService {
   async getRatingByServiceIds(
     serviceIds: string[],
   ): Promise<AggregatedRatingEntity[]> {
-    return this.aggregatedReviewRepository.getRepository().find({
+    return this.aggregatedRatingRepository.getRepository().find({
       where: {
         serviceId: In(serviceIds),
       },
