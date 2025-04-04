@@ -35,7 +35,7 @@ import { OrderExternalService } from './services/order-external.service';
       ],
       getMysqlDataSource(),
     ),
-    OutletModule,
+    forwardRef(() => OutletModule),
     ServiceModule,
     forwardRef(() => CustomerModule),
     ClientModule,

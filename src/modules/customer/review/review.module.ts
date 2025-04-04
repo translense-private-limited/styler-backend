@@ -23,7 +23,13 @@ import { AggregatedRatingController } from './controllers/aggregated-rating.cont
     OrderModule,
   ],
   controllers: [ReviewController, AggregatedRatingController],
-  providers: [ReviewService, ReviewRepository, AggregatedRatingRepository, AggregateRatingService, TimestampRepository],
-  exports: [],
+  providers: [
+    ReviewService,
+    ReviewRepository,
+    AggregatedRatingRepository,
+    AggregateRatingService,
+    TimestampRepository,
+  ],
+  exports: [AggregateRatingService],
 })
 export class ReviewModule {}

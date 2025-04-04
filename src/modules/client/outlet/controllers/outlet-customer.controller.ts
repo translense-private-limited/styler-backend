@@ -8,6 +8,7 @@ import { CustomerDecorator } from '@src/utils/decorators/customer.decorator';
 import { CustomerDecoratorDto } from '@src/utils/dtos/customer-decorator.dto';
 import { ServiceSchema } from '@modules/client/services/schema/service.schema';
 import { OutletEntity } from '../entities/outlet.entity';
+import { RatedServiceInterface } from '../interfaces/rated-service.interface';
 
 @Controller('customer')
 @ApiTags('customer/outlets')
@@ -45,7 +46,7 @@ export class OutletCustomerController {
   @Public()
   async getAllServicesForAnOutlet(
     @Param('outletId', ParseIntPipe) outletId: number,
-  ): Promise<ServiceSchema[]> {
+  ): Promise<RatedServiceInterface[]> {
     return this.outletCustomerService.getAllServicesForAnOutlet(outletId);
   }
 

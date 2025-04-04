@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CustomerService } from './services/customer.service';
 import { CustomerExternalService } from './services/customer-external.service';
 import { CustomerRepository } from './repositories/customer.repository';
@@ -13,7 +13,7 @@ import { ReviewModule } from './review/review.module';
   imports: [
     TypeOrmModule.forFeature([CustomerEntity], getMysqlDataSource()),
     EncryptionModule,
-    ReviewModule
+    forwardRef(() => ReviewModule),
   ],
   controllers: [],
   providers: [CustomerService, CustomerExternalService, CustomerRepository],
