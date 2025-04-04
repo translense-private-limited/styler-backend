@@ -17,6 +17,6 @@ import { ReviewModule } from './review/review.module';
   ],
   controllers: [],
   providers: [CustomerService, CustomerExternalService, CustomerRepository],
-  exports: [CustomerExternalService, CustomerRepository],
+  exports: [CustomerExternalService, CustomerRepository, ReviewModule],
 })
 export class CustomerModule {}

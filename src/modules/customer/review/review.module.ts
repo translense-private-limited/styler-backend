@@ -35,6 +35,6 @@ import { ReviewClientController } from './controllers/review-client.controller';
     AggregateRatingService,
     TimestampRepository,
   ],
-  exports: [AggregateRatingService],
+  exports: [AggregateRatingService, TimestampRepository]
 })
 export class ReviewModule {}

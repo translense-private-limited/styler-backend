@@ -9,6 +9,7 @@ import { SeedAddressData } from '../data/address.data';
 import { SeedServiceData } from '../data/service.data';
 import { SeedClientOutletMappingData } from '../data/client-outlet-mapping.data';
 import { SeedEventConfigurationData } from '../data/event-configuration.data';
+import { SeedTimestampData } from '../data/aggregate-review-timestamp.data';
 
 @Injectable()
 export class SeedService {
@@ -22,6 +23,7 @@ export class SeedService {
     private readonly seedCustomerData:SeedCustomerData,
     private readonly seedAddressData:SeedAddressData,
     private readonly seedServiceData:SeedServiceData,
+    private readonly seedTimestampData:SeedTimestampData,
     private readonly seedEventConfigurationData:SeedEventConfigurationData
   ) {}
 
@@ -35,6 +37,8 @@ export class SeedService {
       await this.seedAdminData.seedAdmins();
       await this.seedCustomerData.seedCustomers();
       await this.seedAddressData.seedAddresses();
+      await this.seedTimestampData.seedTimestamps();
+
       await this.seedEventConfigurationData.seedEventConfigurations();
 
       return;

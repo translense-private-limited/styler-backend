@@ -24,7 +24,7 @@ export class AggregateRatingService {
     return timestamp.lastSyncTime;
   }
 
-  private async updateLastAggregatedTimeStamp(
+  async updateLastAggregatedTimeStamp(
     job: JobEnum,
     currentTimestamp: Date,
   ): Promise<Date> {

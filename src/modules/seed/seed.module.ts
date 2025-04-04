@@ -27,6 +27,8 @@ import { SeedClientOutletMappingData } from './data/client-outlet-mapping.data';
 import { ClientOutletMappingModule } from '@modules/admin/client-outlet-mapping/client-outlet-mapping.module';
 import { SeedEventConfigurationData } from './data/event-configuration.data';
 import { NotificationModule } from '@src/utils/notification/notification.module';
+import { SeedTimestampData } from './data/aggregate-review-timestamp.data';
+import { ReviewModule } from '@modules/customer/review/review.module';
 
 @Module({
   imports: [
@@ -42,6 +44,7 @@ import { NotificationModule } from '@src/utils/notification/notification.module'
     ServiceModule,
     ClientOutletMappingModule,
     NotificationModule,
+    ReviewModule
   ],
   controllers: [SeedController],
   providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData,SeedAdminData,SeedCustomerData,SeedAddressData,SeedServiceData,SeedClientOutletMappingData,SeedEventConfigurationData],
