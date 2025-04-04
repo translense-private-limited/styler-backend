@@ -49,7 +49,8 @@ export class OutletCustomerService {
 
     const serviceWithRatingDetails = services.map((service) => {
       const rating = ratingMap.get(service._id);
-      const ratedServiceDto = { ...service, ...rating };
+      //@ts-ignore
+      const ratedServiceDto = { ...service._doc, ...rating };
       return ratedServiceDto;
     });
 
