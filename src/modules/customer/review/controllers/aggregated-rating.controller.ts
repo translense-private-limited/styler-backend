@@ -8,14 +8,16 @@ import { Public } from '@src/utils/decorators/public.decorator';
 export class AggregatedRatingController {
   constructor(private readonly aggregateRatingService: AggregateRatingService) {}
 
-//   @Post('update-reviews')            FOR TESTING ONLY
-//   async updateAggregatedReviews(
-//     @Body() aggregatedReviews: AggregatedRatingInterface[],
-//   ): Promise<string> {
-//     await this.aggregateRatingService['updateAggregatedReviews'](
-//       aggregatedReviews,
-//     );
-//     return 'Aggregated reviews updated successfully';
-//   }
+
+//   FOR TESTING ONLY
+  @Post('update-reviews')            
+  async updateAggregatedReviews(
+    @Body() aggregatedReviews: AggregatedRatingInterface[],
+  ): Promise<string> {
+    await this.aggregateRatingService['updateAggregatedReviews'](
+      aggregatedReviews,
+    );
+    return 'Aggregated reviews updated successfully';
+  }
 }
 
