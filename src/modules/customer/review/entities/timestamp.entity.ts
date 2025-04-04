@@ -2,7 +2,7 @@ import { BaseEntity } from '@src/utils/entities/base.entity';
 import { JobEnum } from '@src/utils/enums/job.enum';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('reviews')
+@Entity('review_timestamp')
 export class TimestampEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

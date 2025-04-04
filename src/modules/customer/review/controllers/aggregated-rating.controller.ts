@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
 @Controller()
-export class AggregatedReviewController {}
+export class AggregatedRatingController {}

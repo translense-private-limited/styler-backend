@@ -5,7 +5,7 @@ import { ReviewRepository } from '../repositories/review.repository';
 import { ReviewEntity } from '../entities/review.entity';
 import { OrderStatusEnum } from '@modules/customer/order/enums/order-status.enum';
 import { OrderExternalService } from '@modules/customer/order/services/order-external.service';
-import { AggregatedReviewInterface } from '../interfaces/aggregated-review.interface';
+import { AggregatedRatingInterface } from '../interfaces/aggregated-rating.interface';
 
 @Injectable()
 export class ReviewService {
@@ -31,7 +31,7 @@ export class ReviewService {
   async getAggregatedReview(
     lastRunAt: Date,
     currentTimestamp: Date,
-  ): Promise<AggregatedReviewInterface[]> {
+  ): Promise<AggregatedRatingInterface[]> {
     return this.reviewRepository
       .getRepository()
       .createQueryBuilder('review')
@@ -43,7 +43,7 @@ export class ReviewService {
         currentTimestamp,
       })
       .groupBy('review.serviceId')
-      .getRawMany<AggregatedReviewInterface>();
+      .getRawMany<AggregatedRatingInterface>();
   }
 
   async getReviewByCustomerId(

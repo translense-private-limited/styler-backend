@@ -1,8 +1,8 @@
 import { BaseEntity } from '@src/utils/entities/base.entity';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity('reviews')
-export class AggregatedReviewEntity extends BaseEntity {
+@Entity('aggregrate_reviews')
+export class AggregatedRatingEntity extends BaseEntity {
   @PrimaryColumn()
   serviceId: string;
 

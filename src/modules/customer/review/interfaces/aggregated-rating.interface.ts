@@ -1,4 +1,4 @@
-export interface AggregatedReviewInterface {
+export interface AggregatedRatingInterface {
   serviceId: string;
   totalRating: number;
   reviewCount: number;

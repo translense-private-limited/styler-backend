@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { AggregatedReviewRepository } from '../repositories/aggregate-review.repository';
+import { AggregatedReviewRepository } from '../repositories/aggregate-rating.repository';
 import { JobEnum } from '@src/utils/enums/job.enum';
 import { TimestampRepository } from '../repositories/timestamp.repository';
 import { ReviewService } from './review.service';
-import { AggregatedReviewInterface } from '../interfaces/aggregated-review.interface';
+import { AggregatedRatingInterface } from '../interfaces/aggregated-rating.interface';
 import { In } from 'typeorm';
-import { AggregatedReviewEntity } from '../entities/aggregate-review.entity';
+import { AggregatedRatingEntity } from '../entities/aggregate-rating.entity';
 
 @Injectable()
-export class AggregateReviewService {
+export class AggregateRatingService {
   constructor(
     private reviewService: ReviewService,
     private timestampRepository: TimestampRepository,
@@ -38,7 +38,7 @@ export class AggregateReviewService {
   }
 
   private async updateAggregatedReviews(
-    aggregatedReviews: AggregatedReviewInterface[],
+    aggregatedReviews: AggregatedRatingInterface[],
   ): Promise<void> {
     const serviceIds = aggregatedReviews.map((review) => review.serviceId);
 
@@ -50,12 +50,12 @@ export class AggregateReviewService {
       });
 
     // Convert existing records into a map for quick lookup
-    const existingReviewMap: Map<string, AggregatedReviewEntity> = new Map(
+    const existingReviewMap: Map<string, AggregatedRatingEntity> = new Map(
       existingReviews.map((review) => [review.serviceId, review]),
     );
 
-    const updatedEntities: AggregatedReviewEntity[] = [];
-    const newEntities: AggregatedReviewEntity[] = [];
+    const updatedEntities: AggregatedRatingEntity[] = [];
+    const newEntities: AggregatedRatingEntity[] = [];
 
     for (const review of aggregatedReviews) {
       const existing = existingReviewMap.get(review.serviceId);
@@ -113,7 +113,7 @@ export class AggregateReviewService {
 
   async getRatingByServiceId(
     serviceId: string,
-  ): Promise<AggregatedReviewEntity> {
+  ): Promise<AggregatedRatingEntity> {
     return this.aggregatedReviewRepository.getRepository().findOne({
       where: {
         serviceId,
@@ -123,7 +123,7 @@ export class AggregateReviewService {
 
   async getRatingByServiceIds(
     serviceIds: string[],
-  ): Promise<AggregatedReviewEntity[]> {
+  ): Promise<AggregatedRatingEntity[]> {
     return this.aggregatedReviewRepository.getRepository().find({
       where: {
         serviceId: In(serviceIds),
