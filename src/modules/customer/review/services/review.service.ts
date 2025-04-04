@@ -6,6 +6,7 @@ import { ReviewEntity } from '../entities/review.entity';
 import { OrderStatusEnum } from '@modules/customer/order/enums/order-status.enum';
 import { OrderExternalService } from '@modules/customer/order/services/order-external.service';
 import { AggregatedRatingInterface } from '../interfaces/aggregated-rating.interface';
+import { PaginatedSearchDto } from '@src/utils/response/dtos/search.dto';
 
 @Injectable()
 export class ReviewService {
@@ -55,6 +56,21 @@ export class ReviewService {
         serviceId,
         customerId,
       },
+    });
+  }
+
+  async getReviewForService(
+    serviceId: string,
+    paginatedSearchDto?: PaginatedSearchDto,
+  ): Promise<ReviewEntity[]> {
+    const limit = this.reviewRepository.getLimit(paginatedSearchDto);
+    const offset = this.reviewRepository.getSkip(paginatedSearchDto);
+    return await this.reviewRepository.getRepository().find({
+      where: {
+        serviceId,
+      },
+      take: limit,
+      skip: offset,
     });
   }
 }

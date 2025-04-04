@@ -13,6 +13,7 @@ import { AggregateRatingService } from './services/aggregate-rating.service';
 import { TimestampRepository } from './repositories/timestamp.repository';
 import { TimestampEntity } from './entities/timestamp.entity';
 import { AggregatedRatingController } from './controllers/aggregated-rating.controller';
+import { ReviewClientController } from './controllers/review-client.controller';
 
 @Module({
   imports: [
@@ -22,7 +23,11 @@ import { AggregatedRatingController } from './controllers/aggregated-rating.cont
     ),
     OrderModule,
   ],
-  controllers: [ReviewController, AggregatedRatingController],
+  controllers: [
+    ReviewController,
+    AggregatedRatingController,
+    ReviewClientController,
+  ],
   providers: [
     ReviewService,
     ReviewRepository,
