@@ -9,17 +9,20 @@ import { ReviewRepository } from './repositories/review.repository';
 import { OrderModule } from '../order/order.module';
 import { AggregatedReviewEntity } from './entities/aggregate-review.entity';
 import { AggregatedReviewRepository } from './repositories/aggregate-review.repository';
+import { AggregateReviewService } from './services/aggregate-review.service';
+import { TimestampRepository } from './repositories/timestamp.repository';
+import { TimestampEntity } from './entities/timestamp.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [ReviewEntity, AggregatedReviewEntity],
+      [ReviewEntity, AggregatedReviewEntity, TimestampEntity],
       getMysqlDataSource(),
     ),
     OrderModule,
   ],
   controllers: [ReviewController],
-  providers: [ReviewService, ReviewRepository, AggregatedReviewRepository],
+  providers: [ReviewService, ReviewRepository, AggregatedReviewRepository, AggregateReviewService, TimestampRepository],
   exports: [],
 })
 export class ReviewModule {}

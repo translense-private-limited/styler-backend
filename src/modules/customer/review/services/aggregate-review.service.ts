@@ -101,7 +101,7 @@ export class AggregateReviewService {
     );
     const currentTimestamp = new Date();
     const aggregatedReviews =
-      await this.reviewService.getAggregatedReview(lastRunAt);
+      await this.reviewService.getAggregatedReview(lastRunAt, currentTimestamp);
 
     await this.updateAggregatedReviews(aggregatedReviews);
 
