@@ -1,7 +1,7 @@
 import { IsInt, IsString, Min, Max, IsOptional } from 'class-validator';
 import { ReviewInterface } from '../interfaces/review.interface';
 
-export class CreateReviewDto implements Omit<ReviewInterface, 'reviewId'>{
+export class CreateReviewDto implements Omit<ReviewInterface, 'id'> {
   @IsInt()
   customerId: number;
 
@@ -9,7 +9,7 @@ export class CreateReviewDto implements Omit<ReviewInterface, 'reviewId'>{
   orderId: number;
 
   @IsInt()
-  @Min(1)
+  @Min(0.5)
   @Max(5)
   rating: number;
 

@@ -1,9 +1,7 @@
-
-export interface ReviewInterface{
-    reviewId: number;
-    customerId: number;
-    serviceId: string;
-    rating: number; 
-    review?: string;
-  }
-  
+export interface ReviewInterface {
+  id: number;
+  customerId: number;
+  serviceId: string;
+  rating: number;
+  review?: string;
+}

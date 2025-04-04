@@ -1,18 +1,18 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { OrderEntity } from "../entities/orders.entity";
+import { Injectable } from '@nestjs/common';
+
+import { OrderEntity } from '../entities/orders.entity';
+import { OrderService } from './order.service';
 
 @Injectable()
 export class OrderExternalService {
-    constructor(
-        @InjectRepository(OrderEntity)
-        private readonly orderRepository: Repository<OrderEntity>,
-    ) { }
-
-    async getOrderDetails(orderId: number, customerId: number): Promise<OrderEntity | null> {
-        return await this.orderRepository.findOne({
-            where: { orderId, customerId },
-        });
-    }
+  constructor(private orderService: OrderService) {}
+  async getOrderDetails(
+    orderId: number,
+    customerId: number,
+  ): Promise<OrderEntity | null> {
+    return await this.orderService.getOrderByOrderAndCustomerId(
+      orderId,
+      customerId,
+    );
+  }
 }

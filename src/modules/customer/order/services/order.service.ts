@@ -42,8 +42,7 @@ export class OrderService {
     private readonly appointmentService: AppointmentService,
     private readonly appointmentRepository: AppointmentRepository,
     private readonly clientOrderService: ClientOrderService,
-  ) { }
-
+  ) {}
 
   private async expandOrderItem(
     orderItems: OrderItemPayloadDto[],
@@ -516,15 +515,15 @@ export class OrderService {
           outletWebsite: outlet.website,
           address: outlet.address
             ? {
-              addressId: outlet.address.addressId,
-              country: outlet.address.country,
-              state: outlet.address.state,
-              district: outlet.address.district,
-              city: outlet.address.city,
-              pincode: outlet.address.pincode,
-              street: outlet.address.street,
-              landmark: outlet.address.landmark,
-            }
+                addressId: outlet.address.addressId,
+                country: outlet.address.country,
+                state: outlet.address.state,
+                district: outlet.address.district,
+                city: outlet.address.city,
+                pincode: outlet.address.pincode,
+                street: outlet.address.street,
+                landmark: outlet.address.landmark,
+              }
             : null,
         };
       }
@@ -569,24 +568,33 @@ export class OrderService {
     );
   }
 
-
-  async getOrderDetailsById(orderId: number): Promise<CustomerOrderResponseInterface> {
+  async getOrderDetailsById(
+    orderId: number,
+  ): Promise<CustomerOrderResponseInterface> {
     const allOrders = await this.appointmentRepository.getOrderDetails(orderId);
     // Extract unique serviceIds and outletIds
     const serviceIds = [...new Set(allOrders.map((order) => order.serviceId))];
     const outletIds = [...new Set(allOrders.map((order) => order.outletId))];
-  
+
     // Use Promise.all to fetch services and outlet details in parallel
     const [services, outletDetails] = await Promise.all([
       this.serviceExternalService.getServicesByServiceIds(serviceIds),
       this.outletExternalService.getOutletDetailsByIds(outletIds),
     ]);
-  
+
     // Format the results and return
-    return this.formatCustomerOrderDetailsResponse(allOrders, services, outletDetails);
+    return this.formatCustomerOrderDetailsResponse(
+      allOrders,
+      services,
+      outletDetails,
+    );
   }
-  
-  formatCustomerOrderDetailsResponse(orders, services, outletDetails): CustomerOrderResponseInterface {
+
+  formatCustomerOrderDetailsResponse(
+    orders,
+    services,
+    outletDetails,
+  ): CustomerOrderResponseInterface {
     return orders.reduce((acc, row) => {
       if (!acc[row.orderId]) {
         acc[row.orderId] = {
@@ -611,7 +619,7 @@ export class OrderService {
           outlet: {},
         };
       }
-  
+
       // Fetch outlet details for the current order
       const outlet = outletDetails.find((outlet) => outlet.id === row.outletId);
       if (outlet) {
@@ -638,17 +646,24 @@ export class OrderService {
             : null,
         };
       }
-  
+
       // Format service details
       const formattedServiceDetails =
         this.clientOrderService.formatServiceDetails(row, services);
-  
+
       // Add the formatted service details to the services array
       acc[row.orderId].services.push(formattedServiceDetails);
-  
+
       return acc[row.orderId];
     }, {});
   }
-  
 
+  async getOrderByOrderAndCustomerId(
+    orderId: number,
+    customerId: number,
+  ): Promise<OrderEntity | null> {
+    return await this.orderRepository.getRepository().findOne({
+      where: { orderId, customerId },
+    });
+  }
 }

@@ -27,15 +27,25 @@ import { OrderExternalService } from './services/order-external.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [OrderEntity, OrderItemEntity, AppointmentEntity, OrderFulfillmentOtpEntity],
+      [
+        OrderEntity,
+        OrderItemEntity,
+        AppointmentEntity,
+        OrderFulfillmentOtpEntity,
+      ],
       getMysqlDataSource(),
     ),
     OutletModule,
     ServiceModule,
     forwardRef(() => CustomerModule),
-    ClientModule
+    ClientModule,
   ],
-  controllers: [OrderController, AppointmentController, ClientOrderController, CLientAppointmentController],
+  controllers: [
+    OrderController,
+    AppointmentController,
+    ClientOrderController,
+    CLientAppointmentController,
+  ],
   providers: [
     OrderService,
     OrderRepository,
@@ -46,8 +56,8 @@ import { OrderExternalService } from './services/order-external.service';
     ClientOrderService,
     OrderFulfillmentOtpService,
     OrderFulfillmentOtpRepository,
-    OrderExternalService
+    OrderExternalService,
   ],
   exports: [OrderExternalService],
 })
-export class OrderModule { }
+export class OrderModule {}
