@@ -24,6 +24,7 @@ export class ReviewService {
     if (!order || order.status !== OrderStatusEnum.ORDER_COMPLETED) {
       throw new BadRequestException('Only completed orders can be reviewed.');
     }
+    // handle the case of duplicate entry (same customer reviewing twice )
     return await this.reviewRepository.getRepository().save(createReviewDto);
   }
 

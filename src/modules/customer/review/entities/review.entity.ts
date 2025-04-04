@@ -16,9 +16,6 @@ export class ReviewEntity extends BaseEntity implements ReviewInterface {
   @PrimaryGeneratedColumn() // Ensuring this is the ONLY auto-increment column
   id: number;
 
-  @Column({ type: 'varchar' })
-  reviewId: number;
-
   @Index()
   @Column({ type: 'int' })
   customerId: number;
