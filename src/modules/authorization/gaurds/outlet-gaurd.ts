@@ -36,7 +36,7 @@ export class OutletGuard implements CanActivate {
 
     // 1. Access outletIds from headers (assuming they are provided as an array).
     const headers = request.headers;
-    const outletIds: number[] = headers.outletIds;
+    const outletIds: number[] = headers['outlet-ids'];
 
     // 2. Extract outletId from request params, body, and query.
     const outletIdFromParams = request.params?.outletId
