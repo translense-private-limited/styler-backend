@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Query, Get, Param } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ReviewService } from '../services/review.service';
 import { CreateReviewDto } from '../dto/create-review.dto';
 import { ReviewEntity } from '../entities/review.entity';
@@ -7,6 +7,8 @@ import { AggregatedRatingEntity } from '../entities/aggregate-rating.entity';
 import { AggregateRatingService } from '../services/aggregate-rating.service';
 import { PaginatedSearchDto } from '@src/utils/response/dtos/search.dto';
 
+
+@ApiBearerAuth('jwt')
 @ApiTags('Customer/Reviews')
 @Controller('customer')
 export class ReviewController {
