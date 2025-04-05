@@ -23,7 +23,7 @@ export class SeedService {
     private readonly seedCustomerData:SeedCustomerData,
     private readonly seedAddressData:SeedAddressData,
     private readonly seedServiceData:SeedServiceData,
-    private readonly seedTimestampData:SeedTimestampData,
+    // private readonly seedTimestampData:SeedTimestampData,
     private readonly seedEventConfigurationData:SeedEventConfigurationData
   ) {}
 
@@ -37,7 +37,7 @@ export class SeedService {
       await this.seedAdminData.seedAdmins();
       await this.seedCustomerData.seedCustomers();
       await this.seedAddressData.seedAddresses();
-      await this.seedTimestampData.seedTimestamps();
+      // await this.seedTimestampData.seedTimestamps();
 
       await this.seedEventConfigurationData.seedEventConfigurations();
 
