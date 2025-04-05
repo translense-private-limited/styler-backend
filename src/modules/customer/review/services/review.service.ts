@@ -7,6 +7,7 @@ import { OrderStatusEnum } from '@modules/customer/order/enums/order-status.enum
 import { OrderExternalService } from '@modules/customer/order/services/order-external.service';
 import { AggregatedRatingInterface } from '../interfaces/aggregated-rating.interface';
 import { PaginatedSearchDto } from '@src/utils/response/dtos/search.dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class ReviewService {
@@ -71,6 +72,17 @@ export class ReviewService {
       },
       take: limit,
       skip: offset,
+    });
+  }
+
+  async getServiceReviewsByCustomerIdAndServiceIds(
+    customerId: number,
+    serviceIds: string[],
+  ): Promise<ReviewEntity[]> {
+    return this.reviewRepository.getRepository().find({
+      where: {
+        serviceId: In(serviceIds),
+      },
     });
   }
 }

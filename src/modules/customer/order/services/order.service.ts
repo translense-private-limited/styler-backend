@@ -31,6 +31,9 @@ import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
 import { CustomerOrderResponseInterface } from '../interfaces/customer-order-response.interface';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 
+import { ReviewExternalService } from '@modules/customer/review/services/review-external.service';
+import { ReviewEntity } from '@modules/customer/review/entities/review.entity';
+
 @Injectable()
 export class OrderService {
   constructor(
@@ -42,6 +45,8 @@ export class OrderService {
     private readonly appointmentService: AppointmentService,
     private readonly appointmentRepository: AppointmentRepository,
     private readonly clientOrderService: ClientOrderService,
+    @Inject(forwardRef(() => ReviewExternalService))
+    private readonly reviewExternalService: ReviewExternalService,
   ) {}
 
   private async expandOrderItem(
@@ -555,17 +560,39 @@ export class OrderService {
     ];
 
     // Use Promise.all to fetch services and outlet details in parallel
-    const [services, outletDetails] = await Promise.all([
+    const [services, outletDetails, reviews] = await Promise.all([
       this.serviceExternalService.getServicesByServiceIds(serviceIds),
       this.outletExternalService.getOutletDetailsByIds(outletIds),
+      this.reviewExternalService.getServiceReviewsByCustomerIdAndServiceIds(
+        customerId,
+        serviceIds,
+      ),
     ]);
 
     // Format the results into the desired structure
-    return this.formatCustomerOrderResponse(
+    const formattedOrder = this.formatCustomerOrderResponse(
       completedOrders,
       services,
       outletDetails,
     );
+
+    // add the service review
+    const serviceReviewMap: Map<string, ReviewEntity> = new Map<
+      string,
+      ReviewEntity
+    >();
+    reviews.forEach((reviews) => {
+      serviceReviewMap.set(reviews.serviceId, reviews);
+    });
+
+    formattedOrder.forEach((order) => {
+      order.services.forEach((service) => {
+        // @ts-ignore
+        service.review = serviceReviewMap.get(service._id.toString());
+      });
+    });
+
+    return formattedOrder;
   }
 
   async getOrderDetailsById(

@@ -23,6 +23,7 @@ import { OrderFulfillmentOtpEntity } from './entities/otp.entity';
 import { OrderFulfillmentOtpRepository } from './repositories/otp.repository';
 import { CLientAppointmentController } from './controllers/client-appointment.controller';
 import { OrderExternalService } from './services/order-external.service';
+import { ReviewModule } from '../review/review.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { OrderExternalService } from './services/order-external.service';
     ServiceModule,
     forwardRef(() => CustomerModule),
     ClientModule,
+    forwardRef(() => ReviewModule),
   ],
   controllers: [
     OrderController,

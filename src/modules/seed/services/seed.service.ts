@@ -9,27 +9,25 @@ import { SeedAddressData } from '../data/address.data';
 import { SeedServiceData } from '../data/service.data';
 import { SeedClientOutletMappingData } from '../data/client-outlet-mapping.data';
 import { SeedEventConfigurationData } from '../data/event-configuration.data';
-import { SeedTimestampData } from '../data/aggregate-review-timestamp.data';
 
 @Injectable()
 export class SeedService {
   constructor(
     private readonly seedClientData: SeedClientData,
     private readonly seedOutletData: SeedOutletData,
-    private readonly seedClientOutletMapping:SeedClientOutletMappingData,
+    private readonly seedClientOutletMapping: SeedClientOutletMappingData,
     private readonly seedRoleData: SeedRoleData,
     private readonly seedCategoryData: SeedCategoryData,
     private readonly seedAdminData: SeedAdminData,
-    private readonly seedCustomerData:SeedCustomerData,
-    private readonly seedAddressData:SeedAddressData,
-    private readonly seedServiceData:SeedServiceData,
+    private readonly seedCustomerData: SeedCustomerData,
+    private readonly seedAddressData: SeedAddressData,
+    private readonly seedServiceData: SeedServiceData,
     // private readonly seedTimestampData:SeedTimestampData,
-    private readonly seedEventConfigurationData:SeedEventConfigurationData
+    private readonly seedEventConfigurationData: SeedEventConfigurationData,
   ) {}
 
   async seedMySQL(): Promise<void> {
     try {
-
       await this.seedClientData.seedClients();
       await this.seedOutletData.seedOutlets();
       await this.seedClientOutletMapping.seedClientOutletMappings();

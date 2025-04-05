@@ -14,6 +14,7 @@ import { TimestampRepository } from './repositories/timestamp.repository';
 import { TimestampEntity } from './entities/timestamp.entity';
 import { AggregatedRatingController } from './controllers/aggregated-rating.controller';
 import { ReviewClientController } from './controllers/review-client.controller';
+import { ReviewExternalService } from './services/review-external.service';
 
 @Module({
   imports: [
@@ -34,7 +35,13 @@ import { ReviewClientController } from './controllers/review-client.controller';
     AggregatedRatingRepository,
     AggregateRatingService,
     TimestampRepository,
+    ReviewExternalService,
   ],
-  exports: [AggregateRatingService, TimestampRepository]
+  exports: [
+    AggregateRatingService,
+    TimestampRepository,
+    ReviewService,
+    ReviewExternalService,
+  ],
 })
 export class ReviewModule {}
