@@ -1,10 +1,10 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { SeedController } from './controllers/seed.controller';
 import { SeedService } from './services/seed.service';
-import { ClientModule } from '@modules/client/client/client.module';  // Import ClientModule
+import { ClientModule } from '@modules/client/client/client.module'; // Import ClientModule
 import { OutletModule } from '@modules/client/outlet/outlet.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClientEntity } from '@modules/client/client/entities/client.entity';  // Import ClientEntity
+import { ClientEntity } from '@modules/client/client/entities/client.entity'; // Import ClientEntity
 import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
 import { RoleEntity } from '@modules/authorization/entities/role.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
@@ -28,15 +28,19 @@ import { ClientOutletMappingModule } from '@modules/admin/client-outlet-mapping/
 import { SeedEventConfigurationData } from './data/event-configuration.data';
 import { NotificationModule } from '@src/utils/notification/notification.module';
 import { ReviewModule } from '@modules/customer/review/review.module';
+import { SeedJobData } from './data/job.data';
 // import { ReviewModule } from '@modules/customer/review/review.module';
 // import { SeedTimestampData } from './data/aggregate-review-timestamp.data';
 
 @Module({
   imports: [
     ClientModule,
-    forwardRef(()=>OutletModule), 
-    AuthorizationModule,  
-    TypeOrmModule.forFeature([ClientEntity, OutletEntity, RoleEntity], getMysqlDataSource()),
+    forwardRef(() => OutletModule),
+    AuthorizationModule,
+    TypeOrmModule.forFeature(
+      [ClientEntity, OutletEntity, RoleEntity],
+      getMysqlDataSource(),
+    ),
     DatabaseModule,
     forwardRef(() => AdminModule), // Use forwardRef to avoid circular dependency
     CategoryModule,
@@ -45,9 +49,22 @@ import { ReviewModule } from '@modules/customer/review/review.module';
     ServiceModule,
     ClientOutletMappingModule,
     NotificationModule,
-    ReviewModule
+    forwardRef(() => ReviewModule),
   ],
   controllers: [SeedController],
-  providers: [SeedService,SeedClientData,SeedOutletData,SeedRoleData,SeedCategoryData,SeedAdminData,SeedCustomerData,SeedAddressData,SeedServiceData,SeedClientOutletMappingData,SeedEventConfigurationData],
+  providers: [
+    SeedService,
+    SeedClientData,
+    SeedOutletData,
+    SeedRoleData,
+    SeedCategoryData,
+    SeedAdminData,
+    SeedCustomerData,
+    SeedAddressData,
+    SeedServiceData,
+    SeedClientOutletMappingData,
+    SeedEventConfigurationData,
+    SeedJobData,
+  ],
 })
 export class SeedModule {}

@@ -9,6 +9,7 @@ import { SeedAddressData } from '../data/address.data';
 import { SeedServiceData } from '../data/service.data';
 import { SeedClientOutletMappingData } from '../data/client-outlet-mapping.data';
 import { SeedEventConfigurationData } from '../data/event-configuration.data';
+import { SeedJobData } from '../data/job.data';
 
 @Injectable()
 export class SeedService {
@@ -24,6 +25,7 @@ export class SeedService {
     private readonly seedServiceData: SeedServiceData,
     // private readonly seedTimestampData:SeedTimestampData,
     private readonly seedEventConfigurationData: SeedEventConfigurationData,
+    private readonly seedJobData: SeedJobData,
   ) {}
 
   async seedMySQL(): Promise<void> {
@@ -38,6 +40,7 @@ export class SeedService {
       // await this.seedTimestampData.seedTimestamps();
 
       await this.seedEventConfigurationData.seedEventConfigurations();
+      await this.seedJobData.seedJobData();
 
       return;
     } catch (error) {

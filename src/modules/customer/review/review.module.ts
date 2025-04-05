@@ -42,6 +42,7 @@ import { ReviewExternalService } from './services/review-external.service';
     TimestampRepository,
     ReviewService,
     ReviewExternalService,
+    AggregatedRatingRepository,
   ],
 })
 export class ReviewModule {}
