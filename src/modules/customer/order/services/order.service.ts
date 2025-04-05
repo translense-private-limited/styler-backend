@@ -31,6 +31,9 @@ import { OutletEntity } from '@modules/client/outlet/entities/outlet.entity';
 import { CustomerOrderResponseInterface } from '../interfaces/customer-order-response.interface';
 import { throwIfNotFound } from '@src/utils/exceptions/common.exception';
 
+import { ReviewExternalService } from '@modules/customer/review/services/review-external.service';
+import { ReviewEntity } from '@modules/customer/review/entities/review.entity';
+
 @Injectable()
 export class OrderService {
   constructor(
@@ -42,8 +45,9 @@ export class OrderService {
     private readonly appointmentService: AppointmentService,
     private readonly appointmentRepository: AppointmentRepository,
     private readonly clientOrderService: ClientOrderService,
-  ) { }
-
+    @Inject(forwardRef(() => ReviewExternalService))
+    private readonly reviewExternalService: ReviewExternalService,
+  ) {}
 
   private async expandOrderItem(
     orderItems: OrderItemPayloadDto[],
@@ -516,15 +520,15 @@ export class OrderService {
           outletWebsite: outlet.website,
           address: outlet.address
             ? {
-              addressId: outlet.address.addressId,
-              country: outlet.address.country,
-              state: outlet.address.state,
-              district: outlet.address.district,
-              city: outlet.address.city,
-              pincode: outlet.address.pincode,
-              street: outlet.address.street,
-              landmark: outlet.address.landmark,
-            }
+                addressId: outlet.address.addressId,
+                country: outlet.address.country,
+                state: outlet.address.state,
+                district: outlet.address.district,
+                city: outlet.address.city,
+                pincode: outlet.address.pincode,
+                street: outlet.address.street,
+                landmark: outlet.address.landmark,
+              }
             : null,
         };
       }
@@ -556,100 +560,137 @@ export class OrderService {
     ];
 
     // Use Promise.all to fetch services and outlet details in parallel
-    const [services, outletDetails] = await Promise.all([
+    const [services, outletDetails, reviews] = await Promise.all([
       this.serviceExternalService.getServicesByServiceIds(serviceIds),
       this.outletExternalService.getOutletDetailsByIds(outletIds),
+      this.reviewExternalService.getServiceReviewsByCustomerIdAndServiceIds(
+        customerId,
+        serviceIds,
+      ),
     ]);
 
     // Format the results into the desired structure
-    return this.formatCustomerOrderResponse(
+    const formattedOrder = this.formatCustomerOrderResponse(
       completedOrders,
       services,
       outletDetails,
     );
+
+    // add the service review
+    const serviceReviewMap: Map<string, ReviewEntity> = new Map<
+      string,
+      ReviewEntity
+    >();
+    reviews.forEach((reviews) => {
+      serviceReviewMap.set(reviews.serviceId, reviews);
+    });
+
+    formattedOrder.forEach((order) => {
+      order.services.forEach((service) => {
+        // @ts-ignore
+        service.review = serviceReviewMap.get(service._id.toString());
+      });
+    });
+
+    return formattedOrder;
   }
 
-
-  async getOrderDetailsById(orderId: number): Promise<CustomerOrderResponseInterface> {
+  async getOrderDetailsById(
+    orderId: number,
+  ): Promise<CustomerOrderResponseInterface> {
     const allOrders = await this.appointmentRepository.getOrderDetails(orderId);
     // Extract unique serviceIds and outletIds
     const serviceIds = [...new Set(allOrders.map((order) => order.serviceId))];
     const outletIds = [...new Set(allOrders.map((order) => order.outletId))];
-  
+
     // Use Promise.all to fetch services and outlet details in parallel
     const [services, outletDetails] = await Promise.all([
       this.serviceExternalService.getServicesByServiceIds(serviceIds),
       this.outletExternalService.getOutletDetailsByIds(outletIds),
     ]);
-  
+
     // Format the results and return
-    return this.formatCustomerOrderDetailsResponse(allOrders, services, outletDetails);
+    return this.formatCustomerOrderDetailsResponse(
+      allOrders,
+      services,
+      outletDetails,
+    );
   }
-  
 
-formatCustomerOrderDetailsResponse(orders, services, outletDetails): CustomerOrderResponseInterface {
-  return orders.reduce((acc, row) => {
-    if (!acc[row.orderId]) {
-      acc[row.orderId] = {
-        orderId: row.orderId,
-        amountPaid: row.amountPaid,
-        orderStatus: row.orderStatus,
-        otp: row.otp,
-        services: [],
-        customer: {
-          customerId: row.customerId,
-          customerName: row.customerName,
-          customerContact: row.customerContact,
-          customerEmail: row.customerEmail,
-          customerImage: '',
-        },
-        appointment: {
-          appointmentId: row.appointmentId,
-          startTime: row.startTime,
-          endTime: row.endTime,
-          AppointmentStatus: row.status,
-        },
-        outlet: {},
-      };
-    }
+  formatCustomerOrderDetailsResponse(
+    orders,
+    services,
+    outletDetails,
+  ): CustomerOrderResponseInterface {
+    return orders.reduce((acc, row) => {
+      if (!acc[row.orderId]) {
+        acc[row.orderId] = {
+          orderId: row.orderId,
+          amountPaid: row.amountPaid,
+          orderStatus: row.orderStatus,
+          otp: row.otp,
+          services: [],
+          customer: {
+            customerId: row.customerId,
+            customerName: row.customerName,
+            customerContact: row.customerContact,
+            customerEmail: row.customerEmail,
+            customerImage: '',
+          },
+          appointment: {
+            appointmentId: row.appointmentId,
+            startTime: row.startTime,
+            endTime: row.endTime,
+            AppointmentStatus: row.status,
+          },
+          outlet: {},
+        };
+      }
 
-    const outlet = outletDetails.find((outlet) => outlet.id === row.outletId);
-    if (outlet) {
-      acc[row.orderId].outlet = {
-        outletId: outlet.id,
-        outletName: outlet.name,
-        outletDescription: outlet.description,
-        outletLatitude: outlet.latitude,
-        outletLongitude: outlet.longitude,
-        outletPhoneNumber: outlet.phoneNumber,
-        outletEmail: outlet.email,
-        outletWebsite: outlet.website,
-        address: outlet.address
-          ? {
-              addressId: outlet.address.addressId,
-              country: outlet.address.country,
-              state: outlet.address.state,
-              district: outlet.address.district,
-              city: outlet.address.city,
-              pincode: outlet.address.pincode,
-              street: outlet.address.street,
-              landmark: outlet.address.landmark,
-            }
-          : null,
-      };
-    }
+      // Fetch outlet details for the current order
+      const outlet = outletDetails.find((outlet) => outlet.id === row.outletId);
+      if (outlet) {
+        acc[row.orderId].outlet = {
+          outletId: outlet.id,
+          outletName: outlet.name,
+          outletDescription: outlet.description,
+          outletLatitude: outlet.latitude,
+          outletLongitude: outlet.longitude,
+          outletPhoneNumber: outlet.phoneNumber,
+          outletEmail: outlet.email,
+          outletWebsite: outlet.website,
+          address: outlet.address
+            ? {
+                addressId: outlet.address.addressId,
+                country: outlet.address.country,
+                state: outlet.address.state,
+                district: outlet.address.district,
+                city: outlet.address.city,
+                pincode: outlet.address.pincode,
+                street: outlet.address.street,
+                landmark: outlet.address.landmark,
+              }
+            : null,
+        };
+      }
 
-    
-    const formattedServiceDetails =
-      this.clientOrderService.formatServiceDetails(row, services);
+      // Format service details
+      const formattedServiceDetails =
+        this.clientOrderService.formatServiceDetails(row, services);
 
-    
-    acc[row.orderId].services.push(formattedServiceDetails);
+      // Add the formatted service details to the services array
+      acc[row.orderId].services.push(formattedServiceDetails);
 
-    return acc;
-  }, {})[orders[0]?.orderId];
-}
+      return acc[row.orderId];
+    }, {});
+  }
 
-  
-
+  async getOrderByOrderAndCustomerId(
+    orderId: number,
+    customerId: number,
+  ): Promise<OrderEntity | null> {
+    return await this.orderRepository.getRepository().findOne({
+      where: { orderId, customerId },
+    });
+  }
 }

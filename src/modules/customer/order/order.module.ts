@@ -22,19 +22,32 @@ import { OrderFulfillmentOtpService } from './services/order-fulfillment-otp.ser
 import { OrderFulfillmentOtpEntity } from './entities/otp.entity';
 import { OrderFulfillmentOtpRepository } from './repositories/otp.repository';
 import { CLientAppointmentController } from './controllers/client-appointment.controller';
+import { OrderExternalService } from './services/order-external.service';
+import { ReviewModule } from '../review/review.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [OrderEntity, OrderItemEntity, AppointmentEntity, OrderFulfillmentOtpEntity],
+      [
+        OrderEntity,
+        OrderItemEntity,
+        AppointmentEntity,
+        OrderFulfillmentOtpEntity,
+      ],
       getMysqlDataSource(),
     ),
-    OutletModule,
+    forwardRef(() => OutletModule),
     ServiceModule,
     forwardRef(() => CustomerModule),
-    ClientModule
+    ClientModule,
+    forwardRef(() => ReviewModule),
   ],
-  controllers: [OrderController, AppointmentController, ClientOrderController, CLientAppointmentController],
+  controllers: [
+    OrderController,
+    AppointmentController,
+    ClientOrderController,
+    CLientAppointmentController,
+  ],
   providers: [
     OrderService,
     OrderRepository,
@@ -44,8 +57,9 @@ import { CLientAppointmentController } from './controllers/client-appointment.co
     AppointmentService,
     ClientOrderService,
     OrderFulfillmentOtpService,
-    OrderFulfillmentOtpRepository
+    OrderFulfillmentOtpRepository,
+    OrderExternalService,
   ],
-  exports: [],
+  exports: [OrderExternalService],
 })
-export class OrderModule { }
+export class OrderModule {}

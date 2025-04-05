@@ -1,0 +1,3 @@
+export enum JobEnum {
+  REVIEW_AGGREGATION_JOB = 'REVIEW_AGGREGATION_JOB',
+}

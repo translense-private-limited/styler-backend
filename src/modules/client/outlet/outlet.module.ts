@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { OutletService } from './services/outlet.service';
 import { OutletRepository } from './repositories/outlet.repository';
 import { OutletController } from './controllers/outlet.controller';
@@ -26,6 +26,7 @@ import { BusinessHourService } from './services/business-hour.service';
 import { BusinessHourController } from './controllers/business-hour.controller';
 import { BusinessHourEntity } from './entities/business-hours.entity';
 import { BusinessHourRepository } from './repositories/business-hour.repository';
+import { ReviewModule } from '@modules/customer/review/review.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { BusinessHourRepository } from './repositories/business-hour.repository'
     AuthorizationModule,
     UtilsModule,
     EncryptionModule,
+    forwardRef(() => ReviewModule),
   ],
   providers: [
     OutletService,

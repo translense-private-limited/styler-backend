@@ -7,16 +7,16 @@ import { CustomerEntity } from './entities/customer.entity';
 import { getMysqlDataSource } from '@modules/database/data-source';
 
 import { EncryptionModule } from '@modules/encryption/encryption.module';
-import { OrderModule } from './order/order.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([CustomerEntity], getMysqlDataSource()),
     EncryptionModule,
-    forwardRef(()=>OrderModule)
+    forwardRef(() => ReviewModule),
   ],
   controllers: [],
   providers: [CustomerService, CustomerExternalService, CustomerRepository],
-  exports: [CustomerExternalService,CustomerRepository],
+  exports: [CustomerExternalService, CustomerRepository],
 })
 export class CustomerModule {}

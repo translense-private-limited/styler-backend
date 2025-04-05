@@ -20,6 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "node ./src/modules/seed/seed.js",
+    "cronjob": "node ./src/utils/helpers/cron-job-runner.js",
     "typeorm": "npm run build && npx typeorm -d dist/db/dataSourceForMig.js",
     "migration:revert": "npm run typeorm -- migration:revert",
     "migration:generate": "node scripts/generate-migration.js",

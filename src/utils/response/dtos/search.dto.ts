@@ -1,6 +1,7 @@
-import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Max, Min} from 'class-validator';
+import { PagerDto } from './pager.dto';
 
-export class PaginatedSearchDto {
+export class PaginatedSearchDto extends PagerDto {
   @IsNumber()
   @Min(1)
   @IsOptional()
